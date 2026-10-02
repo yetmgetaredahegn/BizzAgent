@@ -1,8 +1,7 @@
 from fastapi import APIRouter, File, UploadFile
 
-from bizzagent.schemas import ApplicationResponse
-from bizzagent.services.application_service import process_application
-
+from bizzagent.schemas import DocumentCheckResponse
+from bizzagent.vision.licence_check import check_documents
 
 router = APIRouter(
     prefix="/applications",
@@ -10,15 +9,9 @@ router = APIRouter(
 )
 
 
-@router.post(
-    "/process",
-    response_model=ApplicationResponse,
-)
+@router.post("/process", response_model=DocumentCheckResponse)
 async def process_application_route(
     license_image: UploadFile = File(...),
     workshop_image: UploadFile = File(...),
-) -> ApplicationResponse:
-    return await process_application(
-        license_image=license_image,
-        workshop_image=workshop_image,
-    )
+) -> DocumentCheckResponse:
+    return await check_documents(license_image=license_image, workshop_image=workshop_image)

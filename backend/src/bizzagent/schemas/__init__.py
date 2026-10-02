@@ -1,16 +1,9 @@
 from bizzagent.schemas.application import (
     ApplicationData,
-    ApplicationFiles,
-    ApplicationResponse,
+    DocumentCheckResponse,
     FileMetadata,
+    UploadedFiles,
 )
-from bizzagent.schemas.interview import (
-    InterviewAnswerResponse,
-    InterviewQuestion,
-    InterviewState,
-    InterviewTurn,
-)
-from bizzagent.schemas.interview_decision import InterviewDecision
 from bizzagent.schemas.company import (
     ApplicantDescription,
     BusinessOrganization,
@@ -38,17 +31,15 @@ from bizzagent.schemas.intervention import (
     RequestedEquipment,
 )
 
-
 __all__ = [
     "ApplicantDescription",
     "ApplicationData",
-    "ApplicationFiles",
-    "ApplicationResponse",
     "BusinessOrganization",
     "CompanyManagement",
     "CompanyOverview",
     "CompanyOwnership",
     "CompanyProfile",
+    "DocumentCheckResponse",
     "Evidence",
     "ExpectedResult",
     "FileMetadata",
@@ -57,11 +48,6 @@ __all__ = [
     "ImpactProtocolDraft",
     "InformationGap",
     "InterventionRequest",
-    "InterviewAnswerResponse",
-    "InterviewDecision",
-    "InterviewQuestion",
-    "InterviewState",
-    "InterviewTurn",
     "JobPosition",
     "ManagementTeamMember",
     "Milestone",
@@ -70,5 +56,5 @@ __all__ = [
     "RequestedConsultant",
     "RequestedEquipment",
     "TranscriptionResult",
+    "UploadedFiles",
 ]
-

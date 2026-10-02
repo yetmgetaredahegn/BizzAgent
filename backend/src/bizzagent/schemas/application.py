@@ -1,9 +1,7 @@
 from pydantic import BaseModel, Field
 
 from bizzagent.schemas.company import ApplicantDescription
-from bizzagent.schemas.evidence import Evidence, TranscriptionResult
-from bizzagent.schemas.gaps import InformationGap
-from bizzagent.schemas.impact import ImpactProtocolDraft
+from bizzagent.schemas.evidence import Evidence
 from bizzagent.schemas.intervention import InterventionRequest
 
 
@@ -12,36 +10,24 @@ class FileMetadata(BaseModel):
     content_type: str
 
 
-class ApplicationFiles(BaseModel):
-    audio: FileMetadata | None = None
+class UploadedFiles(BaseModel):
     license: FileMetadata
     workshop: FileMetadata
 
-class ApplicationData(BaseModel):
-    applicant: ApplicantDescription = Field(
-        default_factory=ApplicantDescription
-    )
 
-    intervention: InterventionRequest = Field(
-        default_factory=InterventionRequest
-    )
+class DocumentCheckResponse(BaseModel):
+    """Result of the automated licence/workshop photo check.
 
-    evidence: list[Evidence] = Field(
-        default_factory=list
-    )
+    It reports only what was checked. It carries no application data:
+    extraction happens in the funding skill, grounded in evidence.
+    """
 
-
-class ApplicationResponse(BaseModel):
     status: str
+    files: UploadedFiles
+    checks: dict[str, bool] = Field(default_factory=dict)
 
-    application: ApplicationData
 
-    impact_protocol: ImpactProtocolDraft
-
-    transcript: TranscriptionResult | None = None
-
-    files: ApplicationFiles
-
-    gaps: list[InformationGap] = Field(
-        default_factory=list
-    )
+class ApplicationData(BaseModel):
+    applicant: ApplicantDescription = Field(default_factory=ApplicantDescription)
+    intervention: InterventionRequest = Field(default_factory=InterventionRequest)
+    evidence: list[Evidence] = Field(default_factory=list)
