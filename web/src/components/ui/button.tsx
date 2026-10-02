@@ -3,26 +3,27 @@ import type { ComponentProps, ButtonHTMLAttributes } from "react";
 
 import { cn } from "@/lib/format";
 
-type Variant = "primary" | "navy" | "secondary" | "ghost" | "light" | "white";
+type Variant = "primary" | "navy" | "secondary" | "ghost" | "light" | "white" | "highlight" | "danger";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap transition-[background-color,color,box-shadow,transform] duration-200 active:translate-y-px disabled:pointer-events-none disabled:opacity-45";
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap transition-[background-color,color,transform] duration-[180ms] active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45";
 
 const variants: Record<Variant, string> = {
-  primary:
-    "bg-brand-500 text-white shadow-[0_10px_24px_-10px_rgb(0_178_169/0.8)] hover:bg-brand-600",
-  navy: "bg-ink-600 text-white shadow-[0_10px_24px_-10px_rgb(29_66_138/0.7)] hover:bg-ink-700",
-  secondary: "bg-surface text-ink ring-1 ring-line-strong hover:bg-ink-50/60 hover:ring-ink-200",
+  primary: "bg-stamp text-on-stamp hover:bg-stamp-strong",
+  navy: "bg-stamp text-on-stamp hover:bg-stamp-strong",
+  secondary: "bg-transparent text-ink ring-1 ring-line-strong hover:bg-ink/5",
   ghost: "text-ink hover:bg-ink/5",
-  light: "bg-white/10 text-white ring-1 ring-white/25 backdrop-blur hover:bg-white/20",
-  white: "bg-white text-brand-800 hover:bg-brand-50",
+  light: "bg-on-stamp/10 text-on-stamp ring-1 ring-on-stamp/30 hover:bg-on-stamp/20",
+  white: "bg-surface text-stamp hover:bg-paper",
+  highlight: "bg-meskel text-on-meskel hover:brightness-95",
+  danger: "bg-transparent text-contradictory ring-1 ring-contradictory hover:bg-contradictory/10",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-9 px-4 text-sm",
+  sm: "h-10 px-4 text-sm",
   md: "h-11 px-5 text-[15px]",
-  lg: "h-13 px-7 text-base",
+  lg: "h-12 px-7 text-base",
 };
 
 export function buttonClass(variant: Variant = "primary", size: Size = "md", className?: string) {

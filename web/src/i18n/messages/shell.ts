@@ -1,0 +1,40 @@
+import { defineMessages } from "../define";
+
+export const shell = defineMessages({
+  en: {
+    "journey.label": "Your journey",
+    "journey.idea": "Idea",
+    "journey.validated": "Validated",
+    "journey.formalised": "Formalised",
+    "journey.operating": "Operating",
+    "journey.growing": "Growing",
+    "journey.funded": "Funded",
+    "journey.expanding": "Expanding",
+    "voice.mock": "Prototype: your voice is not sent anywhere. A sample transcript is used.",
+    "term.pending": "Translation pending review",
+  },
+  am: {
+    "journey.label": "ጉዞዎ",
+    "journey.idea": "ሀሳብ",
+    "journey.validated": "የተረጋገጠ",
+    "journey.formalised": "የተመዘገበ",
+    "journey.operating": "በሥራ ላይ",
+    "journey.growing": "እያደገ",
+    "journey.funded": "የተደገፈ",
+    "journey.expanding": "እየተስፋፋ",
+    "voice.mock": "ናሙና፦ ድምጽዎ ወደ የትም አይላክም። ናሙና ጽሑፍ ጥቅም ላይ ውሏል።",
+    "term.pending": "ትርጉሙ ግምገማ ይጠብቃል",
+  },
+  om: {
+    "journey.label": "Imala kee",
+    "journey.idea": "Yaada",
+    "journey.validated": "Mirkanaa'e",
+    "journey.formalised": "Galmaa'e",
+    "journey.operating": "Hojii irra",
+    "journey.growing": "Guddachaa",
+    "journey.funded": "Deeggarame",
+    "journey.expanding": "Babal'achaa",
+    "voice.mock": "Fakkeenya: sagaleen kee gara tokkootti hin ergamu. Barreeffama fakkeenyaa fayyadamameera.",
+    "term.pending": "Hiikni ilaalcha eegaa jira",
+  },
+});
