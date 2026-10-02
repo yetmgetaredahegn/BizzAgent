@@ -164,7 +164,8 @@ acceptable copy. See [content guidelines](content-guidelines.md).
 ## 10. Review process
 
 1. This document, [tokens.json](tokens.json) and a **brand board with key-screen mockups**
-   (published as a private artifact) are reviewed by the owner. The mockups cover onboarding,
+   (published as a private artifact: [brand board v1](https://claude.ai/artifact/UAUbLsy9cXYWMkSHCwMizy))
+   are reviewed by the owner. The mockups cover onboarding,
    Home, Talk with ReceiptTape, Opportunities and CostTicket, at 390 and 1440, in light and dark,
    in 3 languages.
 2. Optionally, the same frames and a component library go to Figma.
