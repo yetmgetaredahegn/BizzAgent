@@ -28,6 +28,8 @@ describe("messages", () => {
     for (const area of ALL_AREAS) {
       for (const [key, text] of Object.entries(area.am as Record<string, string>)) {
         if (allowedLatin.has(key)) continue;
+        // Strings with no letters (e.g. "{n} / {m}") have no script to check.
+        if (!/[A-Za-z\u1200-\u137F]/.test(text.replace(/\{\w+\}/g, ""))) continue;
         expect(latinOnly.test(text), `am:${key} looks Latin-only: ${text}`).toBe(false);
       }
     }

@@ -24,7 +24,7 @@ export function FidelJourney({ stage, className }: { stage: Stage; className?: s
           key={id}
           aria-current={i === now ? "step" : undefined}
           className={cn(
-            "rounded-stamp flex min-h-16 min-w-[4.5rem] flex-1 flex-col justify-between border p-2",
+            "rounded-stamp flex min-h-16 min-w-[5.25rem] flex-1 flex-col justify-between border p-2",
             i === now
               ? "border-stamp bg-stamp text-on-stamp"
               : i < now
