@@ -32,7 +32,7 @@ class MemoryItem(BaseModel):
 ```mermaid
 flowchart LR
   T[turn finished] --> X[memory_extractor<br/>LLM structured] --> D[dedupe / merge<br/>vs existing]
-  D --> C((read-back: "Should I remember<br/>you have 8 employees?"))
+  D --> C(("read-back: Should I remember<br/>you have 8 employees?"))
   C -->|yes| S[(Store)]
   C -->|no| Drop[discard]
 ```
