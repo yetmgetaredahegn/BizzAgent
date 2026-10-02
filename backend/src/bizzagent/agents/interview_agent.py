@@ -12,9 +12,9 @@ import logging
 
 from langchain_ollama import ChatOllama
 
-from app.schemas.interview import InterviewQuestion, InterviewTurn
-from app.schemas.interview_decision import InterviewDecision
-from app.schemas.application import ApplicationData
+from bizzagent.schemas.interview import InterviewQuestion, InterviewTurn
+from bizzagent.schemas.interview_decision import InterviewDecision
+from bizzagent.schemas.application import ApplicationData
 
 
 logger = logging.getLogger(__name__)

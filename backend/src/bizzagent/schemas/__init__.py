@@ -1,17 +1,17 @@
-from app.schemas.application import (
+from bizzagent.schemas.application import (
     ApplicationData,
     ApplicationFiles,
     ApplicationResponse,
     FileMetadata,
 )
-from app.schemas.interview import (
+from bizzagent.schemas.interview import (
     InterviewAnswerResponse,
     InterviewQuestion,
     InterviewState,
     InterviewTurn,
 )
-from app.schemas.interview_decision import InterviewDecision
-from app.schemas.company import (
+from bizzagent.schemas.interview_decision import InterviewDecision
+from bizzagent.schemas.company import (
     ApplicantDescription,
     BusinessOrganization,
     CompanyManagement,
@@ -24,13 +24,13 @@ from app.schemas.company import (
     ProductService,
     ProductUniqueness,
 )
-from app.schemas.evidence import Evidence, TranscriptionResult
-from app.schemas.gaps import InformationGap
-from app.schemas.impact import (
+from bizzagent.schemas.evidence import Evidence, TranscriptionResult
+from bizzagent.schemas.gaps import InformationGap
+from bizzagent.schemas.impact import (
     ImpactProtocolDraft,
     Milestone,
 )
-from app.schemas.intervention import (
+from bizzagent.schemas.intervention import (
     ExpectedResult,
     InterventionRequest,
     JobPosition,

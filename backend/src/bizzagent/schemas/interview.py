@@ -1,5 +1,5 @@
-from app.schemas.application import ApplicationData
-from app.schemas.evidence import TranscriptionResult
+from bizzagent.schemas.application import ApplicationData
+from bizzagent.schemas.evidence import TranscriptionResult
 
 from pydantic import BaseModel, Field
 

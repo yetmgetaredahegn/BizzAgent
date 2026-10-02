@@ -1,7 +1,7 @@
 from fastapi import APIRouter, File, UploadFile
 
-from app.schemas import ApplicationResponse
-from app.services.application_service import process_application
+from bizzagent.schemas import ApplicationResponse
+from bizzagent.services.application_service import process_application
 
 
 router = APIRouter(

@@ -1,10 +1,10 @@
 from pydantic import BaseModel, Field
 
-from app.schemas.company import ApplicantDescription
-from app.schemas.evidence import Evidence, TranscriptionResult
-from app.schemas.gaps import InformationGap
-from app.schemas.impact import ImpactProtocolDraft
-from app.schemas.intervention import InterventionRequest
+from bizzagent.schemas.company import ApplicantDescription
+from bizzagent.schemas.evidence import Evidence, TranscriptionResult
+from bizzagent.schemas.gaps import InformationGap
+from bizzagent.schemas.impact import ImpactProtocolDraft
+from bizzagent.schemas.intervention import InterventionRequest
 
 
 class FileMetadata(BaseModel):

@@ -3,10 +3,10 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routes.applications import (
+from bizzagent.routes.applications import (
     router as applications_router,
 )
-from app.routes.interview import (
+from bizzagent.routes.interview import (
     router as interview_router,
 )
 

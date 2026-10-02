@@ -2,7 +2,7 @@ from pathlib import Path
 
 from faster_whisper import WhisperModel
 
-from app.schemas import TranscriptionResult
+from bizzagent.schemas import TranscriptionResult
 
 
 MODEL_NAME = "small"

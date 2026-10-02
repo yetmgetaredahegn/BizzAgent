@@ -7,14 +7,14 @@ answer sufficiency and next questions.
 
 import logging
 
-from app.agents.interview_agent import InterviewAgent, ALLOWED_FIELDS
-from app.schemas import (
+from bizzagent.agents.interview_agent import InterviewAgent, ALLOWED_FIELDS
+from bizzagent.schemas import (
     Evidence,
     InterviewQuestion,
     InterviewState,
     InterviewTurn,
 )
-from app.schemas.interview_decision import InterviewDecision
+from bizzagent.schemas.interview_decision import InterviewDecision
 
 
 logger = logging.getLogger(__name__)

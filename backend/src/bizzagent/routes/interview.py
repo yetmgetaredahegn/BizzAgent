@@ -9,21 +9,21 @@ from fastapi import (
 )
 from fastapi.responses import FileResponse
 
-from app.schemas import (
+from bizzagent.schemas import (
     InterviewAnswerResponse,
     InterviewState,
 )
-from app.services.application_service import (
+from bizzagent.services.application_service import (
     save_upload_to_temporary_file,
 )
-from app.services.interview_service import (
+from bizzagent.services.interview_service import (
     process_interview_answer,
     start_interview,
 )
-from app.services.transcription_service import (
+from bizzagent.services.transcription_service import (
     transcribe_audio,
 )
-from app.services.tts_service import (
+from bizzagent.services.tts_service import (
     synthesize_speech,
 )
 

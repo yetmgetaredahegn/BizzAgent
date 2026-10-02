@@ -2,7 +2,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 from fastapi import HTTPException, UploadFile
-from app.schemas import (
+from bizzagent.schemas import (
     ApplicantDescription,
     ApplicationData,
     ApplicationFiles,
