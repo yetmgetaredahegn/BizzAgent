@@ -1,0 +1,136 @@
+import type { InboxItem } from "../../contract";
+
+const cost = (id: string, min: number, max?: number) => ({
+  action: { id },
+  creditsMin: min,
+  creditsMax: max ?? min,
+  balanceAfter: 0, // recomputed from the wallet when listed
+  capRemaining: null,
+});
+
+export const INBOX_SEED: Record<string, InboxItem[]> = {
+  "almaz-spices": [
+    {
+      id: "i-almaz-submit",
+      type: "approval",
+      kind: "submit",
+      title: { id: "inbox.submit.title", vars: { funder: "Highland Enterprise Fund" } },
+      why: { id: "inbox.submit.why" },
+      evidence: [
+        { label: "Business name", status: "unverified" },
+        { label: "Staff: 8 (6 women)", status: "unverified" },
+        { label: "Years in operation: 6", status: "unverified" },
+        { label: "Machinery list", status: "missing" },
+        { label: "Ownership adds up to 110%", status: "contradictory" },
+      ],
+      cost: cost("inbox.submit.cost", 6),
+      undoMinutes: 10,
+      missionId: "m-almaz-funded",
+      status: "pending",
+    },
+    {
+      id: "i-almaz-machinery",
+      type: "question",
+      kind: "ask",
+      title: { id: "inbox.q.machinery" },
+      why: { id: "inbox.q.machinery.why" },
+      evidence: [{ label: "Machinery list", status: "missing" }],
+      unblocks: 2,
+      status: "pending",
+      sample: "A grinding mill, a packing machine and two scales",
+    },
+    {
+      id: "i-almaz-organogram",
+      type: "question",
+      kind: "ask",
+      title: { id: "inbox.q.organogram" },
+      why: { id: "inbox.q.organogram.why" },
+      evidence: [{ label: "Organogram", status: "missing" }],
+      unblocks: 1,
+      status: "pending",
+      sample: "Almaz leads, Dawit helps with orders, two women run the grinding",
+    },
+  ],
+  "meron-garments": [
+    {
+      id: "i-meron-publish",
+      type: "approval",
+      kind: "publish",
+      title: { id: "inbox.publish.title", vars: { role: "production supervisor" } },
+      why: { id: "inbox.publish.why" },
+      evidence: [
+        { label: "Job description in 3 languages", status: "established" },
+        { label: "Pay range given by you", status: "unverified" },
+      ],
+      cost: cost("inbox.publish.cost", 3),
+      undoMinutes: 30,
+      missionId: "m-meron-hire",
+      status: "pending",
+    },
+    {
+      id: "i-meron-send",
+      type: "approval",
+      kind: "send",
+      title: { id: "inbox.send.title", vars: { who: "a Nairobi distributor (demo)" } },
+      why: { id: "inbox.send.why" },
+      evidence: [
+        { label: "Market report: 5 sources", status: "established" },
+        { label: "Your price list", status: "unverified" },
+      ],
+      undoMinutes: undefined,
+      status: "pending",
+    },
+  ],
+  "abel-studio": [
+    {
+      id: "i-abel-traction",
+      type: "question",
+      kind: "ask",
+      title: { id: "inbox.q.traction" },
+      why: { id: "inbox.q.traction.why" },
+      evidence: [{ label: "Paying customers", status: "missing" }],
+      unblocks: 2,
+      status: "pending",
+      sample: "Three studios pay me every month",
+    },
+    {
+      id: "i-abel-share",
+      type: "approval",
+      kind: "share",
+      title: { id: "inbox.share.title", vars: { who: "Addis Launchpad (demo)" } },
+      why: { id: "inbox.share.why" },
+      evidence: [
+        { label: "Business profile", status: "established" },
+        { label: "Cash flow summary", status: "unverified" },
+      ],
+      undoMinutes: 60,
+      status: "pending",
+    },
+  ],
+  "selam-idea": [
+    {
+      id: "i-selam-interviews",
+      type: "question",
+      kind: "ask",
+      title: { id: "inbox.q.interviews" },
+      why: { id: "inbox.q.interviews.why" },
+      evidence: [{ label: "Interview plan", status: "missing" }],
+      unblocks: 2,
+      status: "pending",
+      sample: "Two classmates, my cousin and two neighbours",
+    },
+  ],
+  "kuri-team": [
+    {
+      id: "i-kuri-price",
+      type: "question",
+      kind: "ask",
+      title: { id: "inbox.q.price" },
+      why: { id: "inbox.q.price.why" },
+      evidence: [{ label: "First price", status: "missing" }],
+      unblocks: 1,
+      status: "pending",
+      sample: "Br 40 per delivery",
+    },
+  ],
+};

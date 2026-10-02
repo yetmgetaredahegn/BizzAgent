@@ -7,11 +7,14 @@
 
 import { createStore } from "@/lib/store";
 
-import type { CreateAccountInput, Persona, WorkspaceSummary } from "../contract";
+import type { ActivityEvent, Conversation, CreateAccountInput, InboxItem, Mission, Persona, WorkspaceSummary } from "../contract";
 import { DEFAULT_PERSONA, PERSONAS, WORKSPACES, type PersonaSeed, type WsSeed } from "./seed/workspaces";
 import type { WsFlags } from "./journey";
 import type { Stage } from "@/components/ds/fidel-journey";
 import { daysFromToday } from "./clock";
+import { ACTIVITY_SEED } from "./seed/activity";
+import { INBOX_SEED } from "./seed/inbox";
+import { missionFromSummary } from "./missions";
 
 export const personaStore = createStore<string>("bizzagent.persona", "local", DEFAULT_PERSONA);
 export const accountStore = createStore<CreateAccountInput | null>("bizzagent.account", "local", null);
@@ -19,10 +22,21 @@ export const accountStore = createStore<CreateAccountInput | null>("bizzagent.ac
 const NEW_ACCOUNT_ID = "you";
 const NEW_WS_ID = "you-ws";
 
+export interface ConvRecord {
+  conv: Conversation;
+  internal: { step: string; data: Record<string, unknown> };
+  history: { conv: Conversation; internal: { step: string; data: Record<string, unknown> } }[];
+}
+
 interface Db {
   personas: Record<string, PersonaSeed>;
   workspaces: Record<string, WsSeed>;
   credits: Record<string, number>;
+  inbox: Record<string, InboxItem[]>;
+  activity: Record<string, ActivityEvent[]>;
+  missions: Record<string, Mission[]>;
+  conversations: Record<string, ConvRecord>;
+  counter: number;
   version: number;
 }
 
@@ -70,7 +84,6 @@ export function buildNewAccount(input: CreateAccountInput): { persona: PersonaSe
       staff: input.profile?.staff,
     },
     flags,
-    inboxCount: 0,
     artifacts: isPartner
       ? []
       : [
@@ -105,6 +118,11 @@ function init(): Db {
     personas: Object.fromEntries(PERSONAS.map((p) => [p.id, clone(p)])),
     workspaces: Object.fromEntries(WORKSPACES.map((w) => [w.id, clone(w)])),
     credits: Object.fromEntries(PERSONAS.map((p) => [p.id, p.credits])),
+    inbox: clone(INBOX_SEED),
+    activity: clone(ACTIVITY_SEED),
+    missions: Object.fromEntries(WORKSPACES.map((w) => [w.id, w.missions.map((m) => missionFromSummary(w.id, m))])),
+    conversations: {},
+    counter: 0,
     version: 0,
   };
   const saved = accountStore.get();
@@ -113,6 +131,9 @@ function init(): Db {
     state.personas[persona.id] = persona;
     state.workspaces[workspace.id] = workspace;
     state.credits[persona.id] = persona.credits;
+    state.inbox[workspace.id] = [];
+    state.activity[workspace.id] = [];
+    state.missions[workspace.id] = [];
   }
   return state;
 }
@@ -162,6 +183,12 @@ export function summariesFor(persona: PersonaSeed): WorkspaceSummary[] {
 
 export function toPersona(seed: PersonaSeed): Persona {
   return { id: seed.id, name: seed.name, blurb: seed.blurb, language: seed.language, kind: seed.kind, workspaces: summariesFor(seed) };
+}
+
+export function nextId(prefix: string): string {
+  const state = getDb();
+  state.counter += 1;
+  return `${prefix}${state.counter}`;
 }
 
 export function resetNewAccount(): void {

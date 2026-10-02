@@ -9,7 +9,7 @@
  */
 
 import type { Stage } from "@/components/ds/fidel-journey";
-import type { Lang } from "@/lib/types";
+import type { FieldStatus, Lang } from "@/lib/types";
 
 export type { Lang, Stage };
 
@@ -180,6 +180,188 @@ export interface MissionSummary {
 }
 
 // ---------------------------------------------------------------------------
+// Calculations (shared by sheets and artifacts)
+// ---------------------------------------------------------------------------
+
+export interface CalcStepDto {
+  label: string;
+  op?: "+" | "−" | "×" | "÷" | "=";
+  value: number;
+  input?: string;
+  unit?: "birr" | "percent" | "count" | "months";
+}
+
+export interface CalcResultDto {
+  value: number;
+  unit: "birr" | "percent" | "count" | "months";
+  steps: CalcStepDto[];
+  warnings: string[];
+}
+
+export interface CostEstimateDto {
+  action: Msg;
+  creditsMin: number;
+  creditsMax: number;
+  balanceAfter: number;
+  capRemaining: number | null;
+}
+
+// ---------------------------------------------------------------------------
+// Conversations (concierge)
+// ---------------------------------------------------------------------------
+
+export type TalkTopic = "general" | "numbers" | "idea" | "setup" | "entry";
+
+export type Turn =
+  | { id: string; role: "agent"; msg: Msg }
+  | { id: string; role: "user"; text: string; via: "voice" | "text" }
+  | { id: string; role: "stage"; msg: Msg };
+
+export type Pending =
+  | { kind: "ask"; prompt: Msg; why?: Msg; sample?: Msg; field: string }
+  | { kind: "readback"; text: Msg | string; field: string }
+  | { kind: "cost"; estimate: CostEstimateDto }
+  | { kind: "choice"; options: { id: string; label: Msg; href?: string }[] }
+  | null;
+
+export interface SheetMargin {
+  kind: "margin";
+  inputs: { price: number; cost: number };
+  base: CalcResultDto;
+  whatIf?: { price: number; result: CalcResultDto };
+}
+
+export interface SheetIdea {
+  kind: "idea";
+  version: number;
+  approved: boolean;
+  fields: { key: "oneLiner" | "customer" | "problem" | "solution" | "alternatives"; value: string | null; status: FieldStatus }[];
+}
+
+export interface SheetEntry {
+  kind: "entry";
+  market: string;
+  rows: { key: string; value: Msg | string; status: FieldStatus; demo?: boolean }[];
+  competitors: { name: string; reach: "global" | "local"; source: string }[];
+}
+
+export interface SheetAdvisor {
+  kind: "advisor";
+  owners?: string;
+  questions: Msg[];
+}
+
+export type Sheet = SheetMargin | SheetIdea | SheetEntry | SheetAdvisor;
+
+export interface Conversation {
+  id: string;
+  workspaceId: string;
+  topic: TalkTopic;
+  turns: Turn[];
+  pending: Pending;
+  sheet: Sheet | null;
+  /** Increments whenever the sheet changes (the UI badges the Sheet tab). */
+  sheetVersion: number;
+  canUndo: boolean;
+}
+
+export type ConversationEvent =
+  | { type: "text"; text: string; via: "voice" | "text" }
+  | { type: "confirm" }
+  | { type: "fix" }
+  | { type: "choose"; id: string }
+  | { type: "costConfirm" }
+  | { type: "costCancel" }
+  | { type: "undo" };
+
+// ---------------------------------------------------------------------------
+// Inbox (approvals and questions)
+// ---------------------------------------------------------------------------
+
+export type InboxKind = "submit" | "share" | "send" | "publish" | "spend" | "advisor" | "ask";
+
+export interface InboxItem {
+  id: string;
+  type: "approval" | "question";
+  kind: InboxKind;
+  title: Msg | string;
+  why: Msg | string;
+  evidence: { label: string; status: FieldStatus }[];
+  cost?: CostEstimateDto;
+  /** Minutes the user can undo after approving; absent when the action cannot be undone. */
+  undoMinutes?: number;
+  missionId?: string;
+  /** For questions: how many tasks answering it unblocks. */
+  unblocks?: number;
+  status: "pending" | "approved" | "declined";
+  decidedVia?: "tap" | "voice";
+  /** For questions: a sample answer used by the prototype's voice input. */
+  sample?: string;
+  answer?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Missions
+// ---------------------------------------------------------------------------
+
+export const MISSION_TEMPLATES = ["funded", "register", "launch", "accelerator", "market", "validate", "hire", "monthly"] as const;
+
+export type MissionTemplate = (typeof MISSION_TEMPLATES)[number];
+
+export type MissionStatus = "planned" | "running" | "waiting" | "done" | "paused" | "cancelled";
+
+export type TaskStatus = "done" | "running" | "waiting" | "pending";
+
+export interface MissionTask {
+  id: string;
+  /** Step vocabulary id, translated as `mstep.<step>`. */
+  step: string;
+  owner: string;
+  status: TaskStatus;
+  /** A step that needs the user's approval before it can run. */
+  approval?: boolean;
+  verifiers?: { name: "grounding" | "rules" | "language" | "policy"; result: "pass" | "revised" | "unverified" }[];
+  artifactId?: string;
+}
+
+export interface Mission {
+  id: string;
+  workspaceId: string;
+  template: MissionTemplate;
+  title: Msg | string;
+  status: MissionStatus;
+  tasks: MissionTask[];
+  estimate: CostEstimateDto;
+  spent: number;
+  forkedFrom?: string;
+}
+
+export interface MissionsApi {
+  listMissions(workspaceId: string): Promise<Mission[]>;
+  getMission(workspaceId: string, missionId: string): Promise<Mission>;
+  planMission(workspaceId: string, input: { template?: MissionTemplate; goal?: string }): Promise<Mission>;
+  startMission(workspaceId: string, missionId: string): Promise<Mission>;
+  setMissionStatus(workspaceId: string, missionId: string, status: "paused" | "running" | "cancelled"): Promise<Mission>;
+  forkMission(workspaceId: string, missionId: string): Promise<Mission>;
+}
+
+// ---------------------------------------------------------------------------
+// Activity log
+// ---------------------------------------------------------------------------
+
+export interface ActivityEvent {
+  id: string;
+  /** ISO date-time. */
+  at: string;
+  agent: string;
+  action: Msg | string;
+  sources: string[];
+  approval?: { by: string; via: "tap" | "voice" };
+  credits: number;
+  missionId?: string;
+}
+
+// ---------------------------------------------------------------------------
 // The API
 // ---------------------------------------------------------------------------
 
@@ -193,4 +375,21 @@ export interface AccountsApi {
   inboxCount(workspaceId: string): Promise<number>;
 }
 
-export type BizzAgentApi = AccountsApi;
+export interface ConversationsApi {
+  startConversation(workspaceId: string, topic?: TalkTopic): Promise<Conversation>;
+  getConversation(id: string): Promise<Conversation>;
+  sendEvent(id: string, event: ConversationEvent): Promise<Conversation>;
+}
+
+export interface InboxApi {
+  listInbox(workspaceId: string): Promise<InboxItem[]>;
+  decide(workspaceId: string, itemId: string, decision: "approve" | "decline", via: "tap" | "voice"): Promise<InboxItem>;
+  batchApprove(workspaceId: string, itemIds: string[]): Promise<InboxItem[]>;
+  answerQuestion(workspaceId: string, itemId: string, answer: string): Promise<InboxItem>;
+}
+
+export interface ActivityApi {
+  listActivity(workspaceId: string): Promise<ActivityEvent[]>;
+}
+
+export type BizzAgentApi = AccountsApi & ConversationsApi & InboxApi & MissionsApi & ActivityApi;

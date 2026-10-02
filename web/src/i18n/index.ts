@@ -7,11 +7,14 @@ import type { Lang } from "@/lib/types";
 
 import { common } from "./messages/common";
 import { home } from "./messages/home";
+import { inbox } from "./messages/inbox";
+import { missions } from "./messages/missions";
 import { landing } from "./messages/landing";
 import { onboarding } from "./messages/onboarding";
 import { shell } from "./messages/shell";
+import { talk } from "./messages/talk";
 
-const AREAS = [common, landing, shell, home, onboarding];
+const AREAS = [common, landing, shell, home, onboarding, talk, inbox, missions];
 
 type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends (k: infer I) => void
   ? I
@@ -27,7 +30,14 @@ export type Vars = Record<string, string | number>;
 
 export function translate(lang: Lang, id: MessageId, vars?: Vars): string {
   const raw = TABLE[lang][id] ?? TABLE.en[id] ?? id;
-  return vars ? raw.replace(/\{(\w+)\}/g, (_, key: string) => String(vars[key] ?? `{${key}}`)) : raw;
+  if (!vars) return raw;
+  return raw.replace(/\{(\w+)\}/g, (_, key: string) => {
+    const value = vars[key];
+    if (value === undefined) return `{${key}}`;
+    // "@talk.skill.numbers" means: translate that message and insert it.
+    if (typeof value === "string" && value.startsWith("@")) return translate(lang, value.slice(1) as MessageId);
+    return String(value);
+  });
 }
 
 export function useI18n() {
@@ -39,7 +49,10 @@ export function useI18n() {
 /** Translates a `Msg` (message id + variables) returned by the API. */
 export function useMsg() {
   const { t } = useI18n();
-  return useCallback((msg: { id: string; vars?: Vars }) => t(msg.id as MessageId, msg.vars), [t]);
+  return useCallback(
+    (msg: { id: string; vars?: Vars } | string) => (typeof msg === "string" ? msg : t(msg.id as MessageId, msg.vars)),
+    [t],
+  );
 }
 
 export const ALL_AREAS = AREAS;

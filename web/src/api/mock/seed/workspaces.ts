@@ -19,7 +19,6 @@ export interface WsSeed {
   stage?: Stage;
   profile: { town: string; sector: string; staff?: number; women?: number; years?: number };
   flags: WsFlags;
-  inboxCount: number;
   artifacts: ArtifactSummary[];
   missions: MissionSummary[];
   deadlines: Deadline[];
@@ -82,7 +81,6 @@ export const WORKSPACES: WsSeed[] = [
     stage: "operating",
     profile: { town: "Bekoji", sector: "Agro-processing", staff: 8, women: 6, years: 6 },
     flags: { ...baseFlags, pendingApprovals: 1, profileGaps: 2, readiness: 54 },
-    inboxCount: 3,
     artifacts: [
       art("almaz-spices", "profile", "Business profile", 3, 0.78, [9, 3, 2, 0], 1, "concierge"),
       art("almaz-spices", "proposal", "Highland Enterprise Fund · Agro-processing call", 2, 0.62, [8, 6, 5, 1], 0, "funding"),
@@ -93,7 +91,7 @@ export const WORKSPACES: WsSeed[] = [
         id: "m-almaz-funded",
         title: { id: "mission.funded" },
         status: "waiting",
-        progress: { done: 3, total: 7 },
+        progress: { done: 4, total: 7 },
         nextStep: { id: "ms.approve" },
       },
     ],
@@ -116,7 +114,6 @@ export const WORKSPACES: WsSeed[] = [
       hiringDraft: true,
       readiness: 71,
     },
-    inboxCount: 2,
     artifacts: [
       art("meron-garments", "profile", "Business profile", 5, 0.92, [14, 2, 0, 0], 4, "concierge"),
       art("meron-garments", "legal", "Company checklist", 2, 0.85, [7, 1, 0, 0], 20, "setup"),
@@ -131,14 +128,14 @@ export const WORKSPACES: WsSeed[] = [
         id: "m-meron-market",
         title: { id: "mission.market" },
         status: "running",
-        progress: { done: 4, total: 8 },
-        nextStep: { id: "ms.running", vars: { n: 5, m: 8 } },
+        progress: { done: 2, total: 4 },
+        nextStep: { id: "ms.running", vars: { n: 3, m: 4 } },
       },
       {
         id: "m-meron-hire",
         title: { id: "mission.hire" },
         status: "waiting",
-        progress: { done: 2, total: 6 },
+        progress: { done: 1, total: 5 },
         nextStep: { id: "ms.approve" },
       },
     ],
@@ -162,7 +159,6 @@ export const WORKSPACES: WsSeed[] = [
       acceleratorFit: true,
       readiness: 63,
     },
-    inboxCount: 2,
     artifacts: [
       art("abel-studio", "profile", "Business profile", 2, 0.8, [8, 2, 1, 0], 5, "concierge"),
       art("abel-studio", "finance", "Pricing and cash flow", 3, 0.82, [7, 3, 0, 0], 2, "numbers"),
@@ -173,7 +169,7 @@ export const WORKSPACES: WsSeed[] = [
       {
         id: "m-abel-accel",
         title: { id: "mission.accelerator" },
-        status: "running",
+        status: "waiting",
         progress: { done: 1, total: 6 },
         nextStep: { id: "ms.answer" },
       },
@@ -190,7 +186,6 @@ export const WORKSPACES: WsSeed[] = [
     stage: "idea",
     profile: { town: "Addis Ababa", sector: "Education" },
     flags: { ...baseFlags, profileGaps: 5 },
-    inboxCount: 1,
     artifacts: [
       art("selam-idea", "profile", "About me and my idea", 1, 0.4, [2, 3, 5, 0], 2, "concierge"),
       art("selam-idea", "idea", "Idea canvas", 2, 0.5, [0, 5, 3, 0], 1, "idea"),
@@ -200,8 +195,8 @@ export const WORKSPACES: WsSeed[] = [
       {
         id: "m-selam-validate",
         title: { id: "mission.validate" },
-        status: "running",
-        progress: { done: 1, total: 6 },
+        status: "waiting",
+        progress: { done: 1, total: 5 },
         nextStep: { id: "ms.answer" },
       },
     ],
@@ -214,7 +209,6 @@ export const WORKSPACES: WsSeed[] = [
     stage: "validated",
     profile: { town: "Adama", sector: "Food delivery", staff: 3 },
     flags: { ...baseFlags, ideaClarified: true, profileGaps: 3 },
-    inboxCount: 1,
     artifacts: [
       art("kuri-team", "profile", "Team and venture profile", 1, 0.5, [3, 3, 4, 0], 3, "concierge"),
       art("kuri-team", "idea", "Idea canvas", 3, 0.8, [1, 6, 1, 0], 2, "idea"),
@@ -226,8 +220,8 @@ export const WORKSPACES: WsSeed[] = [
         id: "m-kuri-launch",
         title: { id: "mission.launch" },
         status: "running",
-        progress: { done: 2, total: 6 },
-        nextStep: { id: "ms.running", vars: { n: 3, m: 6 } },
+        progress: { done: 2, total: 5 },
+        nextStep: { id: "ms.running", vars: { n: 3, m: 5 } },
       },
     ],
     deadlines: [],
@@ -239,7 +233,6 @@ export const WORKSPACES: WsSeed[] = [
     partnerKind: "funder",
     profile: { town: "Addis Ababa", sector: "Funder" },
     flags: baseFlags,
-    inboxCount: 2,
     artifacts: [],
     missions: [],
     deadlines: [],
@@ -251,7 +244,6 @@ export const WORKSPACES: WsSeed[] = [
     partnerKind: "program",
     profile: { town: "Addis Ababa", sector: "Accelerator" },
     flags: baseFlags,
-    inboxCount: 1,
     artifacts: [],
     missions: [],
     deadlines: [],
@@ -263,7 +255,6 @@ export const WORKSPACES: WsSeed[] = [
     partnerKind: "support_org",
     profile: { town: "Addis Ababa", sector: "Business advice" },
     flags: baseFlags,
-    inboxCount: 1,
     artifacts: [],
     missions: [],
     deadlines: [],
