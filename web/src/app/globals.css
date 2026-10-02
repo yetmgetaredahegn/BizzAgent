@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+/*
+ * FundFlow design tokens.
+ * Brand teal and navy are sampled from the sequa logo (#00B2A9, #1D428A);
+ * saffron is a warm berbere accent used sparingly.
+ */
+@theme {
+  --font-sans: var(--font-jakarta), var(--font-ethiopic), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-ethiopic: var(--font-noto-ethiopic), var(--font-jakarta), sans-serif;
+
+  --color-paper: #faf8f4;
+  --color-surface: #ffffff;
+  --color-line: #e8e4db;
+  --color-line-strong: #d6d0c3;
+  --color-ink: #0e1a33;
+  --color-muted: #5a6478;
+  --color-subtle: #8a93a5;
+
+  --color-brand-50: #e6f8f7;
+  --color-brand-100: #c2eeeb;
+  --color-brand-200: #8fe0db;
+  --color-brand-300: #52cfc8;
+  --color-brand-400: #1fc0b8;
+  --color-brand-500: #00b2a9;
+  --color-brand-600: #009a93;
+  --color-brand-700: #007c77;
+  --color-brand-800: #04625e;
+  --color-brand-900: #0a4f4c;
+  --color-brand-950: #032e2c;
+
+  --color-navy-50: #eef2fa;
+  --color-navy-100: #d9e1f2;
+  --color-navy-200: #b4c4e6;
+  --color-navy-300: #8099d2;
+  --color-navy-400: #4d6db8;
+  --color-navy-500: #2c55a3;
+  --color-navy-600: #1d428a;
+  --color-navy-700: #183772;
+  --color-navy-800: #142d5c;
+  --color-navy-900: #10244a;
+  --color-navy-950: #0a1730;
+
+  --color-saffron-50: #fef6e7;
+  --color-saffron-100: #fce8c0;
+  --color-saffron-200: #f8d38a;
+  --color-saffron-300: #f2b854;
+  --color-saffron-400: #eaa33d;
+  --color-saffron-500: #e08e1e;
+  --color-saffron-600: #c27214;
+  --color-saffron-700: #9c5613;
+
+  --shadow-card: 0 1px 2px rgb(14 26 51 / 0.04), 0 4px 16px -4px rgb(14 26 51 / 0.08);
+  --shadow-lift: 0 2px 4px rgb(14 26 51 / 0.05), 0 18px 40px -12px rgb(14 26 51 / 0.22);
+
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 9s ease-in-out infinite;
+  --animate-wave: wave 1.2s ease-in-out infinite;
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes wave {
+    0%,
+    100% {
+      transform: scaleY(0.45);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  /* Plus Jakarta Sans sets a narrow space; open it slightly for legibility. */
+  word-spacing: 0.06em;
+}
+
+::selection {
+  background: var(--color-brand-200);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+/* Scripts in Ge'ez read better slightly larger and with more line height. */
+:lang(am) {
+  font-family: var(--font-ethiopic);
+  line-height: 1.7;
+}
+
+/*
+ * Tibeb band: a woven border inspired by the embroidered hem of a
+ * habesha kemis. Used as a quiet cultural divider, never as decoration
+ * on data.
+ */
+.tibeb {
+  height: 10px;
+  background:
+    linear-gradient(135deg, var(--color-saffron-400) 25%, transparent 25%) 0 0 / 20px 10px,
+    linear-gradient(225deg, var(--color-saffron-400) 25%, transparent 25%) 0 0 / 20px 10px,
+    linear-gradient(90deg, var(--color-brand-500), var(--color-navy-600));
+}
+
+.grid-texture {
+  background-image:
+    linear-gradient(to right, rgb(14 26 51 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(14 26 51 / 0.045) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+  .print-hidden {
+    display: none !important;
+  }
+}
