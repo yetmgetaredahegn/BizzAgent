@@ -7,8 +7,12 @@ import type {
   Me,
   Mission,
   Msg,
+  CostEstimateDto,
+  DocumentFormat,
+  ImportRow,
   Opportunity,
   PassportShare,
+  UsageRow,
 } from "../contract";
 import { breakEven, grossMargin, markup } from "@/lib/calc";
 import { languageStore } from "@/lib/store";
@@ -21,6 +25,8 @@ import {
   getDb,
   mutate,
   nextId,
+  settingsOf,
+  walletOf,
   NEW_ACCOUNT_ID,
   personaStore,
   summariesFor,
@@ -28,6 +34,9 @@ import {
   type ConvRecord,
 } from "./db";
 import { buildDetail } from "./artifacts";
+import { BIRR_PER_CREDIT, PRICE_LIST, candidatesFrom } from "./account";
+import { moneyViewOf, personalMoneyOf, previewImport } from "./money";
+import { parseInstruction } from "./policy";
 import { documentDraftsFor, documentText, publicView, sha256Hex, type DocumentDraft } from "./documents";
 import { CATALOGUE, evaluateOpportunity, rankOpportunities } from "./opportunities";
 import { allShares, newToken, saveShare, sharesFor, shareState, type StoredShare } from "./passport";
@@ -108,8 +117,36 @@ function toDto(share: StoredShare): PassportShare {
 /** Every workspace's documents, for the public verification page. */
 function findDocument(id: string): { draft: DocumentDraft; issuer: string } | null {
   for (const ws of Object.values(getDb().workspaces)) {
-    const draft = documentDraftsFor(ws).find((d) => d.id === id);
+    const draft = [...documentDraftsFor(ws), ...(getDb().exports[ws.id] ?? [])].find((d) => d.id === id);
     if (draft) return { draft, issuer: ws.name };
+  }
+  return null;
+}
+
+const lastPreview: Record<string, ImportRow[]> = {};
+
+const EXPORT_CREDITS: Record<DocumentFormat, number> = { pdf: 2, docx: 2, xlsx: 1, json: 0 };
+
+/** Credits spent in the last 30 days across every workspace a person belongs to (the spending cap counts these). */
+function usageFor(personaIdValue: string): UsageRow[] {
+  const state = getDb();
+  const persona = state.personas[personaIdValue];
+  const rows: UsageRow[] = [];
+  for (const membership of persona?.memberships ?? []) {
+    const ws = state.workspaces[membership.ws];
+    for (const event of state.activity[membership.ws] ?? []) {
+      if (event.credits > 0) rows.push({ id: `${membership.ws}-${event.id}`, at: event.at, workspaceId: membership.ws, workspace: ws?.name ?? membership.ws, agent: event.agent, action: event.action, credits: event.credits, missionId: event.missionId });
+    }
+  }
+  return rows.sort((a, b) => b.at.localeCompare(a.at));
+}
+
+function businessProfit(personaIdValue: string): number | null {
+  const state = getDb();
+  for (const membership of state.personas[personaIdValue]?.memberships ?? []) {
+    const view = moneyViewOf(state.ledger[membership.ws] ?? []);
+    const profit = view.kpis.find((k) => k.id === "profit");
+    if (profit && view.months.length > 0) return Math.round(profit.calc.value / view.months.length);
   }
   return null;
 }
@@ -603,7 +640,7 @@ export const mockClient: BizzAgentApi = {
     const records = await Promise.all(
       documentDraftsFor(ws).map(async (draft) => ({ ...draft, hash: await sha256Hex(documentText(draft, ws.name)) })),
     );
-    return clone(records.sort((a, b) => b.createdAt.localeCompare(a.createdAt)));
+    return clone([...(getDb().exports[workspaceId] ?? []), ...records].sort((a, b) => b.createdAt.localeCompare(a.createdAt)));
   },
 
   async getDocumentText(documentId) {
@@ -621,6 +658,267 @@ export const mockClient: BizzAgentApi = {
     const found = findDocument(documentId);
     if (!found) throw new Error("not_found");
     return (await sha256Hex(documentText(found.draft, found.issuer))) === sha256 ? "match" : "altered";
+  },
+
+  // ---- money ------------------------------------------------------------------------
+  async getMoney(workspaceId) {
+    return delay(clone(moneyViewOf(getDb().ledger[workspaceId] ?? [])), 40);
+  },
+
+  async previewImport(workspaceId, input) {
+    const preview = previewImport(getDb().ledger[workspaceId] ?? [], input);
+    if (preview.ok) lastPreview[workspaceId] = preview.rows;
+    return delay(preview, 80);
+  },
+
+  async commitImport(workspaceId, rows) {
+    const known = lastPreview[workspaceId] ?? [];
+    let added = 0;
+    let skipped = 0;
+    mutate((state) => {
+      const ledger = (state.ledger[workspaceId] ??= []);
+      for (const chosen of rows) {
+        const row = known.find((r) => r.id === chosen.id);
+        // A duplicate is never added twice, whatever the client sends.
+        if (!row || row.duplicate) {
+          skipped += 1;
+          continue;
+        }
+        ledger.push({ id: nextId("l"), date: row.date, description: row.description, amount: row.amount, category: chosen.category, source: "statement" });
+        added += 1;
+      }
+      if (added > 0) {
+        state.workspaces[workspaceId].flags.statementImported = true;
+        state.workspaces[workspaceId].flags.ledgerBacked = true;
+      }
+    });
+    if (added > 0) logActivity(workspaceId, { agent: "numbers", action: { id: "ev.statementImported", vars: { n: added } }, sources: ["statement (csv)"], credits: 0 });
+    delete lastPreview[workspaceId];
+    return delay({ added, skipped }, 80);
+  },
+
+  async getPersonalMoney() {
+    const state = getDb();
+    const id = walletId();
+    return delay(clone(personalMoneyOf(id, businessProfit(id), settingsOf(state, id).personalChecks)), 40);
+  },
+
+  async togglePersonalCheck(itemId, done) {
+    mutate((state) => {
+      settingsOf(state, walletId()).personalChecks[itemId] = done;
+    });
+  },
+
+  // ---- wallet and exports -----------------------------------------------------------
+  async getWallet() {
+    const state = getDb();
+    const id = walletId();
+    const wallet = walletOf(state, id);
+    const since = daysFromToday(-30);
+    const capUsed = usageFor(id).filter((u) => u.at.slice(0, 10) >= since).reduce((total, u) => total + u.credits, 0);
+    return delay(
+      clone({ balance: state.credits[id] ?? 0, cap: wallet.cap, capUsed, lowAlert: wallet.lowAlert, topups: [...wallet.topups].sort((a, b) => b.at.localeCompare(a.at)), price: PRICE_LIST }),
+      40,
+    );
+  },
+
+  async listUsage() {
+    return delay(clone(usageFor(walletId())), 40);
+  },
+
+  async topUp(provider, credits) {
+    if (!Number.isInteger(credits) || credits < 20 || credits > 1000) throw new Error("invalid_amount");
+    const topup = { id: nextId("tu"), at: nowIso(), provider, credits, birr: credits * BIRR_PER_CREDIT };
+    mutate((state) => {
+      state.credits[walletId()] = (state.credits[walletId()] ?? 0) + credits;
+      walletOf(state, walletId()).topups.push(topup);
+    });
+    return delay(topup, 150);
+  },
+
+  async setWalletSettings(settings) {
+    mutate((state) => {
+      const wallet = walletOf(state, walletId());
+      wallet.cap = Math.max(0, Math.round(settings.cap));
+      wallet.lowAlert = Math.max(0, Math.round(settings.lowAlert));
+    });
+  },
+
+  async estimateExport(format) {
+    const state = getDb();
+    const id = walletId();
+    const credits = EXPORT_CREDITS[format];
+    const used = usageFor(id).filter((u) => u.at.slice(0, 10) >= daysFromToday(-30)).reduce((total, u) => total + u.credits, 0);
+    const estimate: CostEstimateDto = {
+      action: { id: "doc.export" },
+      creditsMin: credits,
+      creditsMax: credits,
+      balanceAfter: (state.credits[id] ?? 0) - credits,
+      capRemaining: walletOf(state, id).cap - used,
+    };
+    return delay(estimate, 30);
+  },
+
+  async createExport(workspaceId, input) {
+    const state = getDb();
+    const seed = state.workspaces[workspaceId];
+    const summary = seed?.artifacts.find((a) => a.id === input.artifactId);
+    if (!seed || !summary) throw new Error("not_found");
+    const cost = EXPORT_CREDITS[input.format];
+    if ((state.credits[walletId()] ?? 0) < cost) throw new Error("insufficient_credits");
+    const draft = {
+      id: `d-${summary.id}-${input.format}-${input.language}`,
+      title: summary.title,
+      format: input.format,
+      language: input.language,
+      artifactId: summary.id,
+      artifactTitle: summary.title,
+      artifactKind: summary.kind,
+      version: summary.version,
+      createdAt: daysFromToday(0),
+      provenance: summary.stamps,
+    };
+    const record = { ...draft, hash: await sha256Hex(documentText(draft, seed.name)) };
+    mutate((s) => {
+      s.credits[walletId()] -= cost;
+      const list = (s.exports[workspaceId] ??= []);
+      s.exports[workspaceId] = [record, ...list.filter((r) => r.id !== record.id)];
+    });
+    logActivity(workspaceId, { agent: "concierge", action: { id: "ev.exported", vars: { title: summary.title } }, sources: [summary.title], credits: cost });
+    return clone(record);
+  },
+
+  // ---- team and consent --------------------------------------------------------------
+  async getTeam(workspaceId) {
+    return delay(clone(getDb().team[workspaceId] ?? { members: [], consents: [] }), 40);
+  },
+
+  async inviteMember(workspaceId, input) {
+    const member = { id: nextId("u"), name: input.name, role: input.role, signatory: false, status: "invited" as const };
+    mutate((state) => {
+      (state.team[workspaceId] ??= { members: [], consents: [] }).members.push(member);
+    });
+    logActivity(workspaceId, { agent: "you", action: { id: "ev.invited", vars: { name: input.name } }, sources: ["Team"], credits: 0 });
+    return delay(member, 60);
+  },
+
+  async revokeConsent(workspaceId, consentId) {
+    mutate((state) => {
+      const grant = state.team[workspaceId]?.consents.find((c) => c.id === consentId);
+      if (grant) {
+        grant.revoked = true;
+        grant.log.push({ at: nowIso(), what: { id: "consent.log.revoked" } });
+      }
+    });
+    logActivity(workspaceId, { agent: "you", action: { id: "ev.consentRevoked" }, sources: ["Team"], credits: 0 });
+  },
+
+  // ---- settings ------------------------------------------------------------------------
+  async getAutonomy() {
+    return delay(clone(settingsOf(getDb(), walletId()).autonomy), 30);
+  },
+
+  async setAutonomy(skill, level) {
+    mutate((state) => {
+      const item = settingsOf(state, walletId()).autonomy.find((s) => s.id === skill);
+      // The limit is enforced here as well as in the UI: no client can lift a skill past its maximum.
+      if (item && level <= item.max) item.level = level;
+    });
+  },
+
+  async getMemory() {
+    const settings = settingsOf(getDb(), walletId());
+    return delay(clone({ items: settings.memory, paused: settings.paused }), 30);
+  },
+
+  async updateMemory(itemId, text) {
+    mutate((state) => {
+      const item = settingsOf(state, walletId()).memory.find((m) => m.id === itemId);
+      if (item) {
+        item.text = text;
+        item.source = { id: "mem.src.edited" };
+      }
+    });
+  },
+
+  async forgetMemory(itemId) {
+    mutate((state) => {
+      const settings = settingsOf(state, walletId());
+      settings.memory = settings.memory.filter((m) => m.id !== itemId);
+    });
+  },
+
+  async setLearningPaused(paused) {
+    mutate((state) => {
+      settingsOf(state, walletId()).paused = paused;
+    });
+  },
+
+  async importMemory(text) {
+    return delay(candidatesFrom(text).map((c, i) => ({ id: `cand${i}`, ...c })), 80);
+  },
+
+  async confirmMemory(candidates) {
+    mutate((state) => {
+      const settings = settingsOf(state, walletId());
+      for (const c of candidates) {
+        settings.memory.push({ id: nextId("mem"), topic: c.topic, text: c.text, source: { id: "mem.src.imported" }, status: "unverified", learnedAt: daysFromToday(0) });
+      }
+    });
+  },
+
+  async parseInstruction(text) {
+    return delay(parseInstruction(text), 60);
+  },
+
+  async listInstructions() {
+    return delay(clone(settingsOf(getDb(), walletId()).instructions), 30);
+  },
+
+  async saveInstruction(text, policy) {
+    mutate((state) => {
+      settingsOf(state, walletId()).instructions.push({ id: nextId("si"), text, policy });
+    });
+  },
+
+  async removeInstruction(instructionId) {
+    mutate((state) => {
+      const settings = settingsOf(state, walletId());
+      settings.instructions = settings.instructions.filter((i) => i.id !== instructionId);
+    });
+  },
+
+  async listConnectorTokens() {
+    return delay(clone(settingsOf(getDb(), walletId()).tokens), 30);
+  },
+
+  async createConnectorToken(workspaceId, scope) {
+    const bytes = new Uint8Array(12);
+    crypto.getRandomValues(bytes);
+    const secret = `bzg_${[...bytes].map((b) => b.toString(16).padStart(2, "0")).join("")}`;
+    const token = { id: nextId("ct"), workspaceId, workspaceName: getDb().workspaces[workspaceId]?.name ?? workspaceId, scope, createdAt: daysFromToday(0), revoked: false, preview: `${secret.slice(0, 8)}…` };
+    mutate((state) => {
+      settingsOf(state, walletId()).tokens.push(token);
+    });
+    return delay({ token, secret }, 60);
+  },
+
+  async revokeConnectorToken(tokenId) {
+    mutate((state) => {
+      const token = settingsOf(state, walletId()).tokens.find((t) => t.id === tokenId);
+      if (token) token.revoked = true;
+    });
+  },
+
+  async getNotifications() {
+    return delay(clone(settingsOf(getDb(), walletId()).notifications), 30);
+  },
+
+  async setNotifications(patch) {
+    mutate((state) => {
+      const settings = settingsOf(state, walletId());
+      settings.notifications = { ...settings.notifications, ...patch };
+    });
   },
 
   // ---- activity --------------------------------------------------------------------

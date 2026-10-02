@@ -123,6 +123,17 @@
   min-width: var(--touch-target);
 }
 
+@layer base {
+  /*
+   * A grid with no explicit columns is one bounded column. Without this the single
+   * column is "auto", which grows to the widest child's minimum width, so one wide
+   * table widens the whole page on a phone. Utilities such as grid-cols-2 still win.
+   */
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;

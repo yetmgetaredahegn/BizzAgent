@@ -53,6 +53,8 @@ export function documentText(draft: DocumentDraft, issuer: string): string {
     `Title: ${draft.title}`,
     `Issuer: ${issuer}`,
     `Created: ${draft.createdAt}`,
+    `Format: ${draft.format}`,
+    `Language: ${draft.language}`,
     `Source: ${draft.artifactTitle}, version ${draft.version}`,
     `Evidence: ${p.established} established, ${p.unverified} unverified, ${p.missing} missing, ${p.contradictory} contradictory`,
     "",

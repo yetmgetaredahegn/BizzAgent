@@ -5,11 +5,13 @@ import { useCallback } from "react";
 import { useLang } from "@/components/language";
 import type { Lang } from "@/lib/types";
 
+import { account } from "./messages/account";
 import { artifacts } from "./messages/artifacts";
 import { common } from "./messages/common";
 import { home } from "./messages/home";
 import { inbox } from "./messages/inbox";
 import { missions } from "./messages/missions";
+import { money } from "./messages/money";
 import { landing } from "./messages/landing";
 import { onboarding } from "./messages/onboarding";
 import { opps } from "./messages/opps";
@@ -17,7 +19,7 @@ import { shell } from "./messages/shell";
 import { talk } from "./messages/talk";
 import { trust } from "./messages/trust";
 
-const AREAS = [common, landing, shell, home, onboarding, talk, inbox, missions, artifacts, opps, trust];
+const AREAS = [common, landing, shell, home, onboarding, talk, inbox, missions, artifacts, opps, trust, money, account];
 
 type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends (k: infer I) => void
   ? I

@@ -211,7 +211,7 @@ export function weightedScore(rows: { weight: number; score: number; label: stri
 }
 
 /** Adds up cost lines (for the cost to enter a market or to start). */
-export function sumCosts(lines: { label: string; amount: number }[]): CalcResult {
+export function sumCosts(lines: { label: string; amount: number }[], totalLabel = "calc.totalCost"): CalcResult {
   if (lines.some((line) => line.amount < 0)) throw new Error("costs must not be negative");
   const total = lines.reduce((sum, line) => sum + line.amount, 0);
   return {
@@ -220,7 +220,79 @@ export function sumCosts(lines: { label: string; amount: number }[]): CalcResult
     warnings: [],
     steps: [
       ...lines.map((line, i) => ({ label: line.label, op: i === 0 ? undefined : ("+" as Op), value: line.amount, unit: "birr" as const })),
-      { label: "calc.totalCost", op: "=", value: total, unit: "birr" },
+      { label: totalLabel, op: "=", value: total, unit: "birr" },
+    ],
+  };
+}
+
+/** Profit and margin from money in and money out: (in − out) ÷ in. */
+export function profitMargin(moneyIn: number, moneyOut: number): CalcResult {
+  if (moneyIn <= 0) throw new Error("money in must be above zero");
+  const profit = moneyIn - moneyOut;
+  const margin = (profit / moneyIn) * 100;
+  return {
+    value: round(margin, 1),
+    unit: "percent",
+    warnings: moneyOut > moneyIn ? ["calc.warn.costAbovePrice"] : [],
+    steps: [
+      { label: "calc.moneyIn", value: moneyIn, input: "in", unit: "birr" },
+      { label: "calc.moneyOut", op: "−", value: moneyOut, input: "out", unit: "birr" },
+      { label: "calc.profit", op: "=", value: profit, unit: "birr" },
+      { label: "calc.divMoneyIn", op: "÷", value: moneyIn, unit: "birr" },
+      { label: "calc.margin", op: "=", value: round(margin, 1), unit: "percent" },
+    ],
+  };
+}
+
+/** What is left of an income after the budgeted expenses (negative means overspent). */
+export function budgetLeft(income: number, expenses: { label: string; amount: number }[]): CalcResult {
+  if (income < 0 || expenses.some((line) => line.amount < 0)) throw new Error("amounts must not be negative");
+  const spent = expenses.reduce((sum, line) => sum + line.amount, 0);
+  const left = income - spent;
+  return {
+    value: left,
+    unit: "birr",
+    warnings: left < 0 ? ["calc.warn.overBudget"] : [],
+    steps: [
+      { label: "calc.income", value: income, input: "income", unit: "birr" },
+      ...expenses.map((line) => ({ label: line.label, op: "−" as Op, value: line.amount, unit: "birr" as const })),
+      { label: "calc.left", op: "=", value: left, unit: "birr" },
+    ],
+  };
+}
+
+/** Months to reach a savings goal at a steady monthly amount, rounded up. */
+export function savingsMonths(target: number, saved: number, monthly: number): CalcResult {
+  if (monthly <= 0) throw new Error("monthly saving must be above zero");
+  const remaining = Math.max(0, target - saved);
+  const months = Math.ceil(remaining / monthly);
+  return {
+    value: months,
+    unit: "months",
+    warnings: [],
+    steps: [
+      { label: "calc.target", value: target, input: "target", unit: "birr" },
+      { label: "calc.saved", op: "−", value: saved, input: "saved", unit: "birr" },
+      { label: "calc.remaining", op: "=", value: remaining, unit: "birr" },
+      { label: "calc.perMonth", op: "÷", value: monthly, input: "monthly", unit: "birr" },
+      { label: "calc.months", op: "=", value: months, unit: "months" },
+    ],
+  };
+}
+
+/** Net worth: what you own minus what you owe. */
+export function netWorth(assets: { label: string; amount: number }[], liabilities: { label: string; amount: number }[]): CalcResult {
+  if (assets.some((a) => a.amount < 0) || liabilities.some((l) => l.amount < 0)) throw new Error("amounts must not be negative");
+  const own = assets.reduce((sum, a) => sum + a.amount, 0);
+  const owe = liabilities.reduce((sum, l) => sum + l.amount, 0);
+  return {
+    value: own - owe,
+    unit: "birr",
+    warnings: [],
+    steps: [
+      { label: "calc.assets", value: own, unit: "birr" },
+      { label: "calc.liabilities", op: "−", value: owe, unit: "birr" },
+      { label: "calc.netWorth", op: "=", value: own - owe, unit: "birr" },
     ],
   };
 }

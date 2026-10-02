@@ -31,3 +31,23 @@ export function CalcTape({ result, inputSource }: { result: CalcResultDto; input
     </div>
   );
 }
+
+/** A figure that opens its ReceiptTape: the label, the result, and the steps behind it. */
+export function CalcResultRow({ label, calc }: { label: string; calc: CalcResultDto }) {
+  const { t } = useI18n();
+  return (
+    <details className="group rounded-sheet bg-surface ring-1 ring-line open:shadow-sheet">
+      <summary className="flex min-h-12 cursor-pointer list-none flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-4 py-3">
+        <span className="font-semibold">{label}</span>
+        <span className="flex items-baseline gap-3">
+          <span className="font-display num text-2xl font-bold">{formatCalcValue(calc.value, calc.unit)}</span>
+          <span className="text-sm font-semibold text-stamp group-open:hidden">{t("fin.showSteps")}</span>
+          <span className="hidden text-sm font-semibold text-stamp group-open:inline">{t("fin.hideSteps")}</span>
+        </span>
+      </summary>
+      <div className="px-4 pb-4">
+        <CalcTape result={calc} />
+      </div>
+    </details>
+  );
+}

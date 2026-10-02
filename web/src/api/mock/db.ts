@@ -7,7 +7,7 @@
 
 import { createStore } from "@/lib/store";
 
-import type { ActivityEvent, ArtifactDetail, PipelineStage, Conversation, CreateAccountInput, InboxItem, Mission, Persona, WorkspaceSummary } from "../contract";
+import type { ActivityEvent, ArtifactDetail, AutonomySkill, ConnectorToken, ConsentGrant, DocumentRecord, LedgerEntry, Member, MemoryItem, NotificationSettings, PipelineStage, Conversation, StandingInstruction, CreateAccountInput, InboxItem, Mission, Persona, WorkspaceSummary } from "../contract";
 import { DEFAULT_PERSONA, PERSONAS, WORKSPACES, type PersonaSeed, type WsSeed } from "./seed/workspaces";
 import type { WsFlags } from "./journey";
 import type { Stage } from "@/components/ds/fidel-journey";
@@ -16,6 +16,8 @@ import { ACTIVITY_SEED } from "./seed/activity";
 import { INBOX_SEED } from "./seed/inbox";
 import { missionFromSummary } from "./missions";
 import { PIPELINE_SEED } from "./opportunities";
+import { AUTONOMY_SEED, MEMORY_SEED, NOTIFICATIONS_DEFAULT, TEAM_SEED, WALLET_SEED, type WalletState } from "./account";
+import { LEDGER_SEED } from "./money";
 
 export const personaStore = createStore<string>("bizzagent.persona", "local", DEFAULT_PERSONA);
 export const accountStore = createStore<CreateAccountInput | null>("bizzagent.account", "local", null);
@@ -27,6 +29,16 @@ export interface ConvRecord {
   conv: Conversation;
   internal: { step: string; data: Record<string, unknown> };
   history: { conv: Conversation; internal: { step: string; data: Record<string, unknown> } }[];
+}
+
+export interface PersonSettings {
+  autonomy: AutonomySkill[];
+  memory: MemoryItem[];
+  paused: boolean;
+  instructions: StandingInstruction[];
+  tokens: ConnectorToken[];
+  notifications: NotificationSettings;
+  personalChecks: Record<string, boolean>;
 }
 
 interface Db {
@@ -41,6 +53,14 @@ interface Db {
   details: Record<string, ArtifactDetail>;
   /** The opportunity pipeline per workspace: opportunity id to stage. */
   pipeline: Record<string, Record<string, PipelineStage>>;
+  /** Business ledgers per workspace. */
+  ledger: Record<string, LedgerEntry[]>;
+  /** Exports a person made on top of the automatic per-artifact documents. */
+  exports: Record<string, DocumentRecord[]>;
+  team: Record<string, { members: Member[]; consents: ConsentGrant[] }>;
+  /** Per person: wallet, settings and the private personal space. */
+  wallets: Record<string, WalletState>;
+  settings: Record<string, PersonSettings>;
   counter: number;
   version: number;
 }
@@ -128,6 +148,11 @@ function init(): Db {
     conversations: {},
     details: {},
     pipeline: clone(PIPELINE_SEED),
+    ledger: clone(LEDGER_SEED),
+    exports: {},
+    team: clone(TEAM_SEED),
+    wallets: clone(WALLET_SEED),
+    settings: {},
     counter: 0,
     version: 0,
   };
@@ -142,6 +167,23 @@ function init(): Db {
     state.missions[workspace.id] = [];
   }
   return state;
+}
+
+/** A person's settings, created from the seeds the first time they are read. */
+export function settingsOf(state: Db, personaId: string): PersonSettings {
+  return (state.settings[personaId] ??= {
+    autonomy: clone(AUTONOMY_SEED),
+    memory: clone(MEMORY_SEED[personaId] ?? []),
+    paused: false,
+    instructions: [],
+    tokens: [],
+    notifications: clone(NOTIFICATIONS_DEFAULT),
+    personalChecks: {},
+  });
+}
+
+export function walletOf(state: Db, personaId: string): WalletState {
+  return (state.wallets[personaId] ??= { cap: 100, lowAlert: 10, topups: [] });
 }
 
 export function getDb(): Db {

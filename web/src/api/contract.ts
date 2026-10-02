@@ -690,6 +690,232 @@ export interface TrustApi {
 }
 
 // ---------------------------------------------------------------------------
+// Money: business ledger, statement import, personal space
+// ---------------------------------------------------------------------------
+
+export const LEDGER_CATEGORIES = ["sales", "materials", "wages", "rent", "transport", "utilities", "other"] as const;
+
+export type LedgerCategory = (typeof LEDGER_CATEGORIES)[number];
+
+/** Where a ledger line came from. Statement and receipt lines are established; a voice entry is only the user's word. */
+export type LedgerSource = "voice" | "statement" | "receipt" | "manual";
+
+export interface LedgerEntry {
+  id: string;
+  date: string;
+  description: string;
+  /** Positive is money in, negative is money out. */
+  amount: number;
+  category: LedgerCategory;
+  source: LedgerSource;
+}
+
+export interface MoneyView {
+  entries: LedgerEntry[];
+  months: { month: string; inflow: number; outflow: number }[];
+  kpis: { id: "in" | "out" | "profit" | "margin"; label: Msg; calc: CalcResultDto }[];
+}
+
+export interface ImportRow {
+  id: string;
+  date: string;
+  description: string;
+  amount: number;
+  /** A rule suggests the category; the user must confirm it before it is saved. */
+  category: LedgerCategory;
+  duplicate: boolean;
+}
+
+export type ImportPreview = { ok: true; rows: ImportRow[] } | { ok: false; reason: "columns" | "empty"; headers: string[] };
+
+export type ImportInput =
+  | { kind: "sample" }
+  | { kind: "csv"; text: string; columns?: { date: string; amount: string; description: string } };
+
+export interface PersonalMoney {
+  budget: { income: number; lines: { label: string; amount: number }[]; left: CalcResultDto };
+  goals: { id: string; title: string; target: number; saved: number; monthly: number; months: CalcResultDto }[];
+  netWorth: { assets: { label: string; amount: number }[]; liabilities: { label: string; amount: number }[]; calc: CalcResultDto };
+  ownersPay: { pay: number; businessProfit: number | null };
+  separate: { id: string; text: Msg; done: boolean }[];
+}
+
+export interface MoneyApi {
+  getMoney(workspaceId: string): Promise<MoneyView>;
+  previewImport(workspaceId: string, input: ImportInput): Promise<ImportPreview>;
+  commitImport(workspaceId: string, rows: { id: string; category: LedgerCategory }[]): Promise<{ added: number; skipped: number }>;
+  /** The personal space has no workspace: only the signed-in person can read it. */
+  getPersonalMoney(): Promise<PersonalMoney>;
+  togglePersonalCheck(itemId: string, done: boolean): Promise<void>;
+}
+
+// ---------------------------------------------------------------------------
+// Wallet, documents and export
+// ---------------------------------------------------------------------------
+
+export type PaymentProvider = "chapa" | "telebirr" | "card";
+
+export interface TopUp {
+  id: string;
+  at: string;
+  provider: PaymentProvider;
+  credits: number;
+  birr: number;
+}
+
+export interface WalletView {
+  balance: number;
+  cap: number;
+  capUsed: number;
+  lowAlert: number;
+  topups: TopUp[];
+  price: { version: string; effective: string; birrPerCredit: number; items: { action: Msg; unit: Msg; credits: number }[] };
+}
+
+export interface UsageRow {
+  id: string;
+  at: string;
+  workspaceId: string;
+  workspace: string;
+  agent: string;
+  action: Msg | string;
+  credits: number;
+  missionId?: string;
+}
+
+export interface ExportInput {
+  artifactId: string;
+  format: DocumentFormat;
+  language: Lang;
+}
+
+export interface WalletApi {
+  getWallet(): Promise<WalletView>;
+  listUsage(): Promise<UsageRow[]>;
+  topUp(provider: PaymentProvider, credits: number): Promise<TopUp>;
+  setWalletSettings(settings: { cap: number; lowAlert: number }): Promise<void>;
+  estimateExport(format: DocumentFormat): Promise<CostEstimateDto>;
+  createExport(workspaceId: string, input: ExportInput): Promise<DocumentRecord>;
+}
+
+// ---------------------------------------------------------------------------
+// Team and consent
+// ---------------------------------------------------------------------------
+
+export interface Member {
+  id: string;
+  name: string;
+  role: Role;
+  signatory: boolean;
+  status: "active" | "invited";
+}
+
+export interface ConsentGrant {
+  id: string;
+  grantee: string;
+  scope: Msg;
+  artifacts: string[];
+  expiresAt: string;
+  revoked: boolean;
+  log: { at: string; what: Msg }[];
+}
+
+export interface TeamData {
+  members: Member[];
+  consents: ConsentGrant[];
+}
+
+export interface TeamApi {
+  getTeam(workspaceId: string): Promise<TeamData>;
+  inviteMember(workspaceId: string, input: { name: string; role: Role }): Promise<Member>;
+  revokeConsent(workspaceId: string, consentId: string): Promise<void>;
+}
+
+// ---------------------------------------------------------------------------
+// Settings: autonomy, memory, standing instructions, connectors, notifications
+// ---------------------------------------------------------------------------
+
+export type AutonomyLevel = 0 | 1 | 2 | 3;
+
+export interface AutonomySkill {
+  id: string;
+  level: AutonomyLevel;
+  /** Highest level this skill may be set to. Signing, submitting and paying others are never L3. */
+  max: AutonomyLevel;
+}
+
+export interface MemoryItem {
+  id: string;
+  topic: "business" | "goals" | "people" | "preferences";
+  text: string;
+  source: Msg;
+  status: FieldStatus;
+  learnedAt: string;
+}
+
+export interface MemoryView {
+  items: MemoryItem[];
+  paused: boolean;
+}
+
+export interface MemoryCandidate {
+  id: string;
+  topic: MemoryItem["topic"];
+  text: string;
+}
+
+export type Policy =
+  | { kind: "alert"; what: string; maxBirr: number | null }
+  | { kind: "draft"; minFit: number }
+  | { kind: "budget"; credits: number };
+
+export type ParsedInstruction = { ok: true; policy: Policy } | { ok: false };
+
+export interface StandingInstruction {
+  id: string;
+  text: string;
+  policy: Policy;
+}
+
+export interface ConnectorToken {
+  id: string;
+  workspaceId: string;
+  workspaceName: string;
+  scope: "read" | "write";
+  createdAt: string;
+  revoked: boolean;
+  /** Only the first characters; the full secret is shown once, when it is created. */
+  preview: string;
+}
+
+export interface NotificationSettings {
+  web: boolean;
+  weekly: boolean;
+  quiet: { from: string; to: string };
+}
+
+export interface SettingsApi {
+  getAutonomy(): Promise<AutonomySkill[]>;
+  setAutonomy(skill: string, level: AutonomyLevel): Promise<void>;
+  getMemory(): Promise<MemoryView>;
+  updateMemory(itemId: string, text: string): Promise<void>;
+  forgetMemory(itemId: string): Promise<void>;
+  setLearningPaused(paused: boolean): Promise<void>;
+  /** Turns pasted text from another assistant into candidates. Nothing is saved until the user confirms. */
+  importMemory(text: string): Promise<MemoryCandidate[]>;
+  confirmMemory(candidates: MemoryCandidate[]): Promise<void>;
+  parseInstruction(text: string): Promise<ParsedInstruction>;
+  listInstructions(): Promise<StandingInstruction[]>;
+  saveInstruction(text: string, policy: Policy): Promise<void>;
+  removeInstruction(instructionId: string): Promise<void>;
+  listConnectorTokens(): Promise<ConnectorToken[]>;
+  createConnectorToken(workspaceId: string, scope: ConnectorToken["scope"]): Promise<{ token: ConnectorToken; secret: string }>;
+  revokeConnectorToken(tokenId: string): Promise<void>;
+  getNotifications(): Promise<NotificationSettings>;
+  setNotifications(patch: Partial<NotificationSettings>): Promise<void>;
+}
+
+// ---------------------------------------------------------------------------
 // The API
 // ---------------------------------------------------------------------------
 
@@ -720,4 +946,4 @@ export interface ActivityApi {
   listActivity(workspaceId: string): Promise<ActivityEvent[]>;
 }
 
-export type BizzAgentApi = AccountsApi & ConversationsApi & InboxApi & MissionsApi & ActivityApi & ArtifactsApi & OpportunitiesApi & TrustApi;
+export type BizzAgentApi = AccountsApi & ConversationsApi & InboxApi & MissionsApi & ActivityApi & ArtifactsApi & OpportunitiesApi & TrustApi & MoneyApi & WalletApi & TeamApi & SettingsApi;

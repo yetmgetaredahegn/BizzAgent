@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { breakEven, cashFlow, grossMargin, loan, markup, marketSize, sumCosts, weightedScore } from "./calc";
+import { breakEven, budgetLeft, cashFlow, grossMargin, loan, markup, marketSize, netWorth, profitMargin, savingsMonths, sumCosts, weightedScore } from "./calc";
 
 describe("calculators", () => {
   it("gross margin: (150 − 102) ÷ 150 = 32.0%", () => {
@@ -81,5 +81,29 @@ describe("calculators", () => {
   it("sums cost lines and rejects negatives", () => {
     expect(sumCosts([{ label: "a", amount: 1000 }, { label: "b", amount: 250 }]).value).toBe(1250);
     expect(() => sumCosts([{ label: "a", amount: -1 }])).toThrow();
+  });
+
+  it("profit margin: (500,000 − 380,000) ÷ 500,000 = 24.0%", () => {
+    const r = profitMargin(500_000, 380_000);
+    expect(r.steps.map((step) => step.value)).toEqual([500_000, 380_000, 120_000, 500_000, 24]);
+    expect(profitMargin(100, 150).warnings).toContain("calc.warn.costAbovePrice");
+    expect(() => profitMargin(0, 10)).toThrow();
+  });
+
+  it("budget left can go negative and warns", () => {
+    expect(budgetLeft(10_000, [{ label: "a", amount: 6_000 }, { label: "b", amount: 3_000 }]).value).toBe(1_000);
+    const over = budgetLeft(5_000, [{ label: "a", amount: 6_000 }]);
+    expect(over.value).toBe(-1_000);
+    expect(over.warnings).toContain("calc.warn.overBudget");
+  });
+
+  it("savings: (60,000 − 15,000) ÷ 4,000 = 11.25, rounded up to 12 months", () => {
+    expect(savingsMonths(60_000, 15_000, 4_000).value).toBe(12);
+    expect(savingsMonths(10_000, 12_000, 1_000).value).toBe(0);
+    expect(() => savingsMonths(1, 0, 0)).toThrow();
+  });
+
+  it("net worth is assets minus liabilities", () => {
+    expect(netWorth([{ label: "a", amount: 90_000 }, { label: "b", amount: 10_000 }], [{ label: "c", amount: 30_000 }]).value).toBe(70_000);
   });
 });

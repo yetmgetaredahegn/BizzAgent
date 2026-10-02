@@ -7,5 +7,5 @@ import { mockClient } from "./mock/client";
  */
 export const api: BizzAgentApi = mockClient;
 
-export { MISSION_TEMPLATES, OPPORTUNITY_TYPES, PIPELINE_STAGES } from "./contract";
+export { LEDGER_CATEGORIES, MISSION_TEMPLATES, OPPORTUNITY_TYPES, PIPELINE_STAGES } from "./contract";
 export type * from "./contract";

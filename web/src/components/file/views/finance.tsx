@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { api, type ArtifactDetail } from "@/api";
 import { useQuery } from "@/api/use-query";
-import { CalcTape } from "@/components/ds/calc-tape";
+import { CalcResultRow, CalcTape } from "@/components/ds/calc-tape";
 import { EvidenceStamp } from "@/components/ds/evidence-stamp";
 import { Panel } from "@/components/ds/page";
 import { Tag } from "@/components/ds/tag";
@@ -14,25 +14,6 @@ import { formatCalcValue } from "@/lib/format-calc";
 import { SectionTitle } from "../parts";
 
 type Finance = Extract<ArtifactDetail, { kind: "finance" }>;
-
-function Result({ label, calc }: { label: string; calc: Finance["results"][number]["calc"] }) {
-  const { t } = useI18n();
-  return (
-    <details className="group rounded-sheet bg-surface ring-1 ring-line open:shadow-sheet">
-      <summary className="flex min-h-12 cursor-pointer list-none flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-4 py-3">
-        <span className="font-semibold">{label}</span>
-        <span className="flex items-baseline gap-3">
-          <span className="font-display num text-2xl font-bold">{formatCalcValue(calc.value, calc.unit)}</span>
-          <span className="text-sm font-semibold text-stamp group-open:hidden">{t("fin.showSteps")}</span>
-          <span className="hidden text-sm font-semibold text-stamp group-open:inline">{t("fin.hideSteps")}</span>
-        </span>
-      </summary>
-      <div className="px-4 pb-4">
-        <CalcTape result={calc} />
-      </div>
-    </details>
-  );
-}
 
 /** What-if: a different price, recomputed by the same calculator and shown beside the original. */
 function WhatIf({ base }: { base: NonNullable<Finance["whatIf"]> }) {
@@ -99,7 +80,7 @@ export function FinanceView({ artifact }: { wsId: string; artifact: Finance }) {
         <SectionTitle>{t("fin.results")}</SectionTitle>
         <div className="flex flex-col gap-2.5">
           {artifact.results.map((result) => (
-            <Result key={result.id} label={msg(result.label)} calc={result.calc} />
+            <CalcResultRow key={result.id} label={msg(result.label)} calc={result.calc} />
           ))}
         </div>
       </section>
