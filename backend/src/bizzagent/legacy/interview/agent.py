@@ -1,6 +1,6 @@
 """
 Interview agent — uses LangChain + Ollama to make structured
-interview decisions for the FundFlow funding application.
+interview decisions for the legacy funding-application interview.
 
 This is NOT a chatbot.  The agent exists for one job:
 complete the structured funding application by asking the
@@ -10,12 +10,9 @@ minimum useful questions.
 import json
 import logging
 
-from langchain_ollama import ChatOllama
-
-from bizzagent.schemas.interview import InterviewQuestion, InterviewTurn
-from bizzagent.schemas.interview_decision import InterviewDecision
+from bizzagent.legacy.interview.decision import InterviewDecision
+from bizzagent.legacy.interview.schemas import InterviewQuestion, InterviewTurn
 from bizzagent.schemas.application import ApplicationData
-
 
 logger = logging.getLogger(__name__)
 
@@ -74,34 +71,26 @@ def _build_prompt(
 
     field_values = _get_field_values(application)
 
-    known_section = "\n".join(
-        f"  - {FIELD_LABELS.get(f, f)}: {v}"
-        for f, v in field_values.items()
-        if v is not None
-    ) or "  (none yet)"
+    known_section = (
+        "\n".join(
+            f"  - {FIELD_LABELS.get(f, f)}: {v}" for f, v in field_values.items() if v is not None
+        )
+        or "  (none yet)"
+    )
 
-    gaps_section = "\n".join(
-        f"  - {FIELD_LABELS.get(f, f)}"
-        for f in gaps
-    ) or "  (none — interview may be complete)"
+    gaps_section = (
+        "\n".join(f"  - {FIELD_LABELS.get(f, f)}" for f in gaps)
+        or "  (none — interview may be complete)"
+    )
 
     history_section = ""
     if history:
         turns = []
         for turn in history[-6:]:  # last 6 turns max
-            turns.append(
-                f"  Q [{turn.field}]: {turn.question}\n"
-                f"  A: {turn.transcript}"
-            )
-        history_section = (
-            "Recent interview history:\n"
-            + "\n\n".join(turns)
-        )
+            turns.append(f"  Q [{turn.field}]: {turn.question}\n  A: {turn.transcript}")
+        history_section = "Recent interview history:\n" + "\n\n".join(turns)
 
-    allowed_fields_list = "\n".join(
-        f"  - {f}: {FIELD_LABELS.get(f, f)}"
-        for f in ALLOWED_FIELDS
-    )
+    allowed_fields_list = "\n".join(f"  - {f}: {FIELD_LABELS.get(f, f)}" for f in ALLOWED_FIELDS)
 
     return f"""You are an interview agent for a funding application system.
 
@@ -170,6 +159,9 @@ class InterviewAgent:
         self,
         model_name: str = MODEL_NAME,
     ):
+        # Deferred so the API imports without the llm-local extra installed.
+        from langchain_ollama import ChatOllama
+
         self._llm = ChatOllama(
             model=model_name,
             temperature=0,
@@ -205,10 +197,7 @@ class InterviewAgent:
             # Strip markdown code fences if the model wraps output.
             if raw.startswith("```"):
                 lines = raw.split("\n")
-                lines = [
-                    line for line in lines
-                    if not line.strip().startswith("```")
-                ]
+                lines = [line for line in lines if not line.strip().startswith("```")]
                 raw = "\n".join(lines)
 
             parsed = json.loads(raw)
@@ -216,16 +205,11 @@ class InterviewAgent:
 
             # Safety: reject any extracted keys not in ALLOWED_FIELDS.
             decision.extracted_updates = {
-                k: v
-                for k, v in decision.extracted_updates.items()
-                if k in ALLOWED_FIELDS
+                k: v for k, v in decision.extracted_updates.items() if k in ALLOWED_FIELDS
             }
 
             # Safety: reject next_field if not in ALLOWED_FIELDS.
-            if (
-                decision.next_field is not None
-                and decision.next_field not in ALLOWED_FIELDS
-            ):
+            if decision.next_field is not None and decision.next_field not in ALLOWED_FIELDS:
                 decision.next_field = None
                 decision.next_question = None
 
@@ -233,8 +217,7 @@ class InterviewAgent:
 
         except Exception as exc:
             logger.warning(
-                "Interview agent failed: %s. "
-                "Returning safe fallback decision.",
+                "Interview agent failed: %s. Returning safe fallback decision.",
                 exc,
             )
 

@@ -8,9 +8,7 @@ class InterviewDecision(BaseModel):
 
     extracted_updates: dict[str, str | int | float | None] = Field(
         default_factory=dict,
-        description=(
-            "Map of application field name to extracted value."
-        ),
+        description=("Map of application field name to extracted value."),
     )
 
     answer_quality: Literal[

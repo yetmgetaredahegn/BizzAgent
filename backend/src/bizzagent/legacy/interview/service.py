@@ -7,15 +7,14 @@ answer sufficiency and next questions.
 
 import logging
 
-from bizzagent.agents.interview_agent import InterviewAgent, ALLOWED_FIELDS
-from bizzagent.schemas import (
-    Evidence,
+from bizzagent.legacy.interview.agent import ALLOWED_FIELDS, InterviewAgent
+from bizzagent.legacy.interview.decision import InterviewDecision
+from bizzagent.legacy.interview.schemas import (
     InterviewQuestion,
     InterviewState,
     InterviewTurn,
 )
-from bizzagent.schemas.interview_decision import InterviewDecision
-
+from bizzagent.schemas import Evidence
 
 logger = logging.getLogger(__name__)
 
@@ -32,9 +31,7 @@ INTERVIEW_QUESTIONS = [
     ),
     InterviewQuestion(
         field="description",
-        question=(
-            "Please briefly describe what your business does."
-        ),
+        question=("Please briefly describe what your business does."),
     ),
     InterviewQuestion(
         field="address",
@@ -42,21 +39,24 @@ INTERVIEW_QUESTIONS = [
     ),
     InterviewQuestion(
         field="number_of_years_in_operation",
-        question=(
-            "How many years has your business been operating?"
-        ),
+        question=("How many years has your business been operating?"),
     ),
     InterviewQuestion(
         field="funding_problem",
-        question=(
-            "What business problem are you seeking funding to solve?"
-        ),
+        question=("What business problem are you seeking funding to solve?"),
     ),
 ]
 
 
-# Singleton agent instance.
-_agent = InterviewAgent()
+_agent: InterviewAgent | None = None
+
+
+def _get_agent() -> InterviewAgent:
+    """Create the agent on first use so importing the API stays light."""
+    global _agent
+    if _agent is None:
+        _agent = InterviewAgent()
+    return _agent
 
 
 def start_interview() -> InterviewState:
@@ -82,11 +82,7 @@ def _compute_gaps(
     state: InterviewState,
 ) -> list[str]:
     """Return list of field names that are still missing."""
-    return [
-        f
-        for f in ALLOWED_FIELDS
-        if f not in state.completed_fields
-    ]
+    return [f for f in ALLOWED_FIELDS if f not in state.completed_fields]
 
 
 def process_interview_answer(
@@ -111,7 +107,7 @@ def process_interview_answer(
     gaps = _compute_gaps(state)
 
     # --- Ask the agent ---
-    decision: InterviewDecision = _agent.decide(
+    decision: InterviewDecision = _get_agent().decide(
         application=state.application,
         gaps=gaps,
         current_question=current_question,
@@ -163,15 +159,10 @@ def process_interview_answer(
     if decision.answer_quality == "sufficient":
         # Mark field as completed.
         if current_question.field not in state.completed_fields:
-            state.completed_fields.append(
-                current_question.field
-            )
+            state.completed_fields.append(current_question.field)
 
         # Check if all fields are now complete.
-        remaining = [
-            f for f in ALLOWED_FIELDS
-            if f not in state.completed_fields
-        ]
+        remaining = [f for f in ALLOWED_FIELDS if f not in state.completed_fields]
 
         if not remaining:
             # Interview is complete.
@@ -192,14 +183,10 @@ def process_interview_answer(
                 completed_fields=state.completed_fields,
             )
 
-
     else:
         # Insufficient or unclear — stay on current field
         # or use agent's follow-up.
-        if (
-            decision.follow_up_required
-            and decision.next_question is not None
-        ):
+        if decision.follow_up_required and decision.next_question is not None:
             # Enforce staying on the same field for follow-ups
             follow_up_field = current_question.field
 
@@ -222,9 +209,7 @@ def update_application_field(
     field: str,
     value: object,
 ) -> None:
-    company_profile = (
-        state.application.applicant.company_profile
-    )
+    company_profile = state.application.applicant.company_profile
 
     if field == "company_name":
         company_profile.company_name = str(value)
@@ -240,9 +225,7 @@ def update_application_field(
 
     elif field == "number_of_years_in_operation":
         try:
-            company_profile.number_of_years_in_operation = int(
-                value
-            )
+            company_profile.number_of_years_in_operation = int(str(value))
         except (ValueError, TypeError):
             pass
 

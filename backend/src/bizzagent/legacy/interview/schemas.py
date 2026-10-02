@@ -1,7 +1,7 @@
+from pydantic import BaseModel, Field
+
 from bizzagent.schemas.application import ApplicationData
 from bizzagent.schemas.evidence import TranscriptionResult
-
-from pydantic import BaseModel, Field
 
 
 class InterviewQuestion(BaseModel):
@@ -11,23 +11,18 @@ class InterviewQuestion(BaseModel):
 
 class InterviewTurn(BaseModel):
     """One question-answer exchange in the interview."""
+
     field: str
     question: str
     transcript: str
 
 
 class InterviewState(BaseModel):
-    application: ApplicationData = Field(
-        default_factory=ApplicationData
-    )
+    application: ApplicationData = Field(default_factory=ApplicationData)
     current_question: InterviewQuestion | None = None
-    completed_fields: list[str] = Field(
-        default_factory=list
-    )
+    completed_fields: list[str] = Field(default_factory=list)
     audio_url: str | None = None
-    history: list[InterviewTurn] = Field(
-        default_factory=list
-    )
+    history: list[InterviewTurn] = Field(default_factory=list)
 
 
 class InterviewAnswerResponse(BaseModel):
