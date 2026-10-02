@@ -1,26 +1,20 @@
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
 
-class ExpectedResult(str, Enum):
+class ExpectedResult(StrEnum):
     NEW_PRODUCT_SERVICE = "New product/service"
 
-    PRODUCT_SERVICE_DIVERSIFICATION = (
-        "Product/service diversification"
-    )
+    PRODUCT_SERVICE_DIVERSIFICATION = "Product/service diversification"
 
     REACHING_NEW_CLIENTS = "Reaching new clients"
 
     REACHING_NEW_MARKETS = "Reaching new markets"
 
-    ENHANCING_PRODUCTION_CAPACITY = (
-        "Enhancing production capacity"
-    )
+    ENHANCING_PRODUCTION_CAPACITY = "Enhancing production capacity"
 
-    IMPROVING_PRODUCT_SERVICE_QUALITY = (
-        "Improving product/service quality"
-    )
+    IMPROVING_PRODUCT_SERVICE_QUALITY = "Improving product/service quality"
 
     FINANCIAL_SUSTAINABILITY = "Financial sustainability"
 
@@ -59,25 +53,17 @@ class JobPosition(BaseModel):
 class InterventionRequest(BaseModel):
     problem_description: str | None = None
 
-    equipment: list[RequestedEquipment] = Field(
-        default_factory=list
-    )
+    equipment: list[RequestedEquipment] = Field(default_factory=list)
 
-    consultants: list[RequestedConsultant] = Field(
-        default_factory=list
-    )
+    consultants: list[RequestedConsultant] = Field(default_factory=list)
 
-    expected_results: list[ExpectedResult] = Field(
-        default_factory=list
-    )
+    expected_results: list[ExpectedResult] = Field(default_factory=list)
 
     expected_results_explanation: str | None = None
 
     job_creation_explanation: str | None = None
 
-    job_positions: list[JobPosition] = Field(
-        default_factory=list
-    )
+    job_positions: list[JobPosition] = Field(default_factory=list)
 
     social_environmental_impact: str | None = None
 

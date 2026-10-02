@@ -1,16 +1,16 @@
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, EmailStr, Field
 
 
-class BusinessOrganization(str, Enum):
+class BusinessOrganization(StrEnum):
     SOLE_PROPRIETORSHIP = "Sole Proprietorship"
     PRIVATE_LIMITED_COMPANY = "Private Limited Company"
     SHARE_COMPANY = "Share Company"
     OTHER = "Other"
 
 
-class Gender(str, Enum):
+class Gender(StrEnum):
     FEMALE = "Female"
     MALE = "Male"
     OTHER = "Other"
@@ -53,9 +53,7 @@ class GrowthIndicator(BaseModel):
 class CompanyOverview(BaseModel):
     description: str | None = None
 
-    growth_indicators: list[GrowthIndicator] = Field(
-        default_factory=list
-    )
+    growth_indicators: list[GrowthIndicator] = Field(default_factory=list)
 
 
 class ProductService(BaseModel):
@@ -64,17 +62,14 @@ class ProductService(BaseModel):
     distribution_channels: str | None = None
 
 
-class ProductUniqueness(str, Enum):
+class ProductUniqueness(StrEnum):
     NEW_IN_ETHIOPIA = "New product/service in Ethiopia"
 
     DIFFERENT_FROM_COMPETITORS = (
-        "Product/service not new to Ethiopia but "
-        "different from competitors"
+        "Product/service not new to Ethiopia but different from competitors"
     )
 
-    NO_UNIQUE_FEATURES = (
-        "Product/service with no unique features"
-    )
+    NO_UNIQUE_FEATURES = "Product/service with no unique features"
 
 
 class ManagementTeamMember(BaseModel):
@@ -84,21 +79,15 @@ class ManagementTeamMember(BaseModel):
 
 
 class CompanyManagement(BaseModel):
-    core_management_team: list[ManagementTeamMember] = Field(
-        default_factory=list
-    )
+    core_management_team: list[ManagementTeamMember] = Field(default_factory=list)
 
     organogram: str | None = None
 
 
 class ApplicantDescription(BaseModel):
-    company_profile: CompanyProfile = Field(
-        default_factory=CompanyProfile
-    )
+    company_profile: CompanyProfile = Field(default_factory=CompanyProfile)
 
-    company_overview: CompanyOverview = Field(
-        default_factory=CompanyOverview
-    )
+    company_overview: CompanyOverview = Field(default_factory=CompanyOverview)
 
     motivation: str | None = None
 
@@ -106,9 +95,7 @@ class ApplicantDescription(BaseModel):
 
     market_overview: str | None = None
 
-    products_services: list[ProductService] = Field(
-        default_factory=list
-    )
+    products_services: list[ProductService] = Field(default_factory=list)
 
     product_uniqueness: ProductUniqueness | None = None
 
@@ -118,6 +105,4 @@ class ApplicantDescription(BaseModel):
         le=100,
     )
 
-    management: CompanyManagement = Field(
-        default_factory=CompanyManagement
-    )
+    management: CompanyManagement = Field(default_factory=CompanyManagement)
