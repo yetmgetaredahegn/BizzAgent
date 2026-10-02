@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { breakEven, cashFlow, grossMargin, loan, markup } from "./calc";
+import { breakEven, cashFlow, grossMargin, loan, markup, marketSize, sumCosts, weightedScore } from "./calc";
 
 describe("calculators", () => {
   it("gross margin: (150 − 102) ÷ 150 = 32.0%", () => {
@@ -59,5 +59,27 @@ describe("calculators", () => {
     expect(ok.balances).toEqual([1200, 1250]);
     expect(ok.warnings).toEqual([]);
     expect(cashFlow(100, [{ inflow: 0, outflow: 500 }]).warnings).toContain("calc.warn.cashNegative");
+  });
+
+  it("market size: 40,000 buyers × 5% × Br 900 = Br 1,800,000", () => {
+    const r = marketSize(40_000, 5, 900);
+    expect(r.steps.map((step) => step.value)).toEqual([40_000, 5, 2_000, 900, 1_800_000]);
+    expect(r.value).toBe(1_800_000);
+    expect(() => marketSize(100, 120, 10)).toThrow();
+  });
+
+  it("weighted score: (30×4 + 20×3 + 50×5) ÷ (100×5) = 86.0%", () => {
+    const r = weightedScore([
+      { label: "a", weight: 30, score: 4 },
+      { label: "b", weight: 20, score: 3 },
+      { label: "c", weight: 50, score: 5 },
+    ]);
+    expect(r.value).toBe(86);
+    expect(() => weightedScore([{ label: "a", weight: 1, score: 6 }])).toThrow();
+  });
+
+  it("sums cost lines and rejects negatives", () => {
+    expect(sumCosts([{ label: "a", amount: 1000 }, { label: "b", amount: 250 }]).value).toBe(1250);
+    expect(() => sumCosts([{ label: "a", amount: -1 }])).toThrow();
   });
 });

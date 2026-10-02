@@ -170,3 +170,57 @@ export function cashFlow(opening: number, monthly: { inflow: number; outflow: nu
     ],
   };
 }
+
+/** Top-down market size per year: buyers × share of them who would buy × price per buyer. */
+export function marketSize(buyers: number, sharePct: number, pricePerBuyer: number): CalcResult {
+  if (buyers < 0 || pricePerBuyer < 0) throw new Error("buyers and price must not be negative");
+  if (sharePct < 0 || sharePct > 100) throw new Error("share must be between 0 and 100");
+  const reachable = Math.round(buyers * (sharePct / 100));
+  const size = reachable * pricePerBuyer;
+  return {
+    value: size,
+    unit: "birr",
+    warnings: [],
+    steps: [
+      { label: "calc.buyers", value: buyers, input: "buyers", unit: "count" },
+      { label: "calc.sharePct", op: "×", value: sharePct, input: "share", unit: "percent" },
+      { label: "calc.reachable", op: "=", value: reachable, unit: "count" },
+      { label: "calc.pricePerBuyer", op: "×", value: pricePerBuyer, input: "price", unit: "birr" },
+      { label: "calc.marketSize", op: "=", value: size, unit: "birr" },
+    ],
+  };
+}
+
+/** Weighted rubric score as a percent of the best possible: Σ weight × score ÷ Σ weight × max. */
+export function weightedScore(rows: { weight: number; score: number; label: string }[], maxScore = 5): CalcResult {
+  const totalWeight = rows.reduce((sum, row) => sum + row.weight, 0);
+  if (totalWeight <= 0) throw new Error("weights must add up to more than zero");
+  if (rows.some((row) => row.score < 0 || row.score > maxScore)) throw new Error("score outside the scale");
+  const points = rows.reduce((sum, row) => sum + row.weight * row.score, 0);
+  const percent = (points / (totalWeight * maxScore)) * 100;
+  return {
+    value: round(percent, 1),
+    unit: "percent",
+    warnings: [],
+    steps: [
+      ...rows.map((row, i) => ({ label: row.label, op: i === 0 ? undefined : ("+" as Op), value: row.weight * row.score, unit: "count" as const })),
+      { label: "calc.pointsOf", op: "÷", value: totalWeight * maxScore, unit: "count" },
+      { label: "calc.score", op: "=", value: round(percent, 1), unit: "percent" },
+    ],
+  };
+}
+
+/** Adds up cost lines (for the cost to enter a market or to start). */
+export function sumCosts(lines: { label: string; amount: number }[]): CalcResult {
+  if (lines.some((line) => line.amount < 0)) throw new Error("costs must not be negative");
+  const total = lines.reduce((sum, line) => sum + line.amount, 0);
+  return {
+    value: total,
+    unit: "birr",
+    warnings: [],
+    steps: [
+      ...lines.map((line, i) => ({ label: line.label, op: i === 0 ? undefined : ("+" as Op), value: line.amount, unit: "birr" as const })),
+      { label: "calc.totalCost", op: "=", value: total, unit: "birr" },
+    ],
+  };
+}

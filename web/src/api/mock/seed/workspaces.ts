@@ -122,6 +122,7 @@ export const WORKSPACES: WsSeed[] = [
       art("meron-garments", "entry", "Kenya entry plan", 1, 0.55, [4, 3, 3, 0], 1, "market-entry"),
       art("meron-garments", "hiring", "Production supervisor", 1, 0.8, [6, 1, 0, 0], 0, "hiring"),
       art("meron-garments", "growth", "Growth plan 2019 EC", 2, 0.75, [6, 2, 1, 0], 6, "growth"),
+      art("meron-garments", "explainer", "Factory lease agreement, explained", 1, 0.9, [3, 3, 0, 0], 5, "explainer"),
     ],
     missions: [
       {

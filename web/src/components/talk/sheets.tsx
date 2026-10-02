@@ -2,41 +2,15 @@
 
 import { Fragment } from "react";
 
-import type { CalcResultDto, Sheet, SheetAdvisor, SheetEntry, SheetIdea, SheetMargin } from "@/api";
+import type { Sheet, SheetAdvisor, SheetEntry, SheetIdea, SheetMargin } from "@/api";
 import { CarbonSheet } from "@/components/ds/carbon";
 import { CitationSlip } from "@/components/ds/citation-slip";
 import { EvidenceStamp } from "@/components/ds/evidence-stamp";
-import { ReceiptTape, type TapeLine } from "@/components/ds/receipt-tape";
+import { CalcTape } from "@/components/ds/calc-tape";
 import { EmptyState } from "@/components/ds/states";
 import { Tag } from "@/components/ds/tag";
 import { useI18n, useMsg, type MessageId } from "@/i18n";
 import { formatCalcValue } from "@/lib/format-calc";
-
-export function CalcTape({ result, inputSource }: { result: CalcResultDto; inputSource?: string }) {
-  const { t } = useI18n();
-  const steps = result.steps;
-  const total = steps[steps.length - 1];
-  const lines: TapeLine[] = steps.slice(0, -1).map((step) => ({
-    label: t(step.label as MessageId),
-    op: step.op,
-    value: formatCalcValue(step.value, step.unit),
-    source: step.input && inputSource ? inputSource : undefined,
-  }));
-  return (
-    <div className="flex flex-col gap-2">
-      <ReceiptTape
-        caption={t("calc.caption")}
-        lines={lines}
-        total={{ label: t(total.label as MessageId), value: formatCalcValue(total.value, total.unit) }}
-      />
-      {result.warnings.map((warning) => (
-        <p key={warning} role="note" className="text-sm font-semibold text-contradictory">
-          {t(warning as MessageId)}
-        </p>
-      ))}
-    </div>
-  );
-}
 
 function MarginSheet({ sheet }: { sheet: SheetMargin }) {
   const { t } = useI18n();

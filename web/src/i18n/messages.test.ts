@@ -1,3 +1,6 @@
+import { readdirSync, readFileSync, statSync } from "node:fs";
+import { join } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import { ALL_AREAS } from "./index";
@@ -33,5 +36,36 @@ describe("messages", () => {
         expect(latinOnly.test(text), `am:${key} looks Latin-only: ${text}`).toBe(false);
       }
     }
+  });
+
+  it("defines every key in one area only (a duplicate would silently override)", () => {
+    const seen = new Map<string, number>();
+    ALL_AREAS.forEach((area, index) => {
+      for (const key of Object.keys(area.en)) {
+        expect(seen.has(key), `${key} is defined in areas ${seen.get(key)} and ${index}`).toBe(false);
+        seen.set(key, index);
+      }
+    });
+  });
+
+  it("has a message for every id the mock API and calculators refer to", () => {
+    const known = new Set(ALL_AREAS.flatMap((area) => Object.keys(area.en)));
+    const files: string[] = [];
+    const walk = (dir: string) => {
+      for (const name of readdirSync(dir)) {
+        const path = join(dir, name);
+        if (statSync(path).isDirectory()) walk(path);
+        else if (/\.ts$/.test(name) && !/\.test\.ts$/.test(name)) files.push(path);
+      }
+    };
+    walk(join(__dirname, "../api/mock"));
+    files.push(join(__dirname, "../lib/calc.ts"));
+    const patterns = [/\bm\("([a-z][\w.]*)"/g, /\{ id: "([a-z][\w]*\.[\w.]+)"/g, /label: "(calc\.[\w.]+)"/g, /push\("(calc\.[\w.]+)"/g];
+    const missing: string[] = [];
+    for (const file of files) {
+      const source = readFileSync(file, "utf8");
+      for (const pattern of patterns) for (const match of source.matchAll(pattern)) if (!known.has(match[1])) missing.push(`${file.split("/src/")[1]}: ${match[1]}`);
+    }
+    expect(missing).toEqual([]);
   });
 });

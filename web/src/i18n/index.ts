@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import { useLang } from "@/components/language";
 import type { Lang } from "@/lib/types";
 
+import { artifacts } from "./messages/artifacts";
 import { common } from "./messages/common";
 import { home } from "./messages/home";
 import { inbox } from "./messages/inbox";
@@ -14,7 +15,7 @@ import { onboarding } from "./messages/onboarding";
 import { shell } from "./messages/shell";
 import { talk } from "./messages/talk";
 
-const AREAS = [common, landing, shell, home, onboarding, talk, inbox, missions];
+const AREAS = [common, landing, shell, home, onboarding, talk, inbox, missions, artifacts];
 
 type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends (k: infer I) => void
   ? I

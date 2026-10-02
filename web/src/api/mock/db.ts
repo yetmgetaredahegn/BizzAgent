@@ -7,7 +7,7 @@
 
 import { createStore } from "@/lib/store";
 
-import type { ActivityEvent, Conversation, CreateAccountInput, InboxItem, Mission, Persona, WorkspaceSummary } from "../contract";
+import type { ActivityEvent, ArtifactDetail, Conversation, CreateAccountInput, InboxItem, Mission, Persona, WorkspaceSummary } from "../contract";
 import { DEFAULT_PERSONA, PERSONAS, WORKSPACES, type PersonaSeed, type WsSeed } from "./seed/workspaces";
 import type { WsFlags } from "./journey";
 import type { Stage } from "@/components/ds/fidel-journey";
@@ -36,6 +36,8 @@ interface Db {
   activity: Record<string, ActivityEvent[]>;
   missions: Record<string, Mission[]>;
   conversations: Record<string, ConvRecord>;
+  /** Artifact details are built from the seeds on first read and then changed in place. */
+  details: Record<string, ArtifactDetail>;
   counter: number;
   version: number;
 }
@@ -122,6 +124,7 @@ function init(): Db {
     activity: clone(ACTIVITY_SEED),
     missions: Object.fromEntries(WORKSPACES.map((w) => [w.id, w.missions.map((m) => missionFromSummary(w.id, m))])),
     conversations: {},
+    details: {},
     counter: 0,
     version: 0,
   };

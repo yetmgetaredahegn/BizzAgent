@@ -1,5 +1,6 @@
 import type {
   ActivityEvent,
+  ArtifactDetail,
   BizzAgentApi,
   HomeData,
   InboxItem,
@@ -7,6 +8,7 @@ import type {
   Mission,
   Msg,
 } from "../contract";
+import { breakEven, grossMargin, markup } from "@/lib/calc";
 import { languageStore } from "@/lib/store";
 
 import { daysFromToday } from "./clock";
@@ -23,6 +25,7 @@ import {
   toPersona,
   type ConvRecord,
 } from "./db";
+import { buildDetail } from "./artifacts";
 import { nextBestActions } from "./journey";
 import { advance, estimateFor, summaryOf, tasksFor, templateForGoal } from "./missions";
 import { handleEvent, newConversation, type TalkEnv } from "./talk";
@@ -47,6 +50,28 @@ const pendingCount = (ws: string) => (getDb().inbox[ws] ?? []).filter((i) => i.s
 function logActivity(ws: string, event: Omit<ActivityEvent, "id" | "at">) {
   const list = (getDb().activity[ws] ??= []);
   list.push({ id: nextId("a"), at: nowIso(), ...event });
+}
+
+/** The detail of an artifact: built from the seed on first read, rebuilt if its version changed (for example after Talk). */
+function detailOf(ws: string, id: string): ArtifactDetail {
+  const state = getDb();
+  const seed = state.workspaces[ws];
+  const summary = seed?.artifacts.find((a) => a.id === id);
+  if (!summary) throw new Error("not_found");
+  const cached = state.details[id];
+  if (cached && cached.version === summary.version) return cached;
+  const built = buildDetail(seed, summary);
+  state.details[id] = built;
+  return built;
+}
+
+function changeDetail<K extends ArtifactDetail["kind"]>(ws: string, id: string, kind: K, change: (detail: Extract<ArtifactDetail, { kind: K }>) => void): ArtifactDetail {
+  detailOf(ws, id);
+  mutate((state) => {
+    const detail = state.details[id];
+    if (detail.kind === kind) change(detail as Extract<ArtifactDetail, { kind: K }>);
+  });
+  return detailOf(ws, id);
 }
 
 function walletId(): string {
@@ -384,6 +409,57 @@ export const mockClient: BizzAgentApi = {
       (state.missions[workspaceId] ??= []).push(fork);
     });
     return delay(clone(fork), 100);
+  },
+
+  // ---- artifacts -------------------------------------------------------------------
+  async listArtifacts(workspaceId) {
+    return delay(clone(getDb().workspaces[workspaceId]?.artifacts ?? []), 40);
+  },
+
+  async getArtifact(workspaceId, artifactId) {
+    return delay(clone(detailOf(workspaceId, artifactId)), 40);
+  },
+
+  async calc(name, inputs) {
+    const result =
+      name === "margin" ? grossMargin(inputs.price, inputs.cost) : name === "markup" ? markup(inputs.price, inputs.cost) : breakEven(inputs.fixed, inputs.price, inputs.cost);
+    return delay({ value: result.value, unit: result.unit, steps: result.steps, warnings: result.warnings }, 30);
+  },
+
+  async approveIdea(workspaceId, artifactId, version) {
+    const detail = changeDetail(workspaceId, artifactId, "idea", (d) => {
+      const v = d.versions.find((x) => x.n === version);
+      if (v) v.approved = true;
+    });
+    logActivity(workspaceId, { agent: "you", action: { id: "ev.ideaApproved", vars: { n: version } }, sources: ["idea canvas"], credits: 0 });
+    return delay(clone(detail), 60);
+  },
+
+  async toggleChecklistItem(workspaceId, artifactId, itemId, done) {
+    const flip = (items: { id: string; done: boolean }[]) => {
+      const item = items.find((x) => x.id === itemId);
+      if (item) item.done = done;
+    };
+    let detail = changeDetail(workspaceId, artifactId, "legal", (d) => flip(d.steps));
+    detail = changeDetail(workspaceId, artifactId, "launch", (d) => flip([...d.legal, ...d.technical]));
+    return delay(clone(detail), 40);
+  },
+
+  async saveDraft(workspaceId, artifactId, questionId, text) {
+    const detail = changeDetail(workspaceId, artifactId, "accelerator", (d) => {
+      const q = d.questions.find((x) => x.id === questionId);
+      if (q) q.draft = text;
+    });
+    return delay(clone(detail), 40);
+  },
+
+  async explainerAction(workspaceId, artifactId, clauseId, action) {
+    const detail = changeDetail(workspaceId, artifactId, "explainer", (d) => {
+      const c = d.clauses.find((x) => x.id === clauseId);
+      if (c) c.done = action;
+    });
+    logActivity(workspaceId, { agent: "explainer", action: { id: `ev.explainer.${action}` }, sources: ["document explanation"], credits: 0 });
+    return delay(clone(detail), 40);
   },
 
   // ---- activity --------------------------------------------------------------------

@@ -362,6 +362,169 @@ export interface ActivityEvent {
 }
 
 // ---------------------------------------------------------------------------
+// Business File: artifact details
+// ---------------------------------------------------------------------------
+
+/** A source shown as a CitationSlip. Every research or legal row has one, or says it has none. */
+export interface Citation {
+  title: string;
+  /** Domain or pack entry id. */
+  origin: string;
+  retrieved?: string;
+  /** Prototype data is fictional and marked as such. */
+  demo: boolean;
+  verified: boolean;
+}
+
+export interface FieldRow {
+  key: Msg | string;
+  value: Msg | string;
+  status: FieldStatus;
+  source?: Msg | string;
+}
+
+export interface ChecklistItem {
+  id: string;
+  text: Msg;
+  done: boolean;
+  status: FieldStatus;
+  /** `null` means "no verified answer": the UI says so instead of guessing. */
+  citation: Citation | null;
+}
+
+export interface IdeaVersion {
+  n: number;
+  approved: boolean;
+  fields: Record<"oneLiner" | "customer" | "problem" | "solution" | "alternatives", string>;
+}
+
+export interface Assumption {
+  id: string;
+  text: string;
+  /** 1..5 each; risk = impact × uncertainty (computed by the rubric, never by the model). */
+  impact: number;
+  uncertainty: number;
+  confidence: "assumed" | "tested";
+  experiment?: string;
+}
+
+export interface Competitor {
+  name: string;
+  reach: "global" | "local";
+  note: string;
+  citation: Citation;
+}
+
+export interface RubricRow {
+  criterion: Msg;
+  weight: number;
+  /** 1..5 */
+  score: number;
+  status: FieldStatus;
+}
+
+export interface AcceleratorQuestion {
+  id: string;
+  prompt: string;
+  limit: number;
+  draft: string;
+  /** The artifacts every claim in the draft traces to. */
+  claims: { label: string; kind: ArtifactKind }[];
+}
+
+export interface ExplainerClause {
+  id: string;
+  page: number;
+  /** A quoted span of the (fictional) document. */
+  quote: string;
+  kind: "obligation" | "date" | "money" | "term" | "risk";
+  explanation: Msg;
+  redFlag: boolean;
+  action?: "calendar" | "expert" | "task";
+  done?: "calendar" | "expert" | "task";
+}
+
+export interface Candidate {
+  id: string;
+  /** Fictional first name only; screening shows no photo and no protected attributes. */
+  name: string;
+  criteria: { criterion: Msg; weight: number; score: number; quote: string }[];
+}
+
+export interface Objective {
+  id: string;
+  title: Msg;
+  kpis: { label: Msg; value: number; unit: "birr" | "percent" | "count"; basis: "ledger" | "target" }[];
+  initiatives: Msg[];
+}
+
+interface ArtifactBase {
+  id: string;
+  title: string;
+  version: number;
+  updatedAt: string;
+  completeness: number;
+  stamps: FieldStatusCounts;
+  producedBy?: { agent: string; missionId?: string };
+}
+
+export type ArtifactDetail = ArtifactBase &
+  (
+    | { kind: "profile"; rows: FieldRow[] }
+    | {
+        kind: "finance";
+        inputs: { label: Msg; value: number; unit: "birr" | "percent" | "count"; status: FieldStatus; source: Msg }[];
+        results: { id: string; label: Msg; calc: CalcResultDto }[];
+        whatIf: { price: number; cost: number } | null;
+        cashFlow?: { month: string; inflow: number; outflow: number; balance: number }[];
+      }
+    | { kind: "legal"; form: LegalForm; reasons: Msg[]; steps: ChecklistItem[] }
+    | { kind: "launch"; legal: ChecklistItem[]; technical: ChecklistItem[] }
+    | { kind: "idea"; versions: IdeaVersion[] }
+    | { kind: "validation"; assumptions: Assumption[]; interviews: { id: string; who: string; learned: string }[] }
+    | {
+        kind: "market";
+        market: string;
+        sizing: CalcResultDto;
+        sizingInputs: { label: Msg; value: number; unit: "birr" | "percent" | "count" }[];
+        competitors: Competitor[];
+        gaps: { dimension: Msg; note: string }[];
+      }
+    | {
+        kind: "entry";
+        market: string;
+        rubric: RubricRow[];
+        attractiveness: CalcResultDto;
+        entryMode: { id: string; reasons: Msg[] };
+        costToEnter: CalcResultDto;
+        breakEven: CalcResultDto;
+        requirements: { text: Msg; citation: Citation | null }[];
+      }
+    | { kind: "proposal"; funder: string; call: string; provisionalScore: number | null; gaps: number; submitted: boolean; href: string }
+    | { kind: "accelerator"; programme: string; deadline: string; questions: AcceleratorQuestion[] }
+    | { kind: "explainer"; document: string; summary: Msg; clauses: ExplainerClause[] }
+    | {
+        kind: "hiring";
+        role: string;
+        jd: Record<Lang, string>;
+        candidates: Candidate[];
+      }
+    | { kind: "growth"; objectives: Objective[] }
+  );
+
+export type CalcName = "margin" | "markup" | "breakEven";
+
+export interface ArtifactsApi {
+  listArtifacts(workspaceId: string): Promise<ArtifactSummary[]>;
+  getArtifact(workspaceId: string, artifactId: string): Promise<ArtifactDetail>;
+  calc(name: CalcName, inputs: Record<string, number>): Promise<CalcResultDto>;
+  approveIdea(workspaceId: string, artifactId: string, version: number): Promise<ArtifactDetail>;
+  toggleChecklistItem(workspaceId: string, artifactId: string, itemId: string, done: boolean): Promise<ArtifactDetail>;
+  saveDraft(workspaceId: string, artifactId: string, questionId: string, text: string): Promise<ArtifactDetail>;
+  explainerAction(workspaceId: string, artifactId: string, clauseId: string, action: NonNullable<ExplainerClause["action"]>): Promise<ArtifactDetail>;
+}
+
+// ---------------------------------------------------------------------------
 // The API
 // ---------------------------------------------------------------------------
 
@@ -392,4 +555,4 @@ export interface ActivityApi {
   listActivity(workspaceId: string): Promise<ActivityEvent[]>;
 }
 
-export type BizzAgentApi = AccountsApi & ConversationsApi & InboxApi & MissionsApi & ActivityApi;
+export type BizzAgentApi = AccountsApi & ConversationsApi & InboxApi & MissionsApi & ActivityApi & ArtifactsApi;
