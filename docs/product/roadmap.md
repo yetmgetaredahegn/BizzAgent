@@ -10,7 +10,7 @@ changes. A PR that diverges from the docs without updating them is not done.
 | PR | Branch | Scope | Status |
 |---|---|---|---|
 | A | `feat/web-client` | Next.js web client (proposal intake and reviewer dashboard) | open |
-| A2 | `chore/repo-cleanup` | Rename to BizzAgent, src layout, remove Streamlit and sequa assets | open |
+| A2 | `chore/repo-cleanup` | Rename to BizzAgent, src layout, remove Streamlit and the original funder branding | open |
 | B | `docs/product-architecture` | This documentation set | in progress |
 | F | `feat/web-prototype` | Clickable prototype of every screen on a typed mock client, new identity | next |
 | C1 | `feat/platform-core` | Accounts, roles, billing wallet, knowledge packs, calculators, proposal rules, i18n, CI | |

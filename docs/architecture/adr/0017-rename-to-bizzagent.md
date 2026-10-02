@@ -1,4 +1,4 @@
-# ADR-0017: Rename FundFlow to BizzAgent and drop sequa
+# ADR-0017: Rename FundFlow to BizzAgent and drop the single-funder branding
 
 - **Status:** Accepted
 - **Date:** 2026-10-02
@@ -9,7 +9,7 @@ The product grew from a single-funder hackathon tool into a general business age
 
 ## Decision
 
-Rename to BizzAgent (package `bizzagent`, env prefix `BIZZAGENT_`), remove all sequa branding, and archive the hackathon brief.
+Rename to BizzAgent (package `bizzagent`, env prefix `BIZZAGENT_`), remove all branding of the original funder, and archive the hackathon brief.
 
 ## Consequences
 

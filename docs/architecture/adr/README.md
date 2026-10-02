@@ -22,7 +22,7 @@
 | [0014](0014-country-knowledge-packs.md) | Country knowledge packs with citations and verification |
 | [0015](0015-pluggable-search-provider.md) | Pluggable web-search provider |
 | [0016](0016-channel-adapters.md) | Channel adapters |
-| [0017](0017-rename-to-bizzagent.md) | Rename FundFlow to BizzAgent and drop sequa |
+| [0017](0017-rename-to-bizzagent.md) | Rename FundFlow to BizzAgent and drop the single-funder branding |
 | [0018](0018-legal-and-financial-safety.md) | Safety boundaries for legal and financial guidance |
 | [0019](0019-opportunity-catalogue.md) | Opportunity catalogue: sources, freshness, verification and scam policy |
 | [0020](0020-background-jobs.md) | Background jobs via a CLI, cron-friendly |
