@@ -11,7 +11,6 @@ from app.schemas.interview import (
     InterviewTurn,
 )
 from app.schemas.interview_decision import InterviewDecision
-from app.schemas.extraction import ExtractionResult
 from app.schemas.company import (
     ApplicantDescription,
     BusinessOrganization,
@@ -52,7 +51,6 @@ __all__ = [
     "CompanyProfile",
     "Evidence",
     "ExpectedResult",
-    "ExtractionResult",
     "FileMetadata",
     "Gender",
     "GrowthIndicator",
