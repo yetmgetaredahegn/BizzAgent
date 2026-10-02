@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, ExternalLink, Quote } from "lucide-react";
+import { ArrowLeft, ArrowRight, Quote } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -17,7 +17,6 @@ import { PackSections } from "@/components/pack/pack-sections";
 import { useRankedBatch } from "@/components/review/use-ranked";
 import { ButtonLink } from "@/components/ui/button";
 import { Badge, Card, Container } from "@/components/ui/primitives";
-import { isDemoCase } from "@/lib/fixtures";
 import { cn, formatDateTime } from "@/lib/format";
 import { placeName } from "@/lib/evaluate";
 import { GRID_VARIANTS, SECTOR_LABELS } from "@/lib/grid";
@@ -92,11 +91,6 @@ export function ReviewDetail({ id }: { id: string }) {
                 <p className="text-4xl font-bold tabular-nums">{Math.round(e.total)}</p>
                 <p className="text-xs text-subtle">{GRID_VARIANTS[e.variant].name}</p>
               </div>
-              {isDemoCase(pack.id) && (
-                <ButtonLink href={`/apply/${pack.id}/pack`} variant="secondary" size="sm">
-                  Applicant view <ExternalLink className="size-3.5" aria-hidden />
-                </ButtonLink>
-              )}
             </div>
           </div>
 
