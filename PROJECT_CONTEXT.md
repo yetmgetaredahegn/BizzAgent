@@ -239,21 +239,27 @@ SQLite Persistence
 
 ## Frontend
 
-Use **Streamlit**.
+**Decision update (post-hackathon, for the sequa presentation):** the product
+frontend is a **Next.js 16** app in `web/` (App Router, TypeScript, Tailwind v4).
+It replaces Streamlit as the user-facing interface. The Streamlit app in
+`frontend/` stays as a developer harness for the voice interview.
 
-Do not build a Next.js frontend for the hackathon MVP.
+`web/` is responsible for:
 
-Streamlit is responsible for:
+* The landing page
+* Applicant path: intake (licence and workshop photos), voice interview
+  (recording or WhatsApp voice-note upload), application pack for sections
+  1.1–2.6 with a status per field, gap list, three declarations explained in
+  Amharic, Afaan Oromo and English (understanding recorded, never ticked),
+  provisional score, ImpactProtocol draft, submit
+* Reviewer path: ranked shortlist of a 12-application batch, per-company
+  justification, contradictions, site-visit questions, JSON import and CSV export
 
-* Voice/audio upload or recording
-* Licence image upload
-* Workshop image upload
-* Displaying extracted information
-* Displaying evidence and verification status
-* Asking and collecting follow-up answers
-* Displaying the application draft
-* Displaying gaps
-* Displaying evaluation results
+Where the backend has no endpoint yet (eligibility, scoring, declarations,
+reviewer ranking), `web/src/lib` holds deterministic TypeScript rules and typed
+demo fixtures shaped like the Pydantic schemas. The scoring grid in
+`web/src/lib/grid.ts` is illustrative until sequa's official grid is available,
+and the rules in `web/src/lib/evaluate.ts` should move to `backend/app/rules.py`.
 
 The frontend should communicate with the backend through FastAPI.
 
