@@ -1,10 +1,10 @@
 import Link from "next/link";
 
-import { Logo, SequaCredit } from "@/components/site/brand";
+import { Logo } from "@/components/site/brand";
 
 export function SiteFooter() {
   return (
-    <footer className="print-hidden mt-auto bg-navy-950 text-white/80">
+    <footer className="print-hidden mt-auto bg-ink-950 text-white/80">
       <div className="tibeb opacity-90" aria-hidden />
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr] lg:px-8">
         <div className="max-w-sm">
@@ -13,7 +13,6 @@ export function SiteFooter() {
             From a voice note to a fundable proposal. An intake agent between people who talk and
             systems that take structured records, and a reviewer who has to defend a ranking.
           </p>
-          <SequaCredit tone="light" className="mt-6" label="Developed for" />
         </div>
         <div>
           <p className="text-xs font-bold tracking-[0.14em] text-white/50 uppercase">Product</p>
@@ -35,7 +34,7 @@ export function SiteFooter() {
       <div className="border-t border-white/10">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-4 py-6 text-xs text-white/50 sm:px-6 md:flex-row md:justify-between lg:px-8">
           <p>All people and businesses shown are fictional.</p>
-          <p>Scoring grid and declaration wording are illustrative until replaced with sequa&apos;s official versions.</p>
+          <p>Scoring grid and declaration wording are illustrative until replaced with each funder&apos;s official versions.</p>
         </div>
       </div>
     </footer>

@@ -61,7 +61,7 @@ export function SubmitView() {
   function download() {
     const payload = { ...pack, declarations, exportedAt: new Date().toISOString() };
     const slug = (pack.data.applicant.company_profile.company_name ?? caseId).toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    downloadFile(`fundflow-${slug}.json`, JSON.stringify(payload, null, 2), "application/json");
+    downloadFile(`bizzagent-${slug}.json`, JSON.stringify(payload, null, 2), "application/json");
   }
 
   return (
@@ -101,7 +101,7 @@ export function SubmitView() {
             <Item
               state={allTicked ? "done" : "open"}
               title={`Declarations ticked by ${name}: ${ticked} of ${DECLARATIONS.length}`}
-              detail="Only the applicant can tick. FundFlow never does."
+              detail="Only the applicant can tick. BizzAgent never does."
               href={`${base}/declarations`}
             />
             <Item
@@ -138,7 +138,7 @@ export function SubmitView() {
           </Callout>
         )}
         <p className="mt-6 text-xs text-subtle">
-          The reviewer queue is kept in this browser for the demo; submission to sequa&apos;s own system is not connected yet.
+          The reviewer queue is kept in this browser for the demo; submission to the funder&apos;s own system is not connected yet.
         </p>
       </div>
 
@@ -146,7 +146,7 @@ export function SubmitView() {
       <div className="hidden print:block">
         <h1 className="text-2xl font-bold">{pack.data.applicant.company_profile.company_name ?? "Application"}</h1>
         <p className="text-sm">
-          FundFlow application pack · provisional score {Math.round(e.total)} ({GRID_VARIANTS[e.variant].name}) · assessed{" "}
+          BizzAgent application pack · provisional score {Math.round(e.total)} ({GRID_VARIANTS[e.variant].name}) · assessed{" "}
           {formatDate(e.assessedAsOf)}
         </p>
         {SECTIONS.map((section) => (

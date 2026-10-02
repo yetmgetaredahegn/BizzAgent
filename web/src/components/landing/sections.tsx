@@ -42,7 +42,7 @@ const STATS = [
 
 export function ProblemStrip() {
   return (
-    <section className="relative bg-navy-950 text-white">
+    <section className="relative bg-ink-950 text-white">
       <Container className="py-20 lg:py-24">
         <Reveal className="max-w-3xl">
           <Eyebrow className="text-brand-300">The problem</Eyebrow>
@@ -57,7 +57,7 @@ export function ProblemStrip() {
         <div className="mt-12 grid gap-px overflow-hidden rounded-2xl bg-white/10 ring-1 ring-white/10 sm:grid-cols-2 lg:grid-cols-4">
           {STATS.map((stat, index) => (
             <Reveal key={stat.label} delay={index * 80} className="h-full">
-              <div className="h-full bg-navy-950 p-6">
+              <div className="h-full bg-ink-950 p-6">
                 <p className="font-display text-5xl font-medium text-saffron-300">{stat.value}</p>
                 <p className="mt-2 font-semibold">{stat.label}</p>
                 <p className="mt-2 text-sm leading-relaxed text-white/60">{stat.detail}</p>
@@ -90,7 +90,7 @@ const STEPS = [
   {
     Icon: MessageCircleQuestionMark,
     title: "Clarify",
-    text: "FundFlow asks only for what is missing, one short spoken question at a time, and explains why.",
+    text: "BizzAgent asks only for what is missing, one short spoken question at a time, and explains why.",
     output: "Targeted follow-up questions",
   },
   {
@@ -109,18 +109,18 @@ export function HowItWorks() {
           <SectionHeading
             eyebrow="How it works"
             title="Four steps from a spoken story to structured records."
-            lead="The applicant talks. FundFlow does the form. The language model understands the story; plain rules do the arithmetic, the eligibility gate and the scoring."
+            lead="The applicant talks. BizzAgent does the form. The language model understands the story; plain rules do the arithmetic, the eligibility gate and the scoring."
           />
         </Reveal>
         <div className="relative mt-14">
-          <div className="absolute top-9 right-[12%] left-[12%] hidden h-px bg-gradient-to-r from-brand-200 via-navy-200 to-saffron-200 lg:block" aria-hidden />
+          <div className="absolute top-9 right-[12%] left-[12%] hidden h-px bg-gradient-to-r from-brand-200 via-ink-200 to-saffron-200 lg:block" aria-hidden />
           <ol className="relative grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {STEPS.map(({ Icon, title, text, output }, index) => (
               <li key={title} className="h-full">
                 <Reveal delay={index * 90} className="h-full">
                   <Card className="flex h-full flex-col p-6">
                     <div className="flex items-center justify-between">
-                      <span className="grid size-12 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-navy-600 text-white shadow-[0_10px_24px_-12px_rgb(29_66_138/0.8)]">
+                      <span className="grid size-12 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-ink-600 text-white shadow-[0_10px_24px_-12px_rgb(29_66_138/0.8)]">
                         <Icon className="size-5" aria-hidden />
                       </span>
                       <span className="font-display text-3xl text-line-strong">{String(index + 1).padStart(2, "0")}</span>
@@ -246,7 +246,7 @@ const PERSONA_HELP: Record<string, string[]> = {
 
 const AVATAR = {
   almaz: "from-saffron-400 to-saffron-600",
-  nahom: "from-navy-400 to-navy-700",
+  nahom: "from-ink-400 to-ink-700",
   hiwot: "from-brand-400 to-brand-700",
 } as Record<string, string>;
 
@@ -272,13 +272,13 @@ function PersonaCard({ pack, delay }: { pack: ApplicationPack; delay: number }) 
             <p className="text-sm text-muted">{persona.role}</p>
           </div>
         </div>
-        <p className="mt-4 text-sm font-medium text-navy-700">{persona.place}</p>
+        <p className="mt-4 text-sm font-medium text-ink-700">{persona.place}</p>
         <p className="mt-1 flex items-center gap-1.5 text-xs text-subtle">
           <Smartphone className="size-3.5" aria-hidden />
           {persona.device}
         </p>
         <p className="mt-4 text-[15px] leading-relaxed text-muted">{persona.story}</p>
-        <p className="mt-5 text-xs font-bold tracking-wider text-brand-700 uppercase">What FundFlow does</p>
+        <p className="mt-5 text-xs font-bold tracking-wider text-brand-700 uppercase">What BizzAgent does</p>
         <ul className="mt-2 flex-1 space-y-2">
           {PERSONA_HELP[pack.id].map((line) => (
             <li key={line} className="flex gap-2 text-sm text-ink">
@@ -378,7 +378,7 @@ export function TwoPaths() {
             </div>
           </Reveal>
           <Reveal delay={100}>
-            <div className="relative h-full overflow-hidden rounded-3xl bg-gradient-to-br from-navy-600 to-navy-950 p-8 text-white shadow-lift">
+            <div className="relative h-full overflow-hidden rounded-3xl bg-gradient-to-br from-ink-600 to-ink-950 p-8 text-white shadow-lift">
               <Inbox className="size-7 opacity-80" aria-hidden />
               <h3 className="mt-5 text-2xl font-bold">Reviewer path</h3>
               <p className="mt-2 text-white/80">
@@ -422,12 +422,12 @@ export function DeclarationsSpotlight() {
           <SectionHeading
             eyebrow="Declarations"
             title="We explain. You decide. We never tick."
-            lead="Fifteen declarations stand between an applicant and the money. FundFlow explains them in her language and records that she understood. The box stays empty until she ticks it herself."
+            lead="Fifteen declarations stand between an applicant and the money. BizzAgent explains them in her language and records that she understood. The box stays empty until she ticks it herself."
           />
           <ul className="mt-8 space-y-3 text-[15px] text-muted">
             <li className="flex gap-3"><ScrollText className="mt-0.5 size-5 shrink-0 text-brand-600" aria-hidden />Plain-language explanation beside the official wording</li>
             <li className="flex gap-3"><Check className="mt-0.5 size-5 shrink-0 text-brand-600" aria-hidden />&ldquo;I understood&rdquo; is recorded with the language and time</li>
-            <li className="flex gap-3"><Lock className="mt-0.5 size-5 shrink-0 text-brand-600" aria-hidden />No code path in FundFlow ticks a declaration</li>
+            <li className="flex gap-3"><Lock className="mt-0.5 size-5 shrink-0 text-brand-600" aria-hidden />No code path in BizzAgent ticks a declaration</li>
           </ul>
         </Reveal>
         <Reveal delay={120}>
@@ -471,7 +471,7 @@ export function ReviewerPreview() {
   const questions = ranked.reduce((sum, r) => sum + r.analysis.evaluation.siteVisitQuestions.length, 0);
 
   return (
-    <section id="reviewers" className="scroll-mt-20 bg-navy-950 text-white">
+    <section id="reviewers" className="scroll-mt-20 bg-ink-950 text-white">
       <Container className="grid gap-12 py-20 lg:grid-cols-[0.8fr_1.2fr] lg:py-28">
         <Reveal>
           <Eyebrow className="text-brand-300">For reviewers</Eyebrow>
@@ -568,7 +568,7 @@ export function Languages() {
           ].map((item, index) => (
             <Reveal key={item.name} delay={index * 80}>
               <Card className="p-7 text-center">
-                <p lang={item.lang} className="font-display text-5xl font-medium text-navy-700">{item.word}</p>
+                <p lang={item.lang} className="font-display text-5xl font-medium text-ink-700">{item.word}</p>
                 <p className="mt-4 font-semibold">{item.name}</p>
                 <p className="mt-1 text-sm text-muted">{item.note}</p>
               </Card>
@@ -585,7 +585,7 @@ export function CtaBand() {
     <section className="pb-20 lg:pb-28">
       <Container>
         <Reveal>
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-600 via-brand-700 to-navy-700 px-6 py-14 text-center text-white shadow-lift sm:px-12">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-600 via-brand-700 to-ink-700 px-6 py-14 text-center text-white shadow-lift sm:px-12">
             <div className="grid-texture absolute inset-0 opacity-20" aria-hidden />
             <div className="relative">
               <Scale className="mx-auto size-8 opacity-80" aria-hidden />

@@ -17,7 +17,7 @@ type Tone = "neutral" | "brand" | "navy" | "saffron" | "green" | "amber" | "rose
 const tones: Record<Tone, string> = {
   neutral: "bg-paper text-muted ring-line",
   brand: "bg-brand-50 text-brand-800 ring-brand-200",
-  navy: "bg-navy-50 text-navy-700 ring-navy-200",
+  navy: "bg-ink-50 text-ink-700 ring-ink-200",
   saffron: "bg-saffron-50 text-saffron-700 ring-saffron-200",
   green: "bg-emerald-50 text-emerald-800 ring-emerald-200",
   amber: "bg-amber-50 text-amber-800 ring-amber-200",
@@ -55,7 +55,7 @@ export function Eyebrow({ className, ...props }: HTMLAttributes<HTMLParagraphEle
 }
 
 const calloutTones = {
-  info: { className: "bg-navy-50 text-navy-800 ring-navy-200", Icon: Info },
+  info: { className: "bg-ink-50 text-ink-800 ring-ink-200", Icon: Info },
   success: { className: "bg-emerald-50 text-emerald-900 ring-emerald-200", Icon: CircleCheck },
   warn: { className: "bg-amber-50 text-amber-900 ring-amber-200", Icon: TriangleAlert },
   error: { className: "bg-rose-50 text-rose-900 ring-rose-200", Icon: CircleAlert },

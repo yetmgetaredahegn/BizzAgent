@@ -47,7 +47,7 @@ export function SiteHeader({ mode = "landing" }: { mode?: "landing" | "app" }) {
               href={link.href}
               className={cn(
                 "rounded-full px-3.5 py-2 text-sm font-medium transition-colors",
-                isActive(link) ? "bg-navy-50 text-navy-700" : "text-muted hover:text-ink",
+                isActive(link) ? "bg-ink-50 text-ink-700" : "text-muted hover:text-ink",
               )}
             >
               {link.label}

@@ -66,7 +66,7 @@ export function ScoreSummary({ evaluation, audience = "applicant" }: { evaluatio
 
       <Card className="p-6">
         <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-subtle uppercase">
-          <Route className="size-4 text-navy-600" aria-hidden /> Grid routing
+          <Route className="size-4 text-ink-600" aria-hidden /> Grid routing
         </div>
         <p className="mt-3 text-lg font-bold">{variant.name}</p>
         <p className="mt-1 text-sm leading-relaxed text-muted">{evaluation.variantReason}</p>
@@ -120,7 +120,7 @@ function CheckList({ title, checks, exclusion }: { title: string; checks: CheckR
   return (
     <Card className="overflow-hidden">
       <div className="flex items-center gap-2 border-b border-line bg-paper/60 px-5 py-3">
-        {exclusion ? <ShieldAlert className="size-4 text-rose-600" aria-hidden /> : <ClipboardCheck className="size-4 text-navy-600" aria-hidden />}
+        {exclusion ? <ShieldAlert className="size-4 text-rose-600" aria-hidden /> : <ClipboardCheck className="size-4 text-ink-600" aria-hidden />}
         <p className="text-sm font-semibold">{title}</p>
       </div>
       <ul className="divide-y divide-line">
@@ -211,12 +211,12 @@ export function SiteVisitList({ questions }: { questions: string[] }) {
   return (
     <Card className="p-5 sm:p-6">
       <div className="flex items-center gap-2 text-sm font-semibold">
-        <ClipboardCheck className="size-4 text-navy-600" aria-hidden /> Open questions for the site visit
+        <ClipboardCheck className="size-4 text-ink-600" aria-hidden /> Open questions for the site visit
       </div>
       <ol className="mt-4 space-y-2.5">
         {questions.map((question, index) => (
           <li key={question} className="flex gap-3 text-sm leading-relaxed">
-            <span className="grid size-6 shrink-0 place-items-center rounded-full bg-navy-50 text-xs font-bold text-navy-700">{index + 1}</span>
+            <span className="grid size-6 shrink-0 place-items-center rounded-full bg-ink-50 text-xs font-bold text-ink-700">{index + 1}</span>
             <span className="text-ink">{question}</span>
           </li>
         ))}
@@ -250,7 +250,7 @@ export function GridNote() {
   return (
     <p className="text-xs leading-relaxed text-subtle">
       Computed by deterministic rules, not by a language model. The grid, weights and thresholds are
-      illustrative until sequa&apos;s official scoring grid is loaded.
+      illustrative until the funder&apos;s official scoring grid is loaded.
     </p>
   );
 }

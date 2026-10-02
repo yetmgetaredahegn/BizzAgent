@@ -106,7 +106,7 @@ export function ReviewDashboard() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2 lg:shrink-0 lg:flex-nowrap">
-          <label className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-full bg-navy-600 px-4 text-sm font-semibold text-white hover:bg-navy-700">
+          <label className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-full bg-ink-600 px-4 text-sm font-semibold text-white hover:bg-ink-700">
             <FileUp className="size-4" aria-hidden /> Import batch
             <input
               type="file"
@@ -121,14 +121,14 @@ export function ReviewDashboard() {
           <Button
             variant="secondary"
             size="sm"
-            onClick={() => downloadFile("fundflow-sample-batch.json", JSON.stringify(REVIEW_BATCH, null, 2), "application/json")}
+            onClick={() => downloadFile("bizzagent-sample-batch.json", JSON.stringify(REVIEW_BATCH, null, 2), "application/json")}
           >
             <FileBraces className="size-4" aria-hidden /> Sample batch
           </Button>
           <Button
             variant="secondary"
             size="sm"
-            onClick={() => downloadFile("fundflow-shortlist.csv", shortlistCsv(ranked), "text/csv")}
+            onClick={() => downloadFile("bizzagent-shortlist.csv", shortlistCsv(ranked), "text/csv")}
           >
             <Download className="size-4" aria-hidden /> Export CSV
           </Button>
@@ -178,7 +178,7 @@ export function ReviewDashboard() {
             onClick={() => setFilter(id)}
             className={cn(
               "rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap ring-1 transition-colors",
-              filter === id ? "bg-navy-600 text-white ring-navy-600" : "bg-surface text-muted ring-line hover:text-ink",
+              filter === id ? "bg-ink-600 text-white ring-ink-600" : "bg-surface text-muted ring-line hover:text-ink",
             )}
           >
             {id === "all" ? "All" : STATUS_BADGE[id].label}{" "}
@@ -210,7 +210,7 @@ export function ReviewDashboard() {
                 <tr key={item.pack.id} className="group relative hover:bg-paper/70">
                   <td className="py-4 pl-5 text-base font-bold text-subtle tabular-nums">{item.rank ?? "—"}</td>
                   <td className="py-4 pr-4">
-                    <Link href={`/review/${item.pack.id}`} className="font-semibold text-ink after:absolute after:inset-0 group-hover:text-navy-700">
+                    <Link href={`/review/${item.pack.id}`} className="font-semibold text-ink after:absolute after:inset-0 group-hover:text-ink-700">
                       {item.pack.data.applicant.company_profile.company_name ?? "Unnamed applicant"}
                     </Link>
                     <p className="text-xs text-subtle">{companyMeta(item)}</p>
@@ -279,7 +279,7 @@ export function ReviewDashboard() {
       <p className="mt-6 text-xs leading-relaxed text-subtle">
         Ranking uses the routed grid&apos;s total. Excluded applications are listed with the factor that
         ended them and do not enter the ranking. A contradiction never excludes on its own: it becomes a
-        site-visit question. Grid and thresholds are illustrative until sequa&apos;s official grid is loaded.
+        site-visit question. Grid and thresholds are illustrative until the funder&apos;s official grid is loaded.
       </p>
     </Container>
   );

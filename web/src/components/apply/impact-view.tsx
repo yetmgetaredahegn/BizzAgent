@@ -45,7 +45,7 @@ export function ImpactView() {
         lead="A project page drafted from the applicant's own words. Every line stays a draft until the applicant has heard it and approved it."
       />
 
-      <div className="relative mb-6 overflow-hidden rounded-3xl bg-gradient-to-br from-navy-700 via-navy-800 to-brand-800 p-6 text-white shadow-lift sm:p-8">
+      <div className="relative mb-6 overflow-hidden rounded-3xl bg-gradient-to-br from-ink-700 via-ink-800 to-brand-800 p-6 text-white shadow-lift sm:p-8">
         <div className="grid-texture absolute inset-0 opacity-15" aria-hidden />
         <div className="relative">
           <div className="flex flex-wrap items-center gap-2">
@@ -122,7 +122,7 @@ export function ImpactView() {
               {impact.milestones.map((m) => (
                 <li key={m.description} className="relative">
                   <span className="absolute top-1 -left-[27px] size-3 rounded-full bg-brand-500 ring-4 ring-surface" aria-hidden />
-                  <p className="text-xs font-bold text-navy-600">{m.target}</p>
+                  <p className="text-xs font-bold text-ink-600">{m.target}</p>
                   <p className="text-sm font-medium text-ink">{m.description}</p>
                 </li>
               ))}

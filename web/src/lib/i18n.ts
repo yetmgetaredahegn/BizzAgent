@@ -67,7 +67,7 @@ const en = {
   "decl.recordedQuestion": "Question recorded. An advisor will call you.",
   "decl.official": "Official wording",
   "decl.agree": "I agree",
-  "decl.onlyYou": "Only you can tick this box. FundFlow never ticks it for you.",
+  "decl.onlyYou": "Only you can tick this box. BizzAgent never ticks it for you.",
   "decl.tickLocked": "First tell us you understood.",
 };
 
@@ -127,7 +127,7 @@ const am: Messages = {
   "decl.recordedQuestion": "ጥያቄዎ ተመዝግቧል። አማካሪ ይደውልልዎታል።",
   "decl.official": "ይፋዊ ጽሑፍ",
   "decl.agree": "እስማማለሁ",
-  "decl.onlyYou": "ይህን ሳጥን ምልክት ማድረግ የሚችሉት እርስዎ ብቻ ነዎት። FundFlow በፍጹም ምልክት አያደርግልዎትም።",
+  "decl.onlyYou": "ይህን ሳጥን ምልክት ማድረግ የሚችሉት እርስዎ ብቻ ነዎት። BizzAgent በፍጹም ምልክት አያደርግልዎትም።",
   "decl.tickLocked": "መጀመሪያ እንደተረዱ ይንገሩን።",
 };
 
@@ -184,7 +184,7 @@ const om: Messages = {
   "decl.recordedQuestion": "Gaaffiin keessan galmaa'eera. Gorsaan isinii bilbila.",
   "decl.official": "Barreeffama seeraa",
   "decl.agree": "Nan waliigala",
-  "decl.onlyYou": "Saanduqa kana mallattoo kan godhu isin qofa. FundFlow gonkumaa isiniif hin godhu.",
+  "decl.onlyYou": "Saanduqa kana mallattoo kan godhu isin qofa. BizzAgent gonkumaa isiniif hin godhu.",
   "decl.tickLocked": "Jalqaba akka hubattan nutti himaa.",
 };
 

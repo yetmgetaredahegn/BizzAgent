@@ -97,7 +97,7 @@ export const LICENCE_BACKED_KEYS = [
   "company_profile.form_of_business_organization",
 ];
 
-/** Keys drafted by FundFlow for the applicant to approve. */
+/** Keys drafted by BizzAgent for the applicant to approve. */
 export const DRAFTED_IMPACT_KEYS = [
   "impact.title",
   "impact.location",
@@ -235,7 +235,7 @@ export function quickPack(spec: QuickSpec): ApplicationPack {
     provenance[key] = unverified(
       "draft_for_approval",
       undefined,
-      "Drafted by FundFlow from the applicant's own words; the applicant must approve the wording.",
+      "Drafted by BizzAgent from the applicant's own words; the applicant must approve the wording.",
     );
   }
   provenance["impact.funding_target_etb"] = unverified(

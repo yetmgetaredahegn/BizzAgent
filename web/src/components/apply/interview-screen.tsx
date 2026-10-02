@@ -16,9 +16,9 @@ import { FIELD_BY_KEY } from "@/lib/form-schema";
 import { INTERVIEW_FIELD_KEYS } from "@/lib/live-pack";
 import { liveSessionStore, useStore } from "@/lib/store";
 
-function Bubble({ from, children }: { from: "fundflow" | "you"; children: React.ReactNode }) {
+function Bubble({ from, children }: { from: "bizzagent" | "you"; children: React.ReactNode }) {
   const t = useT();
-  if (from === "fundflow") {
+  if (from === "bizzagent") {
     return (
       <div className="flex gap-3">
         <LogoMark className="size-8 shrink-0" />
@@ -30,10 +30,10 @@ function Bubble({ from, children }: { from: "fundflow" | "you"; children: React.
   }
   return (
     <div className="flex flex-row-reverse gap-3">
-      <span className="grid size-8 shrink-0 place-items-center rounded-full bg-navy-600 text-[11px] font-bold text-white">
+      <span className="grid size-8 shrink-0 place-items-center rounded-full bg-ink-600 text-[11px] font-bold text-white">
         {t("interview.you")}
       </span>
-      <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-navy-600 px-4 py-3 text-[15px] text-white">{children}</div>
+      <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-ink-600 px-4 py-3 text-[15px] text-white">{children}</div>
     </div>
   );
 }
@@ -108,13 +108,13 @@ export function InterviewScreen() {
           <div className="mt-8 space-y-4" aria-live="polite">
             {interview?.history.map((turn, index) => (
               <div key={index} className="space-y-3">
-                <Bubble from="fundflow">{turn.question}</Bubble>
+                <Bubble from="bizzagent">{turn.question}</Bubble>
                 <Bubble from="you">“{turn.transcript}”</Bubble>
               </div>
             ))}
 
             {interview?.current_question && (
-              <Bubble from="fundflow">
+              <Bubble from="bizzagent">
                 <p className="text-xs font-semibold text-brand-700">
                   {t("interview.question")} {completed + 1} / {fieldIds.length}
                 </p>
@@ -178,7 +178,7 @@ export function InterviewScreen() {
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <Card className="p-6">
-            <p className="text-xs font-bold tracking-wider text-subtle uppercase">What FundFlow has heard</p>
+            <p className="text-xs font-bold tracking-wider text-subtle uppercase">What BizzAgent has heard</p>
             <div className="mt-3 flex items-center gap-3">
               <ScoreBar value={completed} max={fieldIds.length} />
               <span className="text-sm font-semibold whitespace-nowrap tabular-nums">

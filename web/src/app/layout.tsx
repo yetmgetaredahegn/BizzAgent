@@ -27,12 +27,12 @@ const ethiopic = Noto_Sans_Ethiopic({
 
 export const metadata: Metadata = {
   title: {
-    default: "FundFlow · From a voice note to a fundable proposal",
-    template: "%s · FundFlow",
+    default: "BizzAgent · From a voice note to a fundable proposal",
+    template: "%s · BizzAgent",
   },
   description:
-    "FundFlow turns a spoken story, phone photos and a paper licence into a complete, honest funding application, and gives reviewers a ranked shortlist they can defend. Built for sequa gGmbH.",
-  applicationName: "FundFlow",
+    "BizzAgent turns a spoken story, phone photos and a paper licence into a complete, honest funding application, and gives reviewers a ranked shortlist they can defend.",
+  applicationName: "BizzAgent",
 };
 
 export const viewport: Viewport = {
