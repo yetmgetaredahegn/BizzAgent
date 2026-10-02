@@ -54,3 +54,40 @@ Paste into every UI PR body:
 - [ ] Colour never the only signal; contrast checked
 - [ ] Screenshots 390 / 1440, light / dark, one Ethiopic language
 ```
+
+## 4. Balanced creativity
+
+The product must be **simple but not plain**, and creative without being distracting. The expressive
+layer is **paperwork objects, and each one carries meaning**. They are information design first.
+
+| Motif | Means | Component |
+|---|---|---|
+| Paper clip | Attached evidence: a source clipped to the field it supports | `PaperClip` |
+| Receipt tape (torn edge, double underline) | A calculation or a log | `ReceiptTape` |
+| Perforated ticket edge | A cost | `CostTicket` |
+| Carbon-copy offset stack | Versions and document roles (original, draft, file copy) | `CarbonStack`, `CarbonSheet` |
+| Ledger ruling | A table of facts | `LedgerRule` |
+| Stamp press | "Now checked": a field becomes established | `EvidenceStamp` |
+
+### Delight budget (per screen)
+
+| Budget | Limit |
+|---|---|
+| Motion moments | **1** (600 ms or less; the landing hero prints once, 2.5 s or less) |
+| Paperwork motifs | **2**, each used for its meaning |
+| Bold colour blocks | **1**: a Meskel highlight *or* a stamp-ink panel, not both |
+| Glows, gradients, textures, confetti | **0** |
+
+- **Illustrations** are single-colour line drawings in stamp ink, for empty states and the
+  landing page.
+- **Motion** always has a purpose (feedback, or showing that something was produced). With
+  reduced motion, the final state shows immediately. Nothing animates on scroll.
+- **Test:** remove a motif. If the screen loses no information, the motif was decoration.
+
+### Too plain, balanced, too much
+
+| Too plain | Balanced | Too much |
+|---|---|---|
+| Identical cards everywhere | Real documents and tables as the main surface | Motifs on every card |
+| Numbers without a trace | One yellow highlight marks what needs you now | Confetti, glows, sparkles |
+| "No data" empty states | A clip, torn edge or stamp only where it means something | Animation on every scroll |

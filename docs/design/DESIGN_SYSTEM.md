@@ -116,6 +116,21 @@ Push-to-talk.
 - **TermTooltip.** A dotted underline on business terms. On tap, a 1–2 sentence plain definition
   from the [glossary](../i18n/glossary-am-om-en.md), plus "listen".
 
+### PaperClip · PerforatedEdge · CarbonStack · LedgerRule
+
+- **PaperClip.** An SVG clip (a stamp-ink stroke with a knock-out ring in the surface colour)
+  that attaches to the top-right of a field or card. Use it only for **attached evidence**: it
+  opens the source (CitationSlip, photo or document). One per field. `aria-label="Evidence:
+  <source>"`. Not decorative.
+- **PerforatedEdge.** A dashed divider between an action and its price, used by CostTicket. It
+  separates a "stub" (the amount) from the "main" (the action).
+- **CarbonStack.** Two offset layers behind a sheet (pink, then yellow) to show that a document
+  has a draft and a file copy. At most 2 layers. Text remains on the top sheet.
+- **LedgerRule.** Faint 1 px horizontal rules between rows (`line` token), no vertical rules and
+  no boxed cells. Use for any list of label/value facts.
+
+Delight budget and rules: [ux-principles §4](ux-principles.md#4-balanced-creativity).
+
 ## 4. Core components
 
 | Component | Notes |
@@ -145,3 +160,46 @@ Push-to-talk.
 - [ ] All strings are in the locale files.
 - [ ] The **anti-slop checklist** in [ux-principles](ux-principles.md#3-anti-slop-checklist) is
       ticked.
+
+## 6. Responsive system
+
+The product must work on every device, from a 320 px feature-phone browser to a 1920 px monitor.
+Layout is driven by the **size of the container**, not by device guesses.
+
+### Size classes
+
+| Class | Width | Shell | Notes |
+|---|---|---|---|
+| compact | 320–359 | Bottom bar (5 items + More) | Single column; labels may wrap; no horizontal page scroll |
+| phone | 360–599 | Bottom bar | Designed first at 390 |
+| tablet | 600–1023 | Collapsed icon rail (labels on focus/hover) | Two-pane screens use tabs |
+| laptop | 1024–1439 | Full rail (216 px) | Talk shows the split "ledger spread"; Home gets a side column (320 px) |
+| desktop | 1440–1919 | Full rail | More whitespace; content width capped |
+| wide | 1920+ | Full rail | Content is capped at 1440 and centred |
+
+Landscape phones (about 844 × 390) use the **phone** layout with a collapsed top bar; foldables
+use the class of their current inner width.
+
+### Rules
+
+1. **Mobile first.** Write the narrow layout, then add `min-width` queries.
+2. **Container queries** (`container-type: inline-size`) for components that live in different
+   places: ReceiptTape, CostTicket, cards, tables, the Home grid. Tables **stack** into
+   label/value rows in narrow containers.
+3. **Fluid type** with `clamp()` between scale steps. Body stays at 16 px or more; display sizes
+   shrink first.
+4. **Touch.** `pointer: coarse` raises targets to at least 44 × 44 px with 8 px spacing. Hover
+   effects are enhancements only; nothing is reachable only by hover.
+5. **No horizontal page scroll** at any width from 320 up. Only tables, code and diagrams may
+   scroll inside their own container.
+6. **Text zoom.** Layouts hold at 200% text size and 400% browser zoom (a 320 px viewport
+   equivalent).
+7. **Images and photos** are `max-width: 100%` with explicit aspect ratios, so layout does not
+   jump.
+8. **Safe areas.** Fixed bars add `env(safe-area-inset-*)` padding.
+9. **Ge'ez and Oromo length.** Components tolerate +35% text length; buttons wrap instead of
+   truncating.
+10. **Performance.** The landing page is under 150 KB of JS on first load; images are lazy
+    except the first fold.
+
+Breakpoint tokens are in [tokens.json](tokens.json) (`breakpoint.*`).
