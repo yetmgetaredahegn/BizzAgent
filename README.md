@@ -1,21 +1,24 @@
-# FundFlow
+# BizzAgent
 
-From a voice note to a fundable proposal. FundFlow turns a spoken story, phone
-photos and a paper licence into a complete, honest funding application for
-small Ethiopian businesses. It also gives reviewers a ranked shortlist they can
-defend. Every field it cannot establish is flagged, never guessed.
+A voice-first business agent for founders, teams and small businesses, Ethiopia
+first. BizzAgent helps people understand legal forms and registration, validate
+an idea, do the numbers, find funding and opportunities, and turn what they say
+into documents they can submit. It works in Amharic, Afaan Oromo and English.
+Every value it shows says where it came from; anything it cannot establish is
+flagged, never guessed.
 
-Built for sequa gGmbH (Challenge 1: *From a voice note to a fundable proposal*).
+Formerly FundFlow, a hackathon prototype for turning a voice note into a funding
+proposal. That work is now BizzAgent's funding skill; the original brief is in
+[`docs/archive/`](docs/archive/origin-hackathon-challenge.md).
 
 ## Repository layout
 
 | Path | What it is |
 | --- | --- |
-| `web/` | Next.js 16 web app: landing page, applicant path, reviewer dashboard |
-| `backend/` | FastAPI service: licence OCR check, voice interview (Whisper, Ollama, Kokoro) |
-| `frontend/` | Streamlit developer harness for the voice interview |
-| `docs/` | Challenge brief |
-| `demo/images/` | Sample licence and workshop photos |
+| `web/` | Next.js 16 web client: landing page, applicant path, reviewer dashboard |
+| `backend/` | FastAPI service, package `bizzagent` (src layout, managed with uv) |
+| `backend/tests/fixtures/` | Sample licence and workshop photos used by tests |
+| `docs/` | Product and engineering documentation (in progress) |
 
 ## Run the web app
 
@@ -34,23 +37,35 @@ Checks: `npm run lint`, `npm test`, `npm run build`.
 ## Run the backend
 
 ```bash
-uv sync
 cd backend
-uv run uvicorn app.main:app --reload   # http://127.0.0.1:8000
+cp .env.example .env
+uv sync --group dev
+uv run uvicorn bizzagent.main:app --reload   # http://127.0.0.1:8000
 ```
 
-The interview agent needs Ollama with `llama3.1:8b` pulled. The browser app's
-origin must be allowed by CORS: set `FRONTEND_ORIGINS` (comma-separated,
-default `http://localhost:3000,http://127.0.0.1:3000`).
+Local models are optional extras, loaded on first use:
+
+```bash
+uv sync --group dev --extra speech --extra vision --extra llm-local
+```
+
+The legacy voice interview needs Ollama with `llama3.1:8b` pulled. Ollama is for
+local testing only; production uses hosted model APIs configured through
+environment variables. Allowed browser origins come from
+`BIZZAGENT_FRONTEND_ORIGINS`.
+
+Checks: `uv run ruff check`, `uv run ruff format --check`, `uv run mypy src`,
+`uv run pytest`.
 
 ## Principles
 
 - **Evidence over guessing.** Every field is established, unverified, missing
   or contradictory, and shows where it came from.
-- **Rules, not the model, do the arithmetic.** Eligibility, exclusions and the
-  weighted grid are deterministic code.
-- **Declarations are explained, never ticked.** FundFlow records that the
-  applicant understood; only the applicant ticks.
+- **Rules, not the model, do the arithmetic.** Calculations, eligibility and
+  scoring are deterministic code.
+- **Declarations are explained, never ticked.** BizzAgent records that the
+  user understood; only the user ticks.
 
 All people and businesses in the demo data are fictional. The scoring grid and
-declaration wording are illustrative until replaced with sequa's official versions.
+declaration wording are illustrative until replaced with each funder's official
+versions.
