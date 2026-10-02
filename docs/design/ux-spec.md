@@ -19,6 +19,23 @@ Components are named as in [DESIGN_SYSTEM](DESIGN_SYSTEM.md). API calls are name
 
 Every screen implements all five unless marked n/a.
 
+## 0. Responsive behaviour (applies to every screen)
+
+Classes and rules are in [DESIGN_SYSTEM §6](DESIGN_SYSTEM.md#6-responsive-system). Per screen:
+
+| Element | compact / phone (< 600) | tablet (600–1023) | laptop and up (≥ 1024) |
+|---|---|---|---|
+| Shell | Bottom bar, 5 items + More | Icon rail (64 px); labels on focus | Full rail (216 px) |
+| Home | One column; inbox summary pinned under the journey | One column, wider gutters | Main column + 320 px side column (inbox, deadlines) |
+| Talk | Tabs "Talk" / "Sheet" | Tabs | Split ledger spread (conversation 360–420 px + sheet) |
+| Tables | Stacked label/value rows | Scroll inside the container if needed | Real tables |
+| Pipeline board | Columns scroll horizontally with snap; one column visible | Two to three columns | All columns |
+| Dialogs | Full-height sheets from the bottom | Centred, 560 px | Centred, 560 px |
+| Landing | One column; receipt below the headline | Two columns from 720 px | Two columns; content capped at 1440 |
+
+Every screen is verified at 320, 360, 390, 768, 1024, 1440 and 1920 px, and at 844 × 390
+(landscape), with no horizontal page scroll.
+
 ## 1. Information architecture and routes
 
 ### Venture app (`/w/[ws]/…`; the personal space is `/me/…`)
@@ -267,17 +284,29 @@ member. Export as CSV or JSON.
 
 ## 17. Landing (`/`)
 
-- **Leads with the positioning:** "Verified, stamped, submittable." Hero: a single stamped
-  document mock (CarbonSheet) next to a voice turn that produced it. No blobs, no chips, no
-  gradients.
-- **Sections:**
-  1. How it works (talk → stamped artifacts → submit or export)
-  2. The moats, in plain words (verified local knowledge, your real numbers, funders on the
-     platform, three languages)
-  3. For partners
-  4. Pricing (pay as you go, the honest-billing rules)
-  5. Footer
-- Copy in 3 languages, with a language switch in the header.
+Leads with the positioning: **verified, stamped, submittable.** The page has one motion moment (the
+hero receipt prints once) and uses the clipped-receipt motifs for meaning. No blobs, floating chips
+or gradients. Copy comes in 3 languages from the locale files, with a language switch in the
+header.
+
+| # | Section | Content |
+|---|---|---|
+| 1 | **Header** | Logo, links (How it works · For funders · Pricing), language button, "Start talking" |
+| 2 | **Hero** | Headline "Say it. Get it stamped." and a sentence on what it does. Buttons "Start talking" (primary) and "For funders and programmes". On the right (or below on phones) a **receipt that prints the user's voice note as lines of facts**, each with an EvidenceStamp, a **paper clip** holding the licence photo, and the **round seal** stamped on the total. The print animation plays once (about 2.4 s); with reduced motion the final receipt shows |
+| 3 | **How it works** | Talk → Stamped → Send. A real sequence, so numbering is allowed. A ledger-ruled list on phones; three columns from tablet up |
+| 4 | **Not another chatbot** | The comparison with a general chatbot as a ledger-ruled table (registering a company, your margin, finding funding, sending a proposal). Not icon cards |
+| 5 | **Businesses like yours** | Three fictional stories (Almaz, Abel, Meron) as receipt cards, each with a clip. Labelled as fictional examples |
+| 6 | **For funders and programmes** | Publish a call once and receive proposals scored by your rules, with the evidence per field. A CarbonStack of a ranked proposal. A "Talk to us" button |
+| 7 | **Pay as you go** | A CostTicket and the honest-billing rules in one sentence |
+| 8 | **Your language, by voice** | The three language tiles with audio samples |
+| 9 | **Footer** | "Verify a document", privacy, terms, "not legal, tax or investment advice" |
+
+**States and rules**
+
+- The page is complete at rest: nothing waits on scroll to appear.
+- It works from 320 px up. The headline uses fluid type; the receipt is capped at 540 px.
+- Amharic headings use a line height of 1.25 (display) and body 1.7.
+- The first load stays under 150 KB of JS.
 
 ## 18. Prototype personas
 

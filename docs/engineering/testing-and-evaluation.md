@@ -58,7 +58,26 @@ They live in `backend/tests/invariants/` and run on every PR.
 - Results are written to `backend/evals/results/<date>.json` (gitignored) and summarised in the
   release PR.
 
-## 5. What is not tested in CI
+## 5. Responsive and visual checks (web)
+
+Playwright runs every prototype screen at these viewports:
+
+| Viewport | Class |
+|---|---|
+| 320 × 640 | compact |
+| 360 × 740 | phone |
+| 390 × 844 | phone (design size) |
+| 768 × 1024 | tablet |
+| 1024 × 768 | laptop |
+| 1440 × 900 | desktop |
+| 1920 × 1080 | wide |
+| 844 × 390 | landscape phone |
+
+Each run asserts: **no horizontal page scroll** (`scrollWidth <= clientWidth`), every control has a
+target of at least 44 × 44 px on `pointer: coarse` viewports, and the layout holds at 200% text
+size. It also runs axe, and stores screenshots for light and dark and for one Ethiopic language.
+
+## 6. What is not tested in CI
 
 - Hosted model APIs
 - Real Ollama, Whisper or Kokoro
