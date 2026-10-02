@@ -7,7 +7,7 @@
 
 import { createStore } from "@/lib/store";
 
-import type { ActivityEvent, ArtifactDetail, Conversation, CreateAccountInput, InboxItem, Mission, Persona, WorkspaceSummary } from "../contract";
+import type { ActivityEvent, ArtifactDetail, PipelineStage, Conversation, CreateAccountInput, InboxItem, Mission, Persona, WorkspaceSummary } from "../contract";
 import { DEFAULT_PERSONA, PERSONAS, WORKSPACES, type PersonaSeed, type WsSeed } from "./seed/workspaces";
 import type { WsFlags } from "./journey";
 import type { Stage } from "@/components/ds/fidel-journey";
@@ -15,6 +15,7 @@ import { daysFromToday } from "./clock";
 import { ACTIVITY_SEED } from "./seed/activity";
 import { INBOX_SEED } from "./seed/inbox";
 import { missionFromSummary } from "./missions";
+import { PIPELINE_SEED } from "./opportunities";
 
 export const personaStore = createStore<string>("bizzagent.persona", "local", DEFAULT_PERSONA);
 export const accountStore = createStore<CreateAccountInput | null>("bizzagent.account", "local", null);
@@ -38,6 +39,8 @@ interface Db {
   conversations: Record<string, ConvRecord>;
   /** Artifact details are built from the seeds on first read and then changed in place. */
   details: Record<string, ArtifactDetail>;
+  /** The opportunity pipeline per workspace: opportunity id to stage. */
+  pipeline: Record<string, Record<string, PipelineStage>>;
   counter: number;
   version: number;
 }
@@ -101,7 +104,6 @@ export function buildNewAccount(input: CreateAccountInput): { persona: PersonaSe
           },
         ],
     missions: [],
-    deadlines: [],
   };
   const persona: PersonaSeed = {
     id: NEW_ACCOUNT_ID,
@@ -125,6 +127,7 @@ function init(): Db {
     missions: Object.fromEntries(WORKSPACES.map((w) => [w.id, w.missions.map((m) => missionFromSummary(w.id, m))])),
     conversations: {},
     details: {},
+    pipeline: clone(PIPELINE_SEED),
     counter: 0,
     version: 0,
   };

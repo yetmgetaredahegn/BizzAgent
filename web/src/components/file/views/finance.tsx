@@ -107,7 +107,7 @@ export function FinanceView({ artifact }: { wsId: string; artifact: Finance }) {
       {artifact.cashFlow && (
         <section>
           <SectionTitle>{t("fin.cashflow")}</SectionTitle>
-          <div className="overflow-x-auto rounded-sheet bg-surface ring-1 ring-line">
+          <div className="relative overflow-x-auto rounded-sheet bg-surface ring-1 ring-line">
             <table className="num w-full min-w-[28rem] text-sm">
               <thead className="text-left text-xs text-muted">
                 <tr>

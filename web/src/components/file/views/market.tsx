@@ -55,7 +55,7 @@ export function MarketView({ artifact }: { artifact: Market }) {
 
       <section>
         <SectionTitle>{t("mk.gaps")}</SectionTitle>
-        <div className="overflow-x-auto rounded-sheet bg-surface ring-1 ring-line">
+        <div className="relative overflow-x-auto rounded-sheet bg-surface ring-1 ring-line">
           <table className="w-full min-w-[22rem] text-left">
             <tbody>
               {artifact.gaps.map((gap, i) => (

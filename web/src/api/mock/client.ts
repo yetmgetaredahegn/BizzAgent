@@ -7,6 +7,8 @@ import type {
   Me,
   Mission,
   Msg,
+  Opportunity,
+  PassportShare,
 } from "../contract";
 import { breakEven, grossMargin, markup } from "@/lib/calc";
 import { languageStore } from "@/lib/store";
@@ -26,6 +28,10 @@ import {
   type ConvRecord,
 } from "./db";
 import { buildDetail } from "./artifacts";
+import { documentDraftsFor, documentText, publicView, sha256Hex, type DocumentDraft } from "./documents";
+import { CATALOGUE, evaluateOpportunity, rankOpportunities } from "./opportunities";
+import { allShares, newToken, saveShare, sharesFor, shareState, type StoredShare } from "./passport";
+import { commonApplicationOf, readinessOf } from "./trust";
 import { nextBestActions } from "./journey";
 import { advance, estimateFor, summaryOf, tasksFor, templateForGoal } from "./missions";
 import { handleEvent, newConversation, type TalkEnv } from "./talk";
@@ -72,6 +78,40 @@ function changeDetail<K extends ArtifactDetail["kind"]>(ws: string, id: string, 
     if (detail.kind === kind) change(detail as Extract<ArtifactDetail, { kind: K }>);
   });
   return detailOf(ws, id);
+}
+
+/** Every catalogue entry evaluated for one workspace, with its place in the pipeline. */
+function opportunitiesOf(ws: string): Opportunity[] {
+  const state = getDb();
+  const seed = state.workspaces[ws];
+  if (!seed) throw new Error("not_found");
+  const pipeline = state.pipeline[ws] ?? {};
+  return CATALOGUE.map((entry) => evaluateOpportunity(seed, entry, pipeline[entry.id] ?? null));
+}
+
+/** Home shows the deadlines of opportunities that are still open in the pipeline. */
+function deadlinesFor(ws: string): HomeData["deadlines"] {
+  return opportunitiesOf(ws)
+    .filter((o) => o.stage && o.stage !== "submitted" && o.stage !== "outcome" && o.deadline)
+    .map((o) => ({ id: o.id, title: o.title, iso: o.deadline! }))
+    .sort((a, b) => a.iso.localeCompare(b.iso));
+}
+
+const BASIC_FACTS = new Set(["pf.business", "pf.town", "pf.sector", "pf.legalForm", "pf.licence"]);
+
+function toDto(share: StoredShare): PassportShare {
+  const { workspaceId, ...rest } = share;
+  void workspaceId;
+  return { ...rest, state: shareState(share) };
+}
+
+/** Every workspace's documents, for the public verification page. */
+function findDocument(id: string): { draft: DocumentDraft; issuer: string } | null {
+  for (const ws of Object.values(getDb().workspaces)) {
+    const draft = documentDraftsFor(ws).find((d) => d.id === id);
+    if (draft) return { draft, issuer: ws.name };
+  }
+  return null;
 }
 
 function walletId(): string {
@@ -231,7 +271,7 @@ export const mockClient: BizzAgentApi = {
     if (!membership || !ws) throw new Error("not_found");
     const workspace = summariesFor(persona).find((w) => w.id === workspaceId)!;
     const recent = [...ws.artifacts].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 3);
-    const flags = { ...ws.flags, pendingApprovals: (getDb().inbox[workspaceId] ?? []).filter((i) => i.status === "pending" && i.type === "approval").length };
+    const flags = { ...ws.flags, readiness: readinessOf(ws).score, pendingApprovals: (getDb().inbox[workspaceId] ?? []).filter((i) => i.status === "pending" && i.type === "approval").length };
     return delay(
       clone({
         workspace,
@@ -239,7 +279,7 @@ export const mockClient: BizzAgentApi = {
         nextActions: nextBestActions(ws, flags),
         inboxCount: pendingCount(workspaceId),
         missions: (getDb().missions[workspaceId] ?? []).filter((m) => m.status !== "cancelled").map(summaryOf),
-        deadlines: [...ws.deadlines].sort((a, b) => a.iso.localeCompare(b.iso)),
+        deadlines: deadlinesFor(workspaceId),
         recent,
       }),
     );
@@ -460,6 +500,127 @@ export const mockClient: BizzAgentApi = {
     });
     logActivity(workspaceId, { agent: "explainer", action: { id: `ev.explainer.${action}` }, sources: ["document explanation"], credits: 0 });
     return delay(clone(detail), 40);
+  },
+
+  // ---- opportunities ----------------------------------------------------------------
+  async listOpportunities(workspaceId, filters) {
+    let list = rankOpportunities(opportunitiesOf(workspaceId));
+    if (filters?.type) list = list.filter((o) => o.type === filters.type);
+    if (filters?.closingSoon) list = list.filter((o) => o.closingSoon);
+    return delay(clone(list), 60);
+  },
+
+  async getOpportunity(workspaceId, opportunityId) {
+    const found = opportunitiesOf(workspaceId).find((o) => o.id === opportunityId);
+    if (!found) throw new Error("not_found");
+    return delay(clone(found), 40);
+  },
+
+  async setPipelineStage(workspaceId, opportunityId, stage) {
+    mutate((state) => {
+      const pipeline = (state.pipeline[workspaceId] ??= {});
+      if (stage) pipeline[opportunityId] = stage;
+      else delete pipeline[opportunityId];
+    });
+    const found = opportunitiesOf(workspaceId).find((o) => o.id === opportunityId)!;
+    if (stage) logActivity(workspaceId, { agent: "funding", action: { id: "ev.pipeline", vars: { title: found.title, stage: `@pipe.${stage}` } }, sources: [found.source.domain], credits: 0 });
+    return delay(clone(found), 40);
+  },
+
+  async reportOpportunity(workspaceId, opportunityId) {
+    const found = opportunitiesOf(workspaceId).find((o) => o.id === opportunityId);
+    if (found) logActivity(workspaceId, { agent: "you", action: { id: "ev.reported", vars: { title: found.title } }, sources: [found.source.domain], credits: 0 });
+    return delay(undefined, 40);
+  },
+
+  // ---- readiness, common application, passport ------------------------------------
+  async getReadiness(workspaceId) {
+    const ws = getDb().workspaces[workspaceId];
+    if (!ws) throw new Error("not_found");
+    return delay(clone(readinessOf(ws)), 40);
+  },
+
+  async getCommonApplication(workspaceId) {
+    const ws = getDb().workspaces[workspaceId];
+    if (!ws) throw new Error("not_found");
+    return delay(clone(commonApplicationOf(ws, rankOpportunities(opportunitiesOf(workspaceId)))), 40);
+  },
+
+  async getPassport(workspaceId) {
+    const ws = getDb().workspaces[workspaceId];
+    if (!ws) throw new Error("not_found");
+    const profile = ws.artifacts.find((a) => a.kind === "profile");
+    const detail = profile ? detailOf(workspaceId, profile.id) : null;
+    return delay(
+      clone({ business: ws.name, facts: detail?.kind === "profile" ? detail.rows : [], shares: sharesFor(workspaceId).map(toDto) }),
+      40,
+    );
+  },
+
+  async createShare(workspaceId, input) {
+    const share: StoredShare = {
+      id: nextId("sh"),
+      token: newToken(),
+      workspaceId,
+      scope: input.scope,
+      createdAt: daysFromToday(0),
+      expiresAt: daysFromToday(input.days),
+      revoked: false,
+      views: [],
+    };
+    saveShare(share);
+    logActivity(workspaceId, { agent: "you", action: { id: "ev.passportShared" }, sources: ["Passport"], credits: 0 });
+    mutate(() => {});
+    return delay(toDto(share), 60);
+  },
+
+  async revokeShare(workspaceId, shareId) {
+    const share = sharesFor(workspaceId).find((s) => s.id === shareId);
+    if (share) saveShare({ ...share, revoked: true });
+    logActivity(workspaceId, { agent: "you", action: { id: "ev.passportRevoked" }, sources: ["Passport"], credits: 0 });
+    mutate(() => {});
+    return delay(undefined, 30);
+  },
+
+  async openSharedPassport(token) {
+    const share = allShares().find((s) => s.token === token);
+    if (!share) return delay({ state: "unknown" as const }, 40);
+    const state = shareState(share);
+    if (state !== "ok") return delay({ state }, 40);
+    const ws = getDb().workspaces[share.workspaceId];
+    const profile = ws?.artifacts.find((a) => a.kind === "profile");
+    const detail = ws && profile ? detailOf(ws.id, profile.id) : null;
+    const rows = detail?.kind === "profile" ? detail.rows : [];
+    const facts = share.scope === "full" ? rows : rows.filter((row) => typeof row.key === "object" && BASIC_FACTS.has(row.key.id));
+    saveShare({ ...share, views: [...share.views, { at: `${daysFromToday(0)}T${new Date().toTimeString().slice(0, 5)}:00`, who: { id: "pp.viewer.link" } }] });
+    return delay(clone({ state: "ok" as const, business: ws?.name ?? "", facts, expiresAt: share.expiresAt }), 40);
+  },
+
+  // ---- documents --------------------------------------------------------------------
+  async listDocuments(workspaceId) {
+    const ws = getDb().workspaces[workspaceId];
+    if (!ws) throw new Error("not_found");
+    const records = await Promise.all(
+      documentDraftsFor(ws).map(async (draft) => ({ ...draft, hash: await sha256Hex(documentText(draft, ws.name)) })),
+    );
+    return clone(records.sort((a, b) => b.createdAt.localeCompare(a.createdAt)));
+  },
+
+  async getDocumentText(documentId) {
+    const found = findDocument(documentId);
+    if (!found) throw new Error("not_found");
+    return documentText(found.draft, found.issuer);
+  },
+
+  async getPublicDocument(documentId) {
+    const found = findDocument(documentId);
+    return delay(found ? publicView(found.draft, found.issuer) : null, 40);
+  },
+
+  async verifyDocument(documentId, sha256) {
+    const found = findDocument(documentId);
+    if (!found) throw new Error("not_found");
+    return (await sha256Hex(documentText(found.draft, found.issuer))) === sha256 ? "match" : "altered";
   },
 
   // ---- activity --------------------------------------------------------------------

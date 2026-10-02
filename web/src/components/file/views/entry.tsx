@@ -21,7 +21,7 @@ export function EntryView({ artifact }: { artifact: Entry }) {
           {t("en.rubric")}
         </SectionTitle>
         <div className="grid items-start gap-4 laptop:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
-          <div className="overflow-x-auto rounded-sheet bg-surface ring-1 ring-line">
+          <div className="relative overflow-x-auto rounded-sheet bg-surface ring-1 ring-line">
             <table className="num w-full min-w-[26rem] text-sm">
               <thead className="text-left text-xs text-muted">
                 <tr>

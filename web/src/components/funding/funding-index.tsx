@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Page, Panel } from "@/components/ds/page";
 import { EmptyState } from "@/components/ds/states";
 import { Tag } from "@/components/ds/tag";
+import { FundTabs } from "@/components/fund/fund-tabs";
 import { casesFor } from "@/components/funding/cases";
 import { useWorkspace } from "@/components/shell/workspace-context";
 import { ButtonLink } from "@/components/ui/button";
@@ -22,6 +23,7 @@ export function FundingIndex() {
 
   return (
     <Page eyebrow={workspace.name} title={t("fund.title")} actions={<ButtonLink href={`${root}/new`}>{t("fund.start")}</ButtonLink>}>
+      <FundTabs />
       <p className="max-w-2xl text-muted">{t("fund.sub")}</p>
       {demos.length === 0 && !session ? (
         <EmptyState

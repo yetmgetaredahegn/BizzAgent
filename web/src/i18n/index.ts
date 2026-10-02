@@ -12,10 +12,12 @@ import { inbox } from "./messages/inbox";
 import { missions } from "./messages/missions";
 import { landing } from "./messages/landing";
 import { onboarding } from "./messages/onboarding";
+import { opps } from "./messages/opps";
 import { shell } from "./messages/shell";
 import { talk } from "./messages/talk";
+import { trust } from "./messages/trust";
 
-const AREAS = [common, landing, shell, home, onboarding, talk, inbox, missions, artifacts];
+const AREAS = [common, landing, shell, home, onboarding, talk, inbox, missions, artifacts, opps, trust];
 
 type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends (k: infer I) => void
   ? I

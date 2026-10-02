@@ -525,6 +525,171 @@ export interface ArtifactsApi {
 }
 
 // ---------------------------------------------------------------------------
+// Opportunities
+// ---------------------------------------------------------------------------
+
+export const OPPORTUNITY_TYPES = [
+  "grant_call",
+  "incubator",
+  "accelerator",
+  "investor",
+  "hackathon",
+  "competition",
+  "fellowship",
+  "tender",
+  "trade_fair",
+  "loan_product",
+] as const;
+
+export type OpportunityType = (typeof OPPORTUNITY_TYPES)[number];
+
+export const PIPELINE_STAGES = ["found", "shortlisted", "preparing", "submitted", "outcome"] as const;
+
+export type PipelineStage = (typeof PIPELINE_STAGES)[number];
+
+export interface Opportunity {
+  id: string;
+  type: OpportunityType;
+  title: string;
+  provider: string;
+  /** ISO date, or null for a rolling opportunity. */
+  deadline: string | null;
+  daysLeft: number | null;
+  closingSoon: boolean;
+  benefit: string;
+  languages: Lang[];
+  source: { kind: "platform" | "curated" | "discovered"; domain: string; retrieved: string };
+  onPlatform: boolean;
+  /** Deterministic: "likely" means a fact it rests on is still unverified. */
+  eligibility: { state: "eligible" | "likely" | "not"; reasons: Msg[]; confirm: Msg[] };
+  fit: Msg[];
+  /** Scam-guard reasons; empty when nothing was flagged. */
+  scam: Msg[];
+  requirements: { text: Msg; kind: ArtifactKind; status: FieldStatus; artifactId?: string }[];
+  stage: PipelineStage | null;
+  demo: true;
+}
+
+export interface OpportunityFilters {
+  type?: OpportunityType;
+  closingSoon?: boolean;
+}
+
+export interface OpportunitiesApi {
+  listOpportunities(workspaceId: string, filters?: OpportunityFilters): Promise<Opportunity[]>;
+  getOpportunity(workspaceId: string, opportunityId: string): Promise<Opportunity>;
+  setPipelineStage(workspaceId: string, opportunityId: string, stage: PipelineStage | null): Promise<Opportunity>;
+  reportOpportunity(workspaceId: string, opportunityId: string): Promise<void>;
+}
+
+// ---------------------------------------------------------------------------
+// Funding readiness, common application, passport and document verification
+// ---------------------------------------------------------------------------
+
+export interface ReadinessComponent {
+  id: "evidence" | "ledger" | "documents" | "legal" | "consistency";
+  points: number;
+  max: number;
+  note: Msg;
+}
+
+export interface ReadinessAction {
+  id: string;
+  title: Msg;
+  /** Points the score would gain if this were done. */
+  raises: number;
+  href: string;
+}
+
+export interface Readiness {
+  score: number;
+  components: ReadinessComponent[];
+  /** The three that raise the score most, never more. */
+  actions: ReadinessAction[];
+}
+
+export interface CommonField {
+  id: string;
+  label: Msg;
+  status: FieldStatus;
+  source: Msg;
+  /** Ids of the calls whose form asks for this answer. */
+  requiredBy: string[];
+}
+
+export interface CommonApplication {
+  calls: { id: string; title: string }[];
+  fields: CommonField[];
+}
+
+export interface PassportShare {
+  id: string;
+  token: string;
+  scope: "basic" | "full";
+  createdAt: string;
+  expiresAt: string;
+  revoked: boolean;
+  /** Worked out by the API from the dates and the revoke switch. */
+  state: "ok" | "expired" | "revoked";
+  views: { at: string; who: Msg }[];
+}
+
+export interface PassportData {
+  business: string;
+  facts: FieldRow[];
+  shares: PassportShare[];
+}
+
+export type SharedPassport =
+  | { state: "ok"; business: string; facts: FieldRow[]; expiresAt: string }
+  | { state: "expired" | "revoked" | "unknown" };
+
+export type DocumentFormat = "docx" | "pdf" | "xlsx" | "json";
+
+export interface DocumentRecord {
+  id: string;
+  title: string;
+  format: DocumentFormat;
+  language: Lang;
+  artifactId: string;
+  artifactTitle: string;
+  artifactKind: ArtifactKind;
+  version: number;
+  createdAt: string;
+  /** SHA-256 of the file, hex. The footer shows the first 12 characters. */
+  hash: string;
+  provenance: FieldStatusCounts;
+}
+
+/** What the public verification page may show: the issuer's name only, never the content. */
+export interface PublicDocument {
+  id: string;
+  title: string;
+  issuer: string;
+  format: DocumentFormat;
+  createdAt: string;
+  provenance: FieldStatusCounts;
+  verifiers: ("grounding" | "rules" | "language")[];
+}
+
+export interface TrustApi {
+  getReadiness(workspaceId: string): Promise<Readiness>;
+  getCommonApplication(workspaceId: string): Promise<CommonApplication>;
+  getPassport(workspaceId: string): Promise<PassportData>;
+  createShare(workspaceId: string, input: { scope: PassportShare["scope"]; days: number }): Promise<PassportShare>;
+  revokeShare(workspaceId: string, shareId: string): Promise<void>;
+  /** Public: opens a shared Passport by its token and records the view. */
+  openSharedPassport(token: string): Promise<SharedPassport>;
+  listDocuments(workspaceId: string): Promise<DocumentRecord[]>;
+  /** The text of the prototype's sample file for a document (a real export would be DOCX, PDF or XLSX). */
+  getDocumentText(documentId: string): Promise<string>;
+  /** Public: summary for the verification page, or null when there is no such document. */
+  getPublicDocument(documentId: string): Promise<PublicDocument | null>;
+  /** Public: compares the SHA-256 of a file the visitor holds with the one recorded at export. */
+  verifyDocument(documentId: string, sha256: string): Promise<"match" | "altered">;
+}
+
+// ---------------------------------------------------------------------------
 // The API
 // ---------------------------------------------------------------------------
 
@@ -555,4 +720,4 @@ export interface ActivityApi {
   listActivity(workspaceId: string): Promise<ActivityEvent[]>;
 }
 
-export type BizzAgentApi = AccountsApi & ConversationsApi & InboxApi & MissionsApi & ActivityApi & ArtifactsApi;
+export type BizzAgentApi = AccountsApi & ConversationsApi & InboxApi & MissionsApi & ActivityApi & ArtifactsApi & OpportunitiesApi & TrustApi;

@@ -3,7 +3,7 @@
  * funder here is invented (docs/product/personas.md). Nothing is real.
  */
 
-import type { ArtifactKind, ArtifactSummary, Deadline, LegalForm, MissionSummary, PartnerKind, Role, WorkspaceType } from "../../contract";
+import type { ArtifactKind, ArtifactSummary, LegalForm, MissionSummary, PartnerKind, Role, WorkspaceType } from "../../contract";
 import type { Stage } from "@/components/ds/fidel-journey";
 import type { Lang } from "@/lib/types";
 
@@ -21,7 +21,6 @@ export interface WsSeed {
   flags: WsFlags;
   artifacts: ArtifactSummary[];
   missions: MissionSummary[];
-  deadlines: Deadline[];
 }
 
 export interface PersonaSeed {
@@ -95,7 +94,6 @@ export const WORKSPACES: WsSeed[] = [
         nextStep: { id: "ms.approve" },
       },
     ],
-    deadlines: [{ id: "d1", title: "Highland Enterprise Fund · Agro-processing call", iso: daysFromToday(24) }],
   },
   {
     id: "meron-garments",
@@ -140,10 +138,6 @@ export const WORKSPACES: WsSeed[] = [
         nextStep: { id: "ms.approve" },
       },
     ],
-    deadlines: [
-      { id: "d1", title: "Addis Textile Trade Fair", iso: daysFromToday(41) },
-      { id: "d2", title: "SME Export Window · tender", iso: daysFromToday(12) },
-    ],
   },
   {
     id: "abel-studio",
@@ -175,10 +169,6 @@ export const WORKSPACES: WsSeed[] = [
         nextStep: { id: "ms.answer" },
       },
     ],
-    deadlines: [
-      { id: "d1", title: "Addis Launchpad · accelerator cohort", iso: daysFromToday(19) },
-      { id: "d2", title: "Addis Food-Tech Weekend", iso: daysFromToday(30) },
-    ],
   },
   {
     id: "selam-idea",
@@ -201,7 +191,6 @@ export const WORKSPACES: WsSeed[] = [
         nextStep: { id: "ms.answer" },
       },
     ],
-    deadlines: [],
   },
   {
     id: "kuri-team",
@@ -225,7 +214,6 @@ export const WORKSPACES: WsSeed[] = [
         nextStep: { id: "ms.running", vars: { n: 3, m: 5 } },
       },
     ],
-    deadlines: [],
   },
   {
     id: "highland",
@@ -236,7 +224,6 @@ export const WORKSPACES: WsSeed[] = [
     flags: baseFlags,
     artifacts: [],
     missions: [],
-    deadlines: [],
   },
   {
     id: "launchpad",
@@ -247,7 +234,6 @@ export const WORKSPACES: WsSeed[] = [
     flags: baseFlags,
     artifacts: [],
     missions: [],
-    deadlines: [],
   },
   {
     id: "bridge",
@@ -258,7 +244,6 @@ export const WORKSPACES: WsSeed[] = [
     flags: baseFlags,
     artifacts: [],
     missions: [],
-    deadlines: [],
   },
 ];
 

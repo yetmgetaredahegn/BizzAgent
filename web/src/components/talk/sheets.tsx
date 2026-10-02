@@ -81,7 +81,7 @@ function EntrySheetView({ sheet }: { sheet: SheetEntry }) {
       </dl>
       <div>
         <h3 className="num mb-2 text-xs tracking-wide text-muted uppercase">{t("entry.comp")}</h3>
-        <div className="overflow-x-auto">
+        <div className="relative overflow-x-auto">
           <table className="w-full min-w-[22rem] text-left text-sm">
             <tbody className="ledger-rule">
               {sheet.competitors.map((c) => (
