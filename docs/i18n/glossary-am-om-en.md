@@ -10,6 +10,7 @@
 
 | English | Amharic (draft) | Afaan Oromo (draft) | Plain definition (en) |
 |---|---|---|---|
+| BizzAgent (product name) | ቢዝኤጀንት (owner-confirmed spelling) | BizzAgent (Latin, not translated) | The product's name. |
 | business | ንግድ | daldala | Selling goods or services to earn money. |
 | profit | ትርፍ | bu'aa | Money left after costs are paid. |
 | profit margin | TODO(native review) | TODO(native review) | Profit as a share of the sale price. |

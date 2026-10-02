@@ -2,7 +2,7 @@
 
 > **What this is:** the visual identity: concept, logo, colour (with measured contrast), typography, signature components, layout, imagery, voice and the review process.
 > **Who reads it:** designers and front-end engineers. Tokens are in [tokens.json](tokens.json); components are in [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md).
-> **Last reviewed:** 2026-10-02 · **Status:** awaiting the owner's approval of the brand board
+> **Last reviewed:** 2026-10-02 · **Status:** brand board v2 awaiting the owner's logo pick
 
 ## 1. Brief
 
@@ -35,6 +35,10 @@ Ethiopian context comes through **content and conventions**: birr, the EC calend
 Ge'ez script and local examples. There are **no** flags, tibeb borders, coffee-cup clip art or
 stock "Africa" imagery.
 
+**Balance.** The identity is simple but not plain. The creative layer is paperwork objects that
+each carry meaning (see [ux-principles §4](ux-principles.md#4-balanced-creativity)), under a strict
+per-screen budget.
+
 **Generic directions explicitly avoided:**
 
 - cream + serif display + terracotta
@@ -48,20 +52,41 @@ stock "Africa" imagery.
 - glows and glass
 - decorative 01/02/03 numbering
 
-## 3. Logo
+## 3. Logo and name
 
-- **Mark.** The Ge'ez syllable **ብ** ("bə": the first sound of *birr* and *BizzAgent*), set
-  inside a square stamp. The stamp has slightly softened corners (2 px radius at 32 px) and an
-  inner ring, in stamp ink. It renders as an SVG with no gradient.
+**Name.** The product is **BizzAgent**, written **ቢዝኤጀንት** in Amharic (confirmed by the owner).
+The Amharic name starts with **ቢ** (bi). An earlier draft of the mark used ብ (bə); that was wrong
+and is withdrawn. Two story names were shown as alternatives (Mahtem ማኅተም "seal" and Wekil ወኪል
+"agent"); the owner may choose one. A rename is a separate PR and needs a trademark, domain and
+existing-company check first.
+
+**The story.** *You say it, and it becomes a stamped, trusted paper that travels with you.*
+
+**Concepts** (SVG sources in [logo/](logo/); all are built from the real ቢ letterform outline):
+
+| | Concept | Story | Notes |
+|---|---|---|---|
+| A | **Voice becomes record** | A sound wave under the letter settles into a stamp | Modern; least "paperwork" |
+| B | **The round office stamp** | Ethiopian office stamps are round with rim text: ቢዝኤጀንት above, BIZZAGENT below, a speech bubble with ቢ in the middle | Most recognisably official. Rim text is too fine below about 40 px, so small sizes drop to two rings and ቢ |
+| C | **The clipped receipt** | A torn receipt slip with ቢ, held by a paper clip: your business papers, kept together and checked | Friendly, ownable, ties to the interface motifs |
+| D | **The receipt roll** | A roll feeds a printed receipt with ቢ, two lines of work and a checked stamp | Best "step by step" story; generic at small sizes |
+
+**Recommendation.** **C is the product logo. B is the document seal**, stamped on every export
+next to the verification QR code. The final choice is recorded here after the owner picks.
+**Working default for the prototype: C (logo) and B (seal).** The logo is one component
+(`Logo`, `LogoMark`), so changing the choice is a one-file change.
+
+**Rules (all concepts):**
+
 - **Wordmark.** "BizzAgent" in Familjen Grotesk 700, with the "zz" kerned tight like a stamped
-  serial number.
-- **Lockups:**
-  - mark only (app icon, favicon)
-  - horizontal (header)
-  - stacked Amharic variant "ቢዝኤጀንት"
-- **Clear space** = the height of the ብ. **Minimum size** 20 px.
-- **Cultural check: required before launch.** A native reviewer confirms the use of ብ and the
-  Amharic transliteration.
+  serial number. Amharic wordmark "ቢዝኤጀንት" in Noto Sans Ethiopic 700.
+- **Small marks.** Each concept has a simplified mark for 16–32 px (favicon, tab, app list).
+- **Colour.** One colour: stamp ink. A knock-out ring in the page colour keeps the paper clip
+  readable over the slip. On stamp-ink backgrounds, the mark is `on-stamp`.
+- **Lockups:** mark only (app icon, favicon), horizontal (header), stacked Amharic.
+- **Clear space** = the height of the ቢ. **Minimum size** 20 px (16 px with the small mark).
+- **Cultural check: required before launch.** A native reviewer confirms the use of ቢ, the
+  spelling "ቢዝኤጀንት" and the rim text.
 
 ## 4. Colour
 
@@ -164,7 +189,7 @@ acceptable copy. See [content guidelines](content-guidelines.md).
 ## 10. Review process
 
 1. This document, [tokens.json](tokens.json) and a **brand board with key-screen mockups**
-   (published as a private artifact: [brand board v1](https://claude.ai/artifact/UAUbLsy9cXYWMkSHCwMizy))
+   (published as a private artifact: [brand board v2](https://claude.ai/artifact/UAUbLsy9cXYWMkSHCwMizy))
    are reviewed by the owner. The mockups cover onboarding,
    Home, Talk with ReceiptTape, Opportunities and CostTicket, at 390 and 1440, in light and dark,
    in 3 languages.
