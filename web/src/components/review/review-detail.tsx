@@ -114,7 +114,7 @@ export function ReviewDetail({ id }: { id: string }) {
                 onClick={() => setTab(id)}
                 className={cn(
                   "border-b-2 px-4 py-3 text-sm font-semibold whitespace-nowrap transition-colors",
-                  tab === id ? "border-navy-600 text-navy-700" : "border-transparent text-muted hover:text-ink",
+                  tab === id ? "border-ink-600 text-ink-700" : "border-transparent text-muted hover:text-ink",
                 )}
               >
                 {label}
@@ -128,7 +128,7 @@ export function ReviewDetail({ id }: { id: string }) {
         {tab === "assessment" && (
           <div className="space-y-10">
             <Card className="relative overflow-hidden p-6 sm:p-8">
-              <Quote className="absolute top-5 right-5 size-10 text-navy-100" aria-hidden />
+              <Quote className="absolute top-5 right-5 size-10 text-ink-100" aria-hidden />
               <p className="text-xs font-bold tracking-wider text-subtle uppercase">Justification</p>
               <p className="mt-3 max-w-3xl text-lg leading-relaxed text-ink">{e.justification}</p>
             </Card>
@@ -170,13 +170,13 @@ export function ReviewDetail({ id }: { id: string }) {
           {previous ? (
             <Link href={`/review/${previous.pack.id}`} className="group rounded-2xl p-4 ring-1 ring-line hover:bg-surface">
               <span className="flex items-center gap-1.5 text-xs text-subtle"><ArrowLeft className="size-3.5" aria-hidden /> Previous</span>
-              <span className="mt-1 block font-semibold group-hover:text-navy-700">{previous.pack.data.applicant.company_profile.company_name}</span>
+              <span className="mt-1 block font-semibold group-hover:text-ink-700">{previous.pack.data.applicant.company_profile.company_name}</span>
             </Link>
           ) : <span />}
           {next && (
             <Link href={`/review/${next.pack.id}`} className="group rounded-2xl p-4 text-right ring-1 ring-line hover:bg-surface">
               <span className="flex items-center justify-end gap-1.5 text-xs text-subtle">Next <ArrowRight className="size-3.5" aria-hidden /></span>
-              <span className="mt-1 block font-semibold group-hover:text-navy-700">{next.pack.data.applicant.company_profile.company_name}</span>
+              <span className="mt-1 block font-semibold group-hover:text-ink-700">{next.pack.data.applicant.company_profile.company_name}</span>
             </Link>
           )}
         </nav>

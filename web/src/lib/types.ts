@@ -1,11 +1,11 @@
 /*
- * TypeScript mirrors of the FastAPI/Pydantic schemas in backend/app/schemas,
+ * TypeScript mirrors of the FastAPI/Pydantic schemas in backend/src/bizzagent/schemas,
  * plus view types the web app layers on top (provenance, evaluation).
  * Keep the mirrored shapes in sync with the Python models.
  */
 
 // ---------------------------------------------------------------------------
-// Mirrors of backend/app/schemas/company.py
+// Mirrors of backend/src/bizzagent/schemas/company.py
 // ---------------------------------------------------------------------------
 
 export const BUSINESS_ORGANIZATIONS = [
@@ -87,7 +87,7 @@ export interface ApplicantDescription {
 }
 
 // ---------------------------------------------------------------------------
-// Mirrors of backend/app/schemas/intervention.py
+// Mirrors of backend/src/bizzagent/schemas/intervention.py
 // ---------------------------------------------------------------------------
 
 export const EXPECTED_RESULTS = {
@@ -132,7 +132,8 @@ export interface InterventionRequest {
 }
 
 // ---------------------------------------------------------------------------
-// Mirrors of application.py, evidence.py, gaps.py, impact.py, interview.py
+// Mirrors of application.py, evidence.py, gaps.py, impact.py and
+// legacy/interview/schemas.py
 // ---------------------------------------------------------------------------
 
 export interface Evidence {
@@ -180,17 +181,14 @@ export interface ImpactProtocolDraft {
   sector: string | null;
 }
 
-export interface ApplicationResponse {
+/** Response of POST /applications/process: what was checked, nothing more. */
+export interface DocumentCheckResponse {
   status: string;
-  application: ApplicationData;
-  impact_protocol: ImpactProtocolDraft;
-  transcript: TranscriptionResult | null;
   files: {
-    audio: FileMetadata | null;
     license: FileMetadata;
     workshop: FileMetadata;
   };
-  gaps: InformationGap[];
+  checks: Record<string, boolean>;
 }
 
 export interface InterviewQuestion {
@@ -232,7 +230,7 @@ export type FieldStatus =
 /**
  * Where a value came from. The language model is deliberately not a source:
  * it interprets evidence, it does not create it. "draft_for_approval" marks
- * wording FundFlow proposed that the applicant still has to approve.
+ * wording BizzAgent proposed that the applicant still has to approve.
  */
 export type EvidenceSource =
   | "applicant_voice"
@@ -313,6 +311,6 @@ export interface DeclarationRecord {
   id: DeclarationId;
   understood?: { language: Lang; at: string };
   question?: { language: Lang; at: string };
-  /** Only ever set by the applicant's own click. FundFlow never sets it. */
+  /** Only ever set by the applicant's own click. BizzAgent never sets it. */
   applicantTickedAt?: string;
 }

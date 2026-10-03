@@ -23,7 +23,7 @@ export function ScoreRing({
   const circumference = 2 * Math.PI * radius;
   const share = Math.max(0, Math.min(1, value / max));
   const color =
-    tone === "brand" ? "var(--color-brand-500)" : tone === "navy" ? "var(--color-navy-600)" : "#94a3b8";
+    tone === "brand" ? "var(--color-brand-500)" : tone === "navy" ? "var(--color-ink-600)" : "#94a3b8";
 
   return (
     <div
@@ -74,7 +74,7 @@ export function ScoreBar({
   const colors = {
     brand: "bg-brand-500",
     amber: "bg-amber-400",
-    navy: "bg-navy-600",
+    navy: "bg-ink-600",
     rose: "bg-rose-400",
     slate: "bg-slate-300",
   };

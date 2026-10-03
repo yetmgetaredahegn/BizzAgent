@@ -86,7 +86,7 @@ export function FieldValue({ kind, value }: { kind: FieldKind; value: unknown })
         <div className="max-w-sm">
           <div className="flex h-2.5 overflow-hidden rounded-full bg-line">
             <span className="bg-saffron-400" style={{ width: `${(o.women_percentage / Math.max(total, 100)) * 100}%` }} />
-            <span className="bg-navy-400" style={{ width: `${(o.men_percentage / Math.max(total, 100)) * 100}%` }} />
+            <span className="bg-ink-400" style={{ width: `${(o.men_percentage / Math.max(total, 100)) * 100}%` }} />
           </div>
           <p className="mt-1.5 text-sm">
             <span className="font-semibold">Women {o.women_percentage}%</span>
@@ -187,7 +187,7 @@ export function FieldValue({ kind, value }: { kind: FieldKind; value: unknown })
                 <span
                   className={cn(
                     "grid size-4 shrink-0 place-items-center rounded border",
-                    on ? "border-navy-600 bg-navy-600 text-white" : "border-line-strong bg-surface",
+                    on ? "border-ink-600 bg-ink-600 text-white" : "border-line-strong bg-surface",
                   )}
                   aria-hidden
                 >
@@ -236,7 +236,7 @@ export function FieldValue({ kind, value }: { kind: FieldKind; value: unknown })
         <ol className="space-y-1.5 text-sm">
           {(value as Milestone[]).map((m) => (
             <li key={m.description} className="flex gap-3">
-              <span className="w-16 shrink-0 font-semibold text-navy-600">{m.target ?? "—"}</span>
+              <span className="w-16 shrink-0 font-semibold text-ink-600">{m.target ?? "—"}</span>
               <span className="text-ink">{m.description}</span>
             </li>
           ))}

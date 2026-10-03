@@ -50,8 +50,7 @@ export function IntakeScreen() {
     setError(null);
     try {
       const response = await processApplication(licence.file, workshop.file);
-      // Only the document check is kept. The mock application in the
-      // response is not applicant data and is deliberately discarded.
+      // The check reports only which files passed; no applicant data.
       liveSessionStore.set({
         language: lang,
         startedAt: new Date().toISOString(),
@@ -112,7 +111,7 @@ export function IntakeScreen() {
                     onClick={() => setLang(option.id)}
                     className={cn(
                       "rounded-2xl px-5 py-4 text-left ring-2 transition-colors",
-                      active ? "bg-navy-600 text-white ring-navy-600" : "bg-surface text-ink ring-line hover:ring-navy-200",
+                      active ? "bg-ink-600 text-white ring-ink-600" : "bg-surface text-ink ring-line hover:ring-ink-200",
                     )}
                   >
                     <span lang={option.id} className="block text-lg font-bold">{option.native}</span>
@@ -126,7 +125,7 @@ export function IntakeScreen() {
           <section className="mt-10 grid gap-6 sm:grid-cols-2" aria-label="Photos">
             <FileDrop
               id="licence"
-              icon={<FileText className="size-4 text-navy-600" aria-hidden />}
+              icon={<FileText className="size-4 text-ink-600" aria-hidden />}
               label={t("intake.licence")}
               hint={t("intake.licenceHint")}
               value={licence}
@@ -136,7 +135,7 @@ export function IntakeScreen() {
             />
             <FileDrop
               id="workshop"
-              icon={<Camera className="size-4 text-navy-600" aria-hidden />}
+              icon={<Camera className="size-4 text-ink-600" aria-hidden />}
               label={t("intake.workshop")}
               hint={t("intake.workshopHint")}
               value={workshop}
@@ -173,7 +172,7 @@ export function IntakeScreen() {
               {busy ? t("intake.checking") : t("intake.submit")}
             </Button>
             <p className="flex items-center gap-1.5 text-xs text-subtle" lang="en">
-              <Lock className="size-3.5" aria-hidden /> Photos go only to the FundFlow service to be checked.
+              <Lock className="size-3.5" aria-hidden /> Photos go only to the BizzAgent service to be checked.
             </p>
           </div>
         </div>

@@ -5,8 +5,8 @@
  * it is required, what evidence would establish it and who can provide it.
  * The pack view, the gap list and the evaluator all read from here.
  *
- * The section split mirrors backend/app/schemas (company.py, intervention.py).
- * Reconcile labels and numbering against the official sequa form before use.
+ * The section split mirrors backend/src/bizzagent/schemas (company.py, intervention.py).
+ * Reconcile labels and numbering against the funder's official form before use.
  */
 
 import type { ApplicationPack } from "./types";
@@ -405,7 +405,7 @@ export const FORM_FIELDS: FormField[] = [
     label: "Organogram",
     kind: "longtext",
     required: true,
-    needs: "Who reports to whom. FundFlow can draft it from the team list for the owner to confirm.",
+    needs: "Who reports to whom. BizzAgent can draft it from the team list for the owner to confirm.",
     provider: "Applicant",
     get: (p) => applicant(p).management.organogram,
   },

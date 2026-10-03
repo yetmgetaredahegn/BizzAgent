@@ -80,7 +80,7 @@ function DeclarationCard({
           </p>
         )}
         {question && (
-          <p className="mt-2 flex items-center gap-2 rounded-xl bg-navy-50 px-4 py-2.5 text-sm font-semibold text-navy-800 ring-1 ring-navy-200">
+          <p className="mt-2 flex items-center gap-2 rounded-xl bg-ink-50 px-4 py-2.5 text-sm font-semibold text-ink-800 ring-1 ring-ink-200">
             <MessageCircleQuestionMark className="size-4 shrink-0" aria-hidden />
             {t("decl.recordedQuestion")}
           </p>
@@ -97,7 +97,7 @@ function DeclarationCard({
         <input
           id={checkboxId}
           type="checkbox"
-          className="mt-0.5 size-5 shrink-0 accent-navy-600 disabled:cursor-not-allowed"
+          className="mt-0.5 size-5 shrink-0 accent-ink-600 disabled:cursor-not-allowed"
           checked={ticked}
           disabled={!understood}
           onChange={(event) =>
@@ -144,7 +144,7 @@ export function DeclarationsView() {
               onClick={() => setLang(option.id)}
               className={cn(
                 "rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors",
-                option.id === lang ? "bg-navy-600 text-white" : "text-muted hover:text-ink",
+                option.id === lang ? "bg-ink-600 text-white" : "text-muted hover:text-ink",
               )}
             >
               {option.native}
@@ -166,7 +166,7 @@ export function DeclarationsView() {
             {ticked}
             <span className="text-lg text-subtle">/{DECLARATIONS.length}</span>
           </p>
-          <p className="mt-1 text-sm text-muted">ticked by {applicantName}, never by FundFlow</p>
+          <p className="mt-1 text-sm text-muted">ticked by {applicantName}, never by BizzAgent</p>
         </Card>
       </div>
 

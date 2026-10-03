@@ -111,12 +111,12 @@ export interface LiveSession {
 
 export type DeclarationBook = Record<string, Partial<Record<DeclarationId, DeclarationRecord>>>;
 
-export const languageStore = createStore<Lang>("fundflow.lang", "local", "en");
-export const liveSessionStore = createStore<LiveSession | null>("fundflow.live", "session", null);
-export const declarationStore = createStore<DeclarationBook>("fundflow.declarations", "session", {});
-export const reviewQueueStore = createStore<ApplicationPack[]>("fundflow.review.queue", "local", []);
+export const languageStore = createStore<Lang>("bizzagent.lang", "local", "en");
+export const liveSessionStore = createStore<LiveSession | null>("bizzagent.live", "session", null);
+export const declarationStore = createStore<DeclarationBook>("bizzagent.declarations", "session", {});
+export const reviewQueueStore = createStore<ApplicationPack[]>("bizzagent.review.queue", "local", []);
 export const importedBatchStore = createStore<ApplicationPack[] | null>(
-  "fundflow.review.imported",
+  "bizzagent.review.imported",
   "local",
   null,
 );

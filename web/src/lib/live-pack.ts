@@ -47,7 +47,7 @@ export function buildLivePack(session: LiveSession): ApplicationPack {
     if (field.section === "licence") {
       provenance[field.key] = missing(
         session.documents.checked
-          ? "The licence photo passed the document check, but FundFlow does not read its details yet."
+          ? "The licence photo passed the document check, but BizzAgent does not read its details yet."
           : "No licence photo has been checked.",
       );
     } else {

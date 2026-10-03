@@ -15,7 +15,7 @@ export default function NotFound() {
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <ButtonLink href="/">
-            <ArrowLeft className="size-4" aria-hidden /> Back to FundFlow
+            <ArrowLeft className="size-4" aria-hidden /> Back to BizzAgent
           </ButtonLink>
           <ButtonLink href="/review" variant="secondary">Reviewer dashboard</ButtonLink>
         </div>

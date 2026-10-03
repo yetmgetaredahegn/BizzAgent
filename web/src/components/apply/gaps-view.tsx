@@ -20,7 +20,7 @@ export function GapsView() {
 
   async function copyQuestions() {
     const text = [
-      `Questions for ${name ?? "the applicant"} (FundFlow):`,
+      `Questions for ${name ?? "the applicant"} (BizzAgent):`,
       ...forApplicant.map((g, i) => `${i + 1}. ${g.label}: ${g.required_evidence}`),
     ].join("\n");
     try {

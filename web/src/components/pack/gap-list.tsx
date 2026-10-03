@@ -55,7 +55,7 @@ function GapCard({ gap, localized }: { gap: Gap; localized?: boolean }) {
         <dt className="text-subtle">Needs</dt>
         <dd className="text-ink">{gap.required_evidence}</dd>
         <dt className="text-subtle">From</dt>
-        <dd className="font-medium text-navy-700">{gap.provider}</dd>
+        <dd className="font-medium text-ink-700">{gap.provider}</dd>
       </dl>
     </li>
   );
@@ -71,7 +71,7 @@ function ProviderGroups({ gaps, localized }: { gaps: Gap[]; localized?: boolean 
         return (
           <Card key={provider} className="overflow-hidden">
             <div className="flex items-center gap-3 border-b border-line bg-paper/60 px-5 py-3 sm:px-6">
-              <Icon className="size-4 text-navy-600" aria-hidden />
+              <Icon className="size-4 text-ink-600" aria-hidden />
               <p className="text-sm font-semibold">From: {provider}</p>
               <Badge tone="navy" className="ml-auto">{items.length}</Badge>
             </div>

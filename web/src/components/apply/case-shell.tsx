@@ -70,7 +70,7 @@ function CaseHeader({ caseId, step }: { caseId: string; step: string }) {
     <div className="print-hidden border-b border-line bg-surface">
       <Container className="flex flex-col gap-4 py-5 md:flex-row md:items-center md:justify-between">
         <div className="flex min-w-0 items-center gap-4">
-          <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-navy-600 text-white">
+          <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-ink-600 text-white">
             {caseId === "live" ? <Mic className="size-5" aria-hidden /> : (
               <span className="text-base font-bold">
                 {persona?.name.split(" ").map((p) => p[0]).join("")}
@@ -101,7 +101,7 @@ function CaseHeader({ caseId, step }: { caseId: string; step: string }) {
               className={cn(
                 "rounded-full px-3.5 py-1.5 text-sm font-semibold whitespace-nowrap ring-1 transition-colors",
                 id === caseId
-                  ? "bg-navy-600 text-white ring-navy-600"
+                  ? "bg-ink-600 text-white ring-ink-600"
                   : "bg-paper text-muted ring-line hover:text-ink",
               )}
             >
@@ -144,8 +144,8 @@ function StepNav({ caseId, step }: { caseId: string; step: string }) {
               className={cn(
                 "flex shrink-0 items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm font-semibold ring-1 transition-colors lg:ring-0",
                 active
-                  ? "bg-navy-600 text-white ring-navy-600"
-                  : "bg-surface text-muted ring-line hover:bg-navy-50/60 hover:text-ink lg:bg-transparent",
+                  ? "bg-ink-600 text-white ring-ink-600"
+                  : "bg-surface text-muted ring-line hover:bg-ink-50/60 hover:text-ink lg:bg-transparent",
               )}
             >
               <Icon className="size-4 shrink-0" aria-hidden />

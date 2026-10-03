@@ -1,11 +1,11 @@
 /*
  * Scoring grid configuration.
  *
- * ILLUSTRATIVE: the official sequa grid (nine weighted criteria, eligibility
+ * ILLUSTRATIVE: the funder's official grid (nine weighted criteria, eligibility
  * gate and three exclusion factors) is not in this repository yet. The
  * criteria below follow the application form so the screens can be built and
  * demonstrated; replace names, weights and thresholds with the official grid.
- * The evaluator in evaluate.ts should later move to backend/app/rules.py.
+ * The evaluator in evaluate.ts moves to the backend rules package (bizzagent.rules).
  */
 
 import type { ApplicationPack, SectorCategory } from "./types";

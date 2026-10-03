@@ -31,7 +31,7 @@ export function PackView() {
           onClick={() => setOnlyAttention((v) => !v)}
           className={cn(
             "inline-flex items-center gap-2 self-start rounded-full px-4 py-2 text-sm font-semibold ring-1 transition-colors sm:self-auto",
-            onlyAttention ? "bg-navy-600 text-white ring-navy-600" : "bg-surface text-ink ring-line-strong hover:bg-navy-50/60",
+            onlyAttention ? "bg-ink-600 text-white ring-ink-600" : "bg-surface text-ink ring-line-strong hover:bg-ink-50/60",
           )}
         >
           <ListFilter className="size-4" aria-hidden />
@@ -73,14 +73,14 @@ export function PackView() {
           <p className="text-xs font-bold tracking-wider text-subtle uppercase">Evidence received</p>
           <ul className="mt-3 space-y-2.5 text-sm">
             <li className="flex items-center gap-2.5">
-              <FileText className="size-4 text-navy-600" aria-hidden />
+              <FileText className="size-4 text-ink-600" aria-hidden />
               Licence photo
               <span className="ml-auto">
                 <StatusBadge status={pack.documents?.licence_photo ? "established" : "missing"} size="xs" />
               </span>
             </li>
             <li className="flex items-center gap-2.5">
-              <Camera className="size-4 text-navy-600" aria-hidden />
+              <Camera className="size-4 text-ink-600" aria-hidden />
               Workshop photo
               <span className="ml-auto">
                 <StatusBadge status={pack.documents?.workshop_photo ? "established" : "missing"} size="xs" />

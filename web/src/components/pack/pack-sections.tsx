@@ -92,7 +92,7 @@ function SectionCard({
     <Card id={`section-${section.id}`} className="scroll-mt-28 overflow-hidden">
       <div className="flex items-start justify-between gap-4 border-b border-line bg-paper/60 px-5 py-4 sm:px-6">
         <div className="flex min-w-0 items-start gap-3">
-          <span className="mt-0.5 grid h-7 min-w-9 place-items-center rounded-lg bg-navy-600 px-2 text-xs font-bold text-white">
+          <span className="mt-0.5 grid h-7 min-w-9 place-items-center rounded-lg bg-ink-600 px-2 text-xs font-bold text-white">
             {section.id === "licence" ? "ID" : section.id === "impact" ? "IP" : section.id}
           </span>
           <div className="min-w-0">

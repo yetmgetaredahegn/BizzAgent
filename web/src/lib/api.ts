@@ -1,10 +1,10 @@
 /*
- * Typed client for the existing FundFlow FastAPI endpoints
- * (backend/app/routes). Base URL from NEXT_PUBLIC_API_BASE_URL.
+ * Typed client for the existing BizzAgent FastAPI endpoints
+ * (backend/src/bizzagent/routes). Base URL from NEXT_PUBLIC_API_BASE_URL.
  */
 
 import type {
-  ApplicationResponse,
+  DocumentCheckResponse,
   InterviewAnswerResponse,
   InterviewState,
 } from "./types";
@@ -29,7 +29,7 @@ async function request<T>(path: string, init: RequestInit): Promise<T> {
     response = await fetch(`${API_BASE_URL}${path}`, init);
   } catch {
     throw new ApiError(
-      `Could not reach the FundFlow service at ${API_BASE_URL}. Is the backend running?`,
+      `Could not reach the BizzAgent service at ${API_BASE_URL}. Is the backend running?`,
     );
   }
 
@@ -49,7 +49,7 @@ async function request<T>(path: string, init: RequestInit): Promise<T> {
 }
 
 /** Validates both photos (the licence is checked with OCR). */
-export function processApplication(licence: File, workshop: File): Promise<ApplicationResponse> {
+export function processApplication(licence: File, workshop: File): Promise<DocumentCheckResponse> {
   const body = new FormData();
   body.append("license_image", licence);
   body.append("workshop_image", workshop);

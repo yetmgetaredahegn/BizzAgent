@@ -2,7 +2,7 @@
  * Deterministic evaluation: eligibility gate, exclusion factors and the
  * weighted grid. No language model is involved. A criterion whose inputs are
  * missing is not scored; one whose inputs contradict each other is held. The
- * rules mirror what should later live in backend/app/rules.py.
+ * rules mirror what should later live in the backend rules package (bizzagent.rules).
  */
 
 import { yearsBetween, type Contradiction } from "./contradictions";

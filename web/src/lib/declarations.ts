@@ -2,7 +2,7 @@
  * Three of the fifteen declarations, explained in plain language.
  *
  * ILLUSTRATIVE wording: replace the official text with the declarations
- * from the sequa form. The Amharic and Afaan Oromo explanations are a first
+ * from the funder's form. The Amharic and Afaan Oromo explanations are a first
  * draft for native-speaker review.
  */
 

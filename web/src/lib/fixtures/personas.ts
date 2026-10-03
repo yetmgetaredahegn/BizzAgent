@@ -128,7 +128,7 @@ export const almaz = quickPack({
       "“All the chillies come from farmers around Bekoji and Asella; only the bags come from Addis.”",
     ),
     "management.organogram": missing(
-      "Almaz has never drawn an organogram. FundFlow can draft one from the team list for her to confirm; it will not invent one.",
+      "Almaz has never drawn an organogram. BizzAgent can draft one from the team list for her to confirm; it will not invent one.",
     ),
     "intervention.problem_description": unverified(
       "workshop_photo",
@@ -376,13 +376,13 @@ export const hiwot = quickPack({
       "Placement fees read out from her notebook in the voice note.",
     ),
     local_raw_material_percentage: missing(
-      "A training business uses few raw materials. Ask whether this applies; if not, the programme team marks it not applicable. FundFlow will not enter 0%.",
+      "A training business uses few raw materials. Ask whether this applies; if not, the programme team marks it not applicable. BizzAgent will not enter 0%.",
     ),
-    "management.organogram": missing("Not described yet. FundFlow can draft one from the team list for her to confirm."),
+    "management.organogram": missing("Not described yet. BizzAgent can draft one from the team list for her to confirm."),
     "intervention.consultants": missing("Hiwot did not ask for advice. Optional section."),
     "intervention.osh_commitment": missing("Ask what safety rules apply in the training room: fire exit, electrical safety."),
     "impact.sector": missing(
-      "Her sector, skills training and job placement, is not in the ImpactProtocol sector list. Flagged for the programme team to add; FundFlow did not force it into the nearest category.",
+      "Her sector, skills training and job placement, is not in the ImpactProtocol sector list. Flagged for the programme team to add; BizzAgent did not force it into the nearest category.",
     ),
   },
 });

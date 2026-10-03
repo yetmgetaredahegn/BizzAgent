@@ -1,6 +1,5 @@
 import { ArrowRight, AudioLines, Mic, Play, Scale, ShieldCheck } from "lucide-react";
 
-import { SequaCredit } from "@/components/site/brand";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/primitives";
 import { ScoreRing } from "@/components/ui/score";
@@ -24,11 +23,11 @@ export function Hero() {
         aria-hidden
       />
       <div className="absolute -top-48 -left-40 size-[38rem] rounded-full bg-brand-300/25 blur-3xl" aria-hidden />
-      <div className="absolute top-24 -right-40 size-[32rem] rounded-full bg-navy-300/20 blur-3xl" aria-hidden />
+      <div className="absolute top-24 -right-40 size-[32rem] rounded-full bg-ink-300/20 blur-3xl" aria-hidden />
 
       <Container className="relative grid items-center gap-12 pt-12 pb-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pt-20 lg:pb-28">
         <div>
-          <div className="animate-fade-up inline-flex items-center gap-2 rounded-full bg-surface px-3 py-1.5 text-xs font-semibold text-navy-700 shadow-card ring-1 ring-line">
+          <div className="animate-fade-up inline-flex items-center gap-2 rounded-full bg-surface px-3 py-1.5 text-xs font-semibold text-ink-700 shadow-card ring-1 ring-line">
             <span className="size-1.5 rounded-full bg-brand-500" />
             For Ethiopian small businesses and the people who fund them
           </div>
@@ -40,14 +39,14 @@ export function Hero() {
           </h1>
 
           <p className="animate-fade-up mt-6 max-w-xl text-lg leading-relaxed text-pretty text-muted [animation-delay:160ms]">
-            FundFlow listens in Amharic, Afaan Oromo or English, reads a paper licence and a
+            BizzAgent listens in Amharic, Afaan Oromo or English, reads a paper licence and a
             workshop photo, and builds a complete, honest funding application.{" "}
             <strong className="font-semibold text-ink">
               Every field it cannot establish is flagged, never guessed.
             </strong>
           </p>
 
-          <div className="animate-fade-up mt-5 space-y-1 text-[15px] text-navy-700/80 [animation-delay:220ms]">
+          <div className="animate-fade-up mt-5 space-y-1 text-[15px] text-ink-700/80 [animation-delay:220ms]">
             <p lang="am">ከድምፅ መልዕክት እስከ ሊደገፍ የሚችል ማመልከቻ።</p>
             <p lang="om">Ergaa sagalee irraa hanga iyyata deeggarsa argachuu danda&apos;utti.</p>
           </div>
@@ -77,8 +76,6 @@ export function Hero() {
               Reviewers get a ranking they can defend
             </li>
           </ul>
-
-          <SequaCredit className="mt-10" />
         </div>
 
         <HeroVisual
@@ -118,7 +115,7 @@ function FieldChip({
       )}
     >
       <p className="text-[11px] font-semibold text-subtle">
-        <span className="font-bold text-navy-600">{section}</span> · {label}
+        <span className="font-bold text-ink-600">{section}</span> · {label}
       </p>
       <p className="mt-1 truncate text-sm font-semibold text-ink">{value}</p>
       <div className="mt-2 flex items-center justify-between gap-2">
@@ -157,11 +154,11 @@ function HeroVisual({
       {/* Phone */}
       <div className="relative mx-auto w-[262px] rounded-[2.6rem] bg-ink p-2.5 shadow-lift sm:absolute sm:top-2 sm:left-0 sm:mx-0">
         <div className="overflow-hidden rounded-[2.1rem] bg-[#efe9df]">
-          <div className="flex items-center gap-2.5 bg-navy-800 px-4 pt-7 pb-3 text-white">
+          <div className="flex items-center gap-2.5 bg-ink-800 px-4 pt-7 pb-3 text-white">
             <div className="grid size-8 place-items-center rounded-full bg-brand-500 text-xs font-bold">DT</div>
             <div className="min-w-0">
               <p className="text-sm leading-tight font-semibold">Dawit (Almaz&apos;s son)</p>
-              <p className="text-[11px] text-white/60">forwarded to FundFlow</p>
+              <p className="text-[11px] text-white/60">forwarded to BizzAgent</p>
             </div>
           </div>
           <div className="space-y-3 px-3 pt-4 pb-6">
@@ -191,7 +188,7 @@ function HeroVisual({
               </div>
             </div>
             <div className="ml-auto w-[88%] rounded-2xl rounded-tr-sm bg-brand-50 p-2.5 text-[12px] leading-snug text-ink shadow-sm ring-1 ring-brand-100">
-              <p className="text-[10px] font-semibold text-brand-700">FundFlow</p>
+              <p className="text-[10px] font-semibold text-brand-700">BizzAgent</p>
               Thank you, Almaz. One question: what protects your workers from chilli dust today?
             </div>
             <div className="ml-auto w-[80%] rounded-2xl rounded-tr-sm bg-brand-50 p-2.5 text-[12px] leading-snug text-ink shadow-sm ring-1 ring-brand-100">
@@ -227,7 +224,7 @@ function HeroVisual({
           status="missing"
           source="ask Almaz"
         />
-        <div className="flex items-center gap-3 rounded-2xl bg-navy-950 p-3 pr-5 text-white shadow-lift sm:animate-float-slow sm:absolute sm:right-10 sm:bottom-0 sm:[animation-delay:2s]">
+        <div className="flex items-center gap-3 rounded-2xl bg-ink-950 p-3 pr-5 text-white shadow-lift sm:animate-float-slow sm:absolute sm:right-10 sm:bottom-0 sm:[animation-delay:2s]">
           <div className="rounded-full bg-white p-0.5">
             <ScoreRing value={total} size={58} stroke={6} className="text-[9px]" />
           </div>

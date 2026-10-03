@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 /*
- * FundFlow design tokens.
- * Brand teal and navy are sampled from the sequa logo (#00B2A9, #1D428A);
- * saffron is a warm berbere accent used sparingly.
+ * BizzAgent interim design tokens (teal brand, ink scale, saffron accent).
+ * They are replaced by the "Stamped" identity in the web redesign; see
+ * docs/design/BRAND.md once it lands.
  */
 @theme {
   --font-sans: var(--font-jakarta), var(--font-ethiopic), ui-sans-serif, system-ui, sans-serif;
@@ -30,17 +30,17 @@
   --color-brand-900: #0a4f4c;
   --color-brand-950: #032e2c;
 
-  --color-navy-50: #eef2fa;
-  --color-navy-100: #d9e1f2;
-  --color-navy-200: #b4c4e6;
-  --color-navy-300: #8099d2;
-  --color-navy-400: #4d6db8;
-  --color-navy-500: #2c55a3;
-  --color-navy-600: #1d428a;
-  --color-navy-700: #183772;
-  --color-navy-800: #142d5c;
-  --color-navy-900: #10244a;
-  --color-navy-950: #0a1730;
+  --color-ink-50: #eef2fa;
+  --color-ink-100: #d9e1f2;
+  --color-ink-200: #b4c4e6;
+  --color-ink-300: #8099d2;
+  --color-ink-400: #4d6db8;
+  --color-ink-500: #2c55a3;
+  --color-ink-600: #1d428a;
+  --color-ink-700: #183772;
+  --color-ink-800: #142d5c;
+  --color-ink-900: #10244a;
+  --color-ink-950: #0a1730;
 
   --color-saffron-50: #fef6e7;
   --color-saffron-100: #fce8c0;
@@ -130,7 +130,7 @@ body {
   background:
     linear-gradient(135deg, var(--color-saffron-400) 25%, transparent 25%) 0 0 / 20px 10px,
     linear-gradient(225deg, var(--color-saffron-400) 25%, transparent 25%) 0 0 / 20px 10px,
-    linear-gradient(90deg, var(--color-brand-500), var(--color-navy-600));
+    linear-gradient(90deg, var(--color-brand-500), var(--color-ink-600));
 }
 
 .grid-texture {
