@@ -1,22 +1,28 @@
 # Python
 __pycache__/
 *.py[cod]
-*.pyo
-
-
-# Local audio recordings and generated audio
-*.m4a
-*.wav
-backend/generated_audio/
-demo/
-interview-state.json
-
-# Virtual environments
 .venv/
 venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
-# Environment variables
+# Runtime data (uploads, generated audio, local databases)
+/backend/var/
+*.db
+*.sqlite
+*.sqlite3
+
+# Local recordings
+*.m4a
+*.wav
+
+# Environment variables (examples are committed)
 .env
+.env.*
+!.env.example
 
 # IDE
 .vscode/
@@ -28,10 +34,3 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
-
-# Application data
-data/
-uploads/
-*.db
-*.sqlite
-*.sqlite3
