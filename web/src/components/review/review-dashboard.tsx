@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { ELIGIBILITY_BADGE } from "@/components/pack/evaluation";
 import { useRankedBatch } from "@/components/review/use-ranked";
+import { useWorkspace } from "@/components/shell/workspace-context";
 import { Button } from "@/components/ui/button";
 import { Badge, Callout, Card, Container, Eyebrow } from "@/components/ui/primitives";
 import { ScoreBar } from "@/components/ui/score";
@@ -67,6 +68,8 @@ function failedFactor(item: RankedApplication): string {
 }
 
 export function ReviewDashboard() {
+  const { workspace } = useWorkspace();
+  const base = `/p/${workspace.id}/review`;
   const { ranked, imported } = useRankedBatch();
   const [filter, setFilter] = useState<Filter>("all");
   const [message, setMessage] = useState<{ tone: "success" | "error"; text: string } | null>(null);
@@ -210,7 +213,7 @@ export function ReviewDashboard() {
                 <tr key={item.pack.id} className="group relative hover:bg-paper/70">
                   <td className="py-4 pl-5 text-base font-bold text-subtle tabular-nums">{item.rank ?? "—"}</td>
                   <td className="py-4 pr-4">
-                    <Link href={`/review/${item.pack.id}`} className="font-semibold text-ink after:absolute after:inset-0 group-hover:text-ink-700">
+                    <Link href={`${base}/${item.pack.id}`} className="font-semibold text-ink after:absolute after:inset-0 group-hover:text-ink-700">
                       {item.pack.data.applicant.company_profile.company_name ?? "Unnamed applicant"}
                     </Link>
                     <p className="text-xs text-subtle">{companyMeta(item)}</p>
@@ -254,7 +257,7 @@ export function ReviewDashboard() {
           const status = STATUS_BADGE[item.status];
           return (
             <li key={item.pack.id}>
-              <Link href={`/review/${item.pack.id}`} className="block">
+              <Link href={`${base}/${item.pack.id}`} className="block">
                 <Card className="p-4">
                   <div className="flex items-start gap-3">
                     <span className="w-6 pt-0.5 text-base font-bold text-subtle tabular-nums">{item.rank ?? "—"}</span>

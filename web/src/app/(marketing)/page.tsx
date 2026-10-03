@@ -1,29 +1,16 @@
 import { Hero } from "@/components/landing/hero";
-import {
-  CtaBand,
-  DeclarationsSpotlight,
-  Honesty,
-  HowItWorks,
-  Languages,
-  Personas,
-  ProblemStrip,
-  ReviewerPreview,
-  TwoPaths,
-} from "@/components/landing/sections";
+import { Compare, How, LanguageTiles, Partners, Pricing, Stories } from "@/components/landing/sections";
 
 export default function LandingPage() {
   return (
     <>
       <Hero />
-      <ProblemStrip />
-      <HowItWorks />
-      <Honesty />
-      <Personas />
-      <TwoPaths />
-      <DeclarationsSpotlight />
-      <ReviewerPreview />
-      <Languages />
-      <CtaBand />
+      <How />
+      <Compare />
+      <Stories />
+      <Partners />
+      <Pricing />
+      <LanguageTiles />
     </>
   );
 }

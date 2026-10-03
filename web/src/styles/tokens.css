@@ -1,0 +1,102 @@
+/* Generated from docs/design/tokens.json by scripts/tokens.mjs. Do not edit. */
+@theme {
+  --breakpoint-phone: 360px;
+  --breakpoint-tablet: 600px;
+  --breakpoint-laptop: 1024px;
+  --breakpoint-desktop: 1440px;
+  --breakpoint-wide: 1920px;
+}
+
+:root {
+  --paper: #F3F4F8;
+  --surface: #FFFFFF;
+  --ink: #161722;
+  --muted: #555A6E;
+  --line: #D9DBE6;
+  --line-strong: #82879B;
+  --stamp: #4A2FBF;
+  --stamp-strong: #36209A;
+  --on-stamp: #FFFFFF;
+  --meskel: #F2C230;
+  --copy-pink: #FBE9EE;
+  --copy-yellow: #FFF6D6;
+  --established: #1C6E47;
+  --unverified: #8A5300;
+  --missing: #5B6274;
+  --contradictory: #B42A22;
+  --on-meskel: #161722;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --radius-stamp: 2px;
+  --radius-sheet: 8px;
+  --radius-pill: 9999px;
+  --shadow-active-sheet: 0px 8px 24px -12px #16172240;
+  --motion-stamp-press: 140ms;
+  --motion-standard: 180ms;
+  --motion-landing-print: 2400ms;
+  --motion-easing: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --bp-phone: 360px;
+  --bp-tablet: 600px;
+  --bp-laptop: 1024px;
+  --bp-desktop: 1440px;
+  --bp-wide: 1920px;
+  --bp-content-max: 1440px;
+  --layout-rail-full: 216px;
+  --layout-rail-collapsed: 64px;
+  --layout-side-column: 320px;
+  --layout-gutter-phone: 16px;
+  --layout-gutter-tablet: 24px;
+  --layout-gutter-desktop: 36px;
+  --touch-target: 44px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  --paper: #111219;
+  --surface: #1A1B25;
+  --ink: #ECEDF5;
+  --muted: #A6A9BD;
+  --line: #2E3040;
+  --line-strong: #6C7088;
+  --stamp: #A99BFF;
+  --stamp-strong: #C4BAFF;
+  --on-stamp: #111219;
+  --meskel: #F2C230;
+  --copy-pink: #2A1F27;
+  --copy-yellow: #29261A;
+  --established: #5CC98F;
+  --unverified: #F0B44C;
+  --missing: #9AA1B5;
+  --contradictory: #FF7A6E;
+  --on-meskel: #111219;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #111219;
+  --surface: #1A1B25;
+  --ink: #ECEDF5;
+  --muted: #A6A9BD;
+  --line: #2E3040;
+  --line-strong: #6C7088;
+  --stamp: #A99BFF;
+  --stamp-strong: #C4BAFF;
+  --on-stamp: #111219;
+  --meskel: #F2C230;
+  --copy-pink: #2A1F27;
+  --copy-yellow: #29261A;
+  --established: #5CC98F;
+  --unverified: #F0B44C;
+  --missing: #9AA1B5;
+  --contradictory: #FF7A6E;
+  --on-meskel: #111219;
+  color-scheme: dark;
+}

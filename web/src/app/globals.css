@@ -1,73 +1,77 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
 /*
- * BizzAgent interim design tokens (teal brand, ink scale, saffron accent).
- * They are replaced by the "Stamped" identity in the web redesign; see
- * docs/design/BRAND.md once it lands.
+ * BizzAgent theme. Colours, type, space, radius and motion come from
+ * docs/design/tokens.json via src/styles/tokens.css (npm run tokens).
+ * Components use these utilities and never raw hex values.
  */
-@theme {
-  --font-sans: var(--font-jakarta), var(--font-ethiopic), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
-  --font-ethiopic: var(--font-noto-ethiopic), var(--font-jakarta), sans-serif;
+@theme inline {
+  --font-sans: var(--font-atkinson), var(--font-noto-ethiopic), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-familjen), var(--font-noto-serif-ethiopic), ui-sans-serif, system-ui,
+    sans-serif;
+  --font-mono: var(--font-atkinson-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-ethiopic: var(--font-noto-ethiopic), var(--font-atkinson), sans-serif;
+  --font-ethiopic-display: var(--font-noto-serif-ethiopic), serif;
 
-  --color-paper: #faf8f4;
-  --color-surface: #ffffff;
-  --color-line: #e8e4db;
-  --color-line-strong: #d6d0c3;
-  --color-ink: #0e1a33;
-  --color-muted: #5a6478;
-  --color-subtle: #8a93a5;
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-stamp: var(--stamp);
+  --color-stamp-strong: var(--stamp-strong);
+  --color-on-stamp: var(--on-stamp);
+  --color-meskel: var(--meskel);
+  --color-on-meskel: var(--on-meskel);
+  --color-copy-pink: var(--copy-pink);
+  --color-copy-yellow: var(--copy-yellow);
+  --color-established: var(--established);
+  --color-unverified: var(--unverified);
+  --color-missing: var(--missing);
+  --color-contradictory: var(--contradictory);
 
-  --color-brand-50: #e6f8f7;
-  --color-brand-100: #c2eeeb;
-  --color-brand-200: #8fe0db;
-  --color-brand-300: #52cfc8;
-  --color-brand-400: #1fc0b8;
-  --color-brand-500: #00b2a9;
-  --color-brand-600: #009a93;
-  --color-brand-700: #007c77;
-  --color-brand-800: #04625e;
-  --color-brand-900: #0a4f4c;
-  --color-brand-950: #032e2c;
+  /* Legacy names used by the funding screens, mapped onto the new palette. */
+  --color-subtle: var(--muted);
+  --color-brand-50: color-mix(in oklab, var(--stamp) 7%, var(--surface));
+  --color-brand-100: color-mix(in oklab, var(--stamp) 14%, var(--surface));
+  --color-brand-200: color-mix(in oklab, var(--stamp) 26%, var(--surface));
+  --color-brand-300: color-mix(in oklab, var(--stamp) 45%, var(--surface));
+  --color-brand-400: color-mix(in oklab, var(--stamp) 70%, var(--surface));
+  --color-brand-500: var(--stamp);
+  --color-brand-600: var(--stamp);
+  --color-brand-700: color-mix(in oklab, var(--stamp) 82%, var(--ink));
+  --color-brand-800: color-mix(in oklab, var(--stamp) 65%, var(--ink));
+  --color-brand-900: color-mix(in oklab, var(--stamp) 50%, var(--ink));
+  --color-brand-950: color-mix(in oklab, var(--stamp) 35%, var(--ink));
+  --color-ink-50: color-mix(in oklab, var(--ink) 5%, var(--surface));
+  --color-ink-100: color-mix(in oklab, var(--ink) 10%, var(--surface));
+  --color-ink-200: color-mix(in oklab, var(--ink) 20%, var(--surface));
+  --color-ink-300: color-mix(in oklab, var(--ink) 35%, var(--surface));
+  --color-ink-400: color-mix(in oklab, var(--ink) 50%, var(--surface));
+  --color-ink-500: color-mix(in oklab, var(--ink) 65%, var(--surface));
+  --color-ink-600: var(--ink);
+  --color-ink-700: var(--ink);
+  --color-ink-800: var(--ink);
+  --color-ink-900: var(--ink);
+  --color-ink-950: var(--ink);
+  --color-saffron-50: color-mix(in oklab, var(--meskel) 12%, var(--surface));
+  --color-saffron-100: color-mix(in oklab, var(--meskel) 24%, var(--surface));
+  --color-saffron-200: color-mix(in oklab, var(--meskel) 45%, var(--surface));
+  --color-saffron-300: color-mix(in oklab, var(--meskel) 70%, var(--surface));
+  --color-saffron-400: var(--meskel);
+  --color-saffron-500: var(--meskel);
+  --color-saffron-600: color-mix(in oklab, var(--meskel) 60%, var(--ink));
+  --color-saffron-700: color-mix(in oklab, var(--meskel) 40%, var(--ink));
 
-  --color-ink-50: #eef2fa;
-  --color-ink-100: #d9e1f2;
-  --color-ink-200: #b4c4e6;
-  --color-ink-300: #8099d2;
-  --color-ink-400: #4d6db8;
-  --color-ink-500: #2c55a3;
-  --color-ink-600: #1d428a;
-  --color-ink-700: #183772;
-  --color-ink-800: #142d5c;
-  --color-ink-900: #10244a;
-  --color-ink-950: #0a1730;
+  --shadow-card: 0 1px 2px rgb(22 23 34 / 0.06);
+  --shadow-lift: var(--shadow-active-sheet);
+  --shadow-sheet: var(--shadow-active-sheet);
 
-  --color-saffron-50: #fef6e7;
-  --color-saffron-100: #fce8c0;
-  --color-saffron-200: #f8d38a;
-  --color-saffron-300: #f2b854;
-  --color-saffron-400: #eaa33d;
-  --color-saffron-500: #e08e1e;
-  --color-saffron-600: #c27214;
-  --color-saffron-700: #9c5613;
-
-  --shadow-card: 0 1px 2px rgb(14 26 51 / 0.04), 0 4px 16px -4px rgb(14 26 51 / 0.08);
-  --shadow-lift: 0 2px 4px rgb(14 26 51 / 0.05), 0 18px 40px -12px rgb(14 26 51 / 0.22);
-
-  --animate-float: float 7s ease-in-out infinite;
-  --animate-float-slow: float 9s ease-in-out infinite;
   --animate-wave: wave 1.2s ease-in-out infinite;
-  --animate-fade-up: fade-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-8px);
-    }
-  }
+  --animate-print: printout var(--motion-landing-print) cubic-bezier(0.3, 0.6, 0.2, 1) both;
+  --animate-press: press var(--motion-stamp-press) var(--motion-easing) both;
 
   @keyframes wave {
     0%,
@@ -79,65 +83,137 @@
     }
   }
 
-  @keyframes fade-up {
+  /* The receipt starts with its upper half printed, so the first frame has content. */
+  @keyframes printout {
     from {
-      opacity: 0;
-      transform: translateY(14px);
+      clip-path: inset(0 0 52% 0);
     }
     to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes press {
+    0% {
+      transform: scale(1.06);
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(1);
       opacity: 1;
-      transform: translateY(0);
     }
   }
 }
 
+@utility rounded-stamp {
+  border-radius: var(--radius-stamp);
+}
+@utility rounded-sheet {
+  border-radius: var(--radius-sheet);
+}
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+@utility num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+@utility min-touch {
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+}
+
+@layer base {
+  /*
+   * A grid with no explicit columns is one bounded column. Without this the single
+   * column is "auto", which grows to the widest child's minimum width, so one wide
+   * table widens the whole page on a phone. Utilities such as grid-cols-2 still win.
+   */
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 html {
-  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--font-sans);
-  /* Plus Jakarta Sans sets a narrow space; open it slightly for legibility. */
-  word-spacing: 0.06em;
+  overflow-wrap: break-word;
 }
 
 ::selection {
-  background: var(--color-brand-200);
-  color: var(--color-ink);
+  background: var(--meskel);
+  color: var(--on-meskel);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-brand-500);
+  outline: 2px solid var(--stamp);
   outline-offset: 2px;
 }
 
-/* Scripts in Ge'ez read better slightly larger and with more line height. */
+/* Ge'ez needs more line height; display lines are tightened again. */
 :lang(am) {
   font-family: var(--font-ethiopic);
   line-height: 1.7;
 }
-
-/*
- * Tibeb band: a woven border inspired by the embroidered hem of a
- * habesha kemis. Used as a quiet cultural divider, never as decoration
- * on data.
- */
-.tibeb {
-  height: 10px;
-  background:
-    linear-gradient(135deg, var(--color-saffron-400) 25%, transparent 25%) 0 0 / 20px 10px,
-    linear-gradient(225deg, var(--color-saffron-400) 25%, transparent 25%) 0 0 / 20px 10px,
-    linear-gradient(90deg, var(--color-brand-500), var(--color-ink-600));
+h1:lang(am),
+h2:lang(am),
+h3:lang(am),
+:lang(am) > h1,
+:lang(am) .font-display {
+  font-family: var(--font-ethiopic-display);
+  line-height: 1.25;
 }
 
-.grid-texture {
-  background-image:
-    linear-gradient(to right, rgb(14 26 51 / 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(14 26 51 / 0.045) 1px, transparent 1px);
-  background-size: 44px 44px;
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+/* ---- Paper edges (shared by ReceiptTape, CitationSlip, landing receipt) ---- */
+.edge-torn-bottom {
+  --tooth: 12px;
+  -webkit-mask:
+    linear-gradient(#000, #000) top / 100% calc(100% - 8px) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--tooth)
+      8px repeat-x;
+  mask:
+    linear-gradient(#000, #000) top / 100% calc(100% - 8px) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--tooth)
+      8px repeat-x;
+}
+.edge-torn-top {
+  --tooth: 12px;
+  -webkit-mask:
+    conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / var(--tooth) 8px
+      repeat-x,
+    linear-gradient(#000, #000) bottom / 100% calc(100% - 8px) no-repeat;
+  mask:
+    conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / var(--tooth) 8px
+      repeat-x,
+    linear-gradient(#000, #000) bottom / 100% calc(100% - 8px) no-repeat;
+}
+.edge-torn-bottom-lg {
+  --tooth: 14px;
+  -webkit-mask:
+    linear-gradient(#000, #000) top / 100% calc(100% - 10px) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--tooth)
+      10px repeat-x;
+  mask:
+    linear-gradient(#000, #000) top / 100% calc(100% - 10px) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--tooth)
+      10px repeat-x;
+}
+
+/* Ledger ruling: faint row rules, never boxed cells. */
+.ledger-rule > * + * {
+  border-top: 1px solid var(--line);
 }
 
 .no-scrollbar {
@@ -145,18 +221,6 @@ body {
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
-}
-
-.reveal {
-  opacity: 0;
-  transform: translateY(16px);
-  transition:
-    opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
-    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-.reveal.is-visible {
-  opacity: 1;
-  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -169,10 +233,6 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-  .reveal {
-    opacity: 1;
-    transform: none;
   }
 }
 

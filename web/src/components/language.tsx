@@ -67,8 +67,8 @@ export function LanguageSwitch({
               "rounded-full px-2.5 py-1 transition-colors",
               active
                 ? tone === "light"
-                  ? "bg-ink-600 text-white"
-                  : "bg-white text-ink-700"
+                  ? "bg-stamp text-on-stamp"
+                  : "bg-surface text-stamp"
                 : tone === "light"
                   ? "text-muted hover:text-ink"
                   : "text-white/70 hover:text-white",

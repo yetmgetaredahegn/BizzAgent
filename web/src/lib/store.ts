@@ -120,3 +120,13 @@ export const importedBatchStore = createStore<ApplicationPack[] | null>(
   "local",
   null,
 );
+
+export type ThemeChoice = "system" | "light" | "dark";
+export const themeStore = createStore<ThemeChoice>("bizzagent.theme", "local", "system");
+
+export const dateOrderStore = createStore<"ec-first" | "gc-first">("bizzagent.dateOrder", "local", "ec-first");
+
+export const lastWorkspaceStore = createStore<string | null>("bizzagent.lastWorkspace", "local", null);
+
+/** Whether BizzAgent reads its replies aloud by itself. Off by default: voice is opt-in. */
+export const voiceAutoplayStore = createStore<boolean>("bizzagent.voiceAutoplay", "local", false);

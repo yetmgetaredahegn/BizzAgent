@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, ExternalLink, Quote } from "lucide-react";
+import { ArrowLeft, ArrowRight, Quote } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -15,9 +15,9 @@ import {
 import { GapList } from "@/components/pack/gap-list";
 import { PackSections } from "@/components/pack/pack-sections";
 import { useRankedBatch } from "@/components/review/use-ranked";
+import { useWorkspace } from "@/components/shell/workspace-context";
 import { ButtonLink } from "@/components/ui/button";
 import { Badge, Card, Container } from "@/components/ui/primitives";
-import { isDemoCase } from "@/lib/fixtures";
 import { cn, formatDateTime } from "@/lib/format";
 import { placeName } from "@/lib/evaluate";
 import { GRID_VARIANTS, SECTOR_LABELS } from "@/lib/grid";
@@ -30,6 +30,8 @@ const STATUS_LABEL = {
 };
 
 export function ReviewDetail({ id }: { id: string }) {
+  const { workspace } = useWorkspace();
+  const base = `/p/${workspace.id}/review`;
   const { ranked } = useRankedBatch();
   const [tab, setTab] = useState<"assessment" | "application" | "gaps">("assessment");
   const index = ranked.findIndex((r) => r.pack.id === id);
@@ -43,7 +45,7 @@ export function ReviewDetail({ id }: { id: string }) {
           <p className="mt-2 text-muted">
             It may have been submitted or imported in another browser. Reviewer data is kept locally in this demo.
           </p>
-          <ButtonLink href="/review" className="mt-6">
+          <ButtonLink href={base} className="mt-6">
             <ArrowLeft className="size-4" aria-hidden /> Back to the shortlist
           </ButtonLink>
         </Card>
@@ -65,7 +67,7 @@ export function ReviewDetail({ id }: { id: string }) {
     <div>
       <div className="border-b border-line bg-surface">
         <Container className="py-6">
-          <Link href="/review" className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted hover:text-ink">
+          <Link href={base} className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted hover:text-ink">
             <ArrowLeft className="size-4" aria-hidden /> Shortlist
           </Link>
           <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -92,11 +94,6 @@ export function ReviewDetail({ id }: { id: string }) {
                 <p className="text-4xl font-bold tabular-nums">{Math.round(e.total)}</p>
                 <p className="text-xs text-subtle">{GRID_VARIANTS[e.variant].name}</p>
               </div>
-              {isDemoCase(pack.id) && (
-                <ButtonLink href={`/apply/${pack.id}/pack`} variant="secondary" size="sm">
-                  Applicant view <ExternalLink className="size-3.5" aria-hidden />
-                </ButtonLink>
-              )}
             </div>
           </div>
 
@@ -168,13 +165,13 @@ export function ReviewDetail({ id }: { id: string }) {
 
         <nav aria-label="Other applications" className="mt-12 grid gap-3 border-t border-line pt-6 sm:grid-cols-2">
           {previous ? (
-            <Link href={`/review/${previous.pack.id}`} className="group rounded-2xl p-4 ring-1 ring-line hover:bg-surface">
+            <Link href={`${base}/${previous.pack.id}`} className="group rounded-2xl p-4 ring-1 ring-line hover:bg-surface">
               <span className="flex items-center gap-1.5 text-xs text-subtle"><ArrowLeft className="size-3.5" aria-hidden /> Previous</span>
               <span className="mt-1 block font-semibold group-hover:text-ink-700">{previous.pack.data.applicant.company_profile.company_name}</span>
             </Link>
           ) : <span />}
           {next && (
-            <Link href={`/review/${next.pack.id}`} className="group rounded-2xl p-4 text-right ring-1 ring-line hover:bg-surface">
+            <Link href={`${base}/${next.pack.id}`} className="group rounded-2xl p-4 text-right ring-1 ring-line hover:bg-surface">
               <span className="flex items-center justify-end gap-1.5 text-xs text-subtle">Next <ArrowRight className="size-3.5" aria-hidden /></span>
               <span className="mt-1 block font-semibold group-hover:text-ink-700">{next.pack.data.applicant.company_profile.company_name}</span>
             </Link>
