@@ -14,7 +14,7 @@ import { useI18n } from "@/i18n";
 import { cn } from "@/lib/format";
 import { lastWorkspaceStore, useStore } from "@/lib/store";
 
-import { MORE_ICON, PARTNER_NAV, VENTURE_NAV, type NavItem } from "./nav-config";
+import { MORE_ICON, VENTURE_NAV, partnerNavFor, type NavItem } from "./nav-config";
 import { LanguageMenu, PersonaSwitcher, WorkspaceSwitcher } from "./switchers";
 import { WorkspaceProvider } from "./workspace-context";
 
@@ -70,7 +70,7 @@ export function AppShell({ wsId, kind, children }: { wsId: string | null; kind: 
     if (workspace && wsId !== null) lastWorkspaceStore.set(workspace.id);
   }, [workspace, wsId]);
 
-  const nav = kind === "partner" ? PARTNER_NAV : VENTURE_NAV;
+  const nav = kind === "partner" ? partnerNavFor(workspace?.partnerKind) : VENTURE_NAV;
 
   if (loading) {
     return (

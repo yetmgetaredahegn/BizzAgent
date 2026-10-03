@@ -15,11 +15,12 @@ import { money } from "./messages/money";
 import { landing } from "./messages/landing";
 import { onboarding } from "./messages/onboarding";
 import { opps } from "./messages/opps";
+import { partner } from "./messages/partner";
 import { shell } from "./messages/shell";
 import { talk } from "./messages/talk";
 import { trust } from "./messages/trust";
 
-const AREAS = [common, landing, shell, home, onboarding, talk, inbox, missions, artifacts, opps, trust, money, account];
+const AREAS = [common, landing, shell, home, onboarding, talk, inbox, missions, artifacts, opps, trust, money, account, partner];
 
 type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends (k: infer I) => void
   ? I

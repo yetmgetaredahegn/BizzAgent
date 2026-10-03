@@ -916,6 +916,82 @@ export interface SettingsApi {
 }
 
 // ---------------------------------------------------------------------------
+// Partner portal: calls, ventures, members
+// ---------------------------------------------------------------------------
+
+export interface CallVersion {
+  v: number;
+  publishedAt: string;
+  note: string;
+  /** Short SHA-256 of the configuration, so a published version can never change unnoticed. */
+  hash: string;
+  weights: Record<string, number>;
+}
+
+export interface CallDetail {
+  id: string;
+  title: string;
+  status: "draft" | "open" | "closed";
+  deadline: string;
+  languages: Lang[];
+  submission: "on-platform" | "export";
+  /** Criteria with their current weights; the weights add up to 100. */
+  grid: { id: string; label: Msg; weight: number }[];
+  gate: Msg[];
+  exclusions: Msg[];
+  declarations: Msg[];
+  versions: CallVersion[];
+  applications: number;
+}
+
+export interface CallSummary {
+  id: string;
+  title: string;
+  status: CallDetail["status"];
+  deadline: string;
+  version: number;
+  applications: number;
+}
+
+export interface PartnerOverview {
+  kind: PartnerKind;
+  openCalls: CallSummary[];
+  awaitingReview: number;
+  ventures: number;
+  members: number;
+}
+
+export interface Venture {
+  id: string;
+  name: string;
+  stage: Stage;
+  status: Msg;
+  /** Only the pages the venture chose to share. */
+  shared: string[];
+  consentUntil: string;
+  /** Shown only when the venture shared it. */
+  readiness: number | null;
+}
+
+export interface PartnerMember {
+  id: string;
+  name: string;
+  role: Role;
+  status: "active" | "invited";
+}
+
+export interface PartnerApi {
+  getPartnerOverview(orgId: string): Promise<PartnerOverview>;
+  listCalls(orgId: string): Promise<CallSummary[]>;
+  getCall(orgId: string, callId: string): Promise<CallDetail>;
+  /** Publishing makes a new immutable version. The weights must add up to 100. */
+  publishCall(orgId: string, callId: string, input: { weights: Record<string, number>; deadline: string; languages: Lang[]; note: string }): Promise<CallDetail>;
+  listVentures(orgId: string): Promise<Venture[]>;
+  listPartnerMembers(orgId: string): Promise<PartnerMember[]>;
+  invitePartnerMember(orgId: string, input: { name: string; role: Role }): Promise<PartnerMember>;
+}
+
+// ---------------------------------------------------------------------------
 // The API
 // ---------------------------------------------------------------------------
 
@@ -946,4 +1022,4 @@ export interface ActivityApi {
   listActivity(workspaceId: string): Promise<ActivityEvent[]>;
 }
 
-export type BizzAgentApi = AccountsApi & ConversationsApi & InboxApi & MissionsApi & ActivityApi & ArtifactsApi & OpportunitiesApi & TrustApi & MoneyApi & WalletApi & TeamApi & SettingsApi;
+export type BizzAgentApi = AccountsApi & ConversationsApi & InboxApi & MissionsApi & ActivityApi & ArtifactsApi & OpportunitiesApi & TrustApi & MoneyApi & WalletApi & TeamApi & SettingsApi & PartnerApi;

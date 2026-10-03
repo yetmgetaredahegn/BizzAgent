@@ -56,4 +56,11 @@ export const PARTNER_NAV: NavItem[] = [
   { id: "settings", label: "nav.settings", href: () => `/me/settings`, icon: Settings, match: (p) => p.startsWith("/me/settings") },
 ];
 
+/** The partner menu depends on what the organisation does: funders review, programmes see ventures, advisors coach. */
+export function partnerNavFor(kind: "funder" | "program" | "support_org" | undefined): NavItem[] {
+  const drop: Record<string, string[]> = { funder: ["ventures"], program: ["review"], support_org: ["calls", "review"] };
+  const hidden = kind ? (drop[kind] ?? []) : [];
+  return PARTNER_NAV.filter((item) => !hidden.includes(item.id));
+}
+
 export const MORE_ICON = CircleEllipsis;

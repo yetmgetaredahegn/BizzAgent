@@ -7,7 +7,7 @@
 
 import { createStore } from "@/lib/store";
 
-import type { ActivityEvent, ArtifactDetail, AutonomySkill, ConnectorToken, ConsentGrant, DocumentRecord, LedgerEntry, Member, MemoryItem, NotificationSettings, PipelineStage, Conversation, StandingInstruction, CreateAccountInput, InboxItem, Mission, Persona, WorkspaceSummary } from "../contract";
+import type { ActivityEvent, ArtifactDetail, AutonomySkill, ConnectorToken, ConsentGrant, DocumentRecord, LedgerEntry, Member, MemoryItem, NotificationSettings, PartnerMember, PipelineStage, Conversation, StandingInstruction, CreateAccountInput, InboxItem, Mission, Persona, WorkspaceSummary } from "../contract";
 import { DEFAULT_PERSONA, PERSONAS, WORKSPACES, type PersonaSeed, type WsSeed } from "./seed/workspaces";
 import type { WsFlags } from "./journey";
 import type { Stage } from "@/components/ds/fidel-journey";
@@ -18,6 +18,7 @@ import { missionFromSummary } from "./missions";
 import { PIPELINE_SEED } from "./opportunities";
 import { AUTONOMY_SEED, MEMORY_SEED, NOTIFICATIONS_DEFAULT, TEAM_SEED, WALLET_SEED, type WalletState } from "./account";
 import { LEDGER_SEED } from "./money";
+import { CALLS_SEED, PARTNER_MEMBERS_SEED, type CallState } from "./partner";
 
 export const personaStore = createStore<string>("bizzagent.persona", "local", DEFAULT_PERSONA);
 export const accountStore = createStore<CreateAccountInput | null>("bizzagent.account", "local", null);
@@ -61,6 +62,9 @@ interface Db {
   /** Per person: wallet, settings and the private personal space. */
   wallets: Record<string, WalletState>;
   settings: Record<string, PersonSettings>;
+  /** Partner portal: calls and members per organisation. */
+  calls: Record<string, CallState[]>;
+  partnerMembers: Record<string, PartnerMember[]>;
   counter: number;
   version: number;
 }
@@ -153,6 +157,8 @@ function init(): Db {
     team: clone(TEAM_SEED),
     wallets: clone(WALLET_SEED),
     settings: {},
+    calls: clone(CALLS_SEED),
+    partnerMembers: clone(PARTNER_MEMBERS_SEED),
     counter: 0,
     version: 0,
   };

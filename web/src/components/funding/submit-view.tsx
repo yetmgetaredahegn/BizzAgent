@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { useCase } from "@/components/funding/case-context";
 import { FieldValue } from "@/components/pack/field-value";
-import { Button, ButtonLink } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { PageTitle } from "@/components/ui/page-title";
 import { Callout, Card } from "@/components/ui/primitives";
 import { DECLARATIONS } from "@/lib/declarations";
@@ -129,11 +129,8 @@ export function SubmitView() {
           </p>
         )}
         {sentId && (
-          <Callout tone="success" title="Sent to the reviewer queue" className="mt-6">
-            It now appears in the reviewer dashboard alongside the demo batch.{" "}
-            <ButtonLink href={`/review/${sentId}`} size="sm" variant="secondary" className="mt-3">
-              Open it as a reviewer <ArrowRight className="size-4" aria-hidden />
-            </ButtonLink>
+          <Callout tone="success" title="Sent to the funder&apos;s review queue" className="mt-6">
+            It now waits for the funder&apos;s reviewers. You cannot open their queue from here.
           </Callout>
         )}
         <p className="mt-6 text-xs text-subtle">

@@ -7,6 +7,8 @@ import type {
   Me,
   Mission,
   Msg,
+  CallDetail,
+  CallSummary,
   CostEstimateDto,
   DocumentFormat,
   ImportRow,
@@ -36,6 +38,7 @@ import {
 import { buildDetail } from "./artifacts";
 import { BIRR_PER_CREDIT, PRICE_LIST, candidatesFrom } from "./account";
 import { moneyViewOf, personalMoneyOf, previewImport } from "./money";
+import { CRITERIA, VENTURES_SEED, validatePublish } from "./partner";
 import { parseInstruction } from "./policy";
 import { documentDraftsFor, documentText, publicView, sha256Hex, type DocumentDraft } from "./documents";
 import { CATALOGUE, evaluateOpportunity, rankOpportunities } from "./opportunities";
@@ -149,6 +152,20 @@ function businessProfit(personaIdValue: string): number | null {
     if (profit && view.months.length > 0) return Math.round(profit.calc.value / view.months.length);
   }
   return null;
+}
+
+const summaryOfCall = (call: { id: string; title: string; status: CallDetail["status"]; deadline: string; versions: unknown[]; applications: number }): CallSummary => ({
+  id: call.id,
+  title: call.title,
+  status: call.status,
+  deadline: call.deadline,
+  version: call.versions.length,
+  applications: call.applications,
+});
+
+/** A short fingerprint of one published version, so a version can never change unnoticed. */
+async function callHash(callId: string, v: number, weights: Record<string, number>, deadline: string): Promise<string> {
+  return (await sha256Hex(JSON.stringify({ callId, v, weights, deadline }))).slice(0, 12);
 }
 
 function walletId(): string {
@@ -919,6 +936,78 @@ export const mockClient: BizzAgentApi = {
       const settings = settingsOf(state, walletId());
       settings.notifications = { ...settings.notifications, ...patch };
     });
+  },
+
+  // ---- partner portal ----------------------------------------------------------------
+  async getPartnerOverview(orgId) {
+    const state = getDb();
+    const org = state.workspaces[orgId];
+    if (!org || org.type !== "partner") throw new Error("not_found");
+    const calls = state.calls[orgId] ?? [];
+    const open = calls.filter((c) => c.status === "open");
+    return delay(
+      clone({
+        kind: org.partnerKind!,
+        openCalls: open.map(summaryOfCall),
+        // The funder's review queue is the demo applications; a programme counts its open calls' applications.
+        awaitingReview: org.partnerKind === "funder" ? 3 : open.reduce((total, c) => total + c.applications, 0),
+        ventures: (VENTURES_SEED[orgId] ?? []).length,
+        members: (state.partnerMembers[orgId] ?? []).length,
+      }),
+      60,
+    );
+  },
+
+  async listCalls(orgId) {
+    return delay(clone((getDb().calls[orgId] ?? []).map(summaryOfCall)), 40);
+  },
+
+  async getCall(orgId, callId) {
+    const call = (getDb().calls[orgId] ?? []).find((c) => c.id === callId);
+    if (!call) throw new Error("not_found");
+    const versions = await Promise.all(call.versions.map(async (v) => ({ ...v, hash: await callHash(call.id, v.v, v.weights, call.deadline) })));
+    return clone({ ...call, versions });
+  },
+
+  async publishCall(orgId, callId, input) {
+    const call = (getDb().calls[orgId] ?? []).find((c) => c.id === callId);
+    if (!call) throw new Error("not_found");
+    if (validatePublish(input.weights, input.deadline, input.languages) !== "ok") throw new Error("invalid_call");
+    mutate((state) => {
+      const target = state.calls[orgId].find((c) => c.id === callId)!;
+      target.versions.push({ v: target.versions.length + 1, publishedAt: daysFromToday(0), note: input.note, hash: "", weights: { ...input.weights } });
+      target.grid = CRITERIA.map((id) => ({ id, label: { id: `call.crit.${id}` }, weight: input.weights[id] }));
+      target.deadline = input.deadline;
+      target.languages = input.languages;
+      target.status = "open";
+    });
+    logActivity(orgId, { agent: "funding", action: { id: "ev.callPublished", vars: { title: call.title } }, sources: [call.title], credits: 0 });
+    return mockClient.getCall(orgId, callId);
+  },
+
+  async listVentures(orgId) {
+    const state = getDb();
+    return delay(
+      clone(
+        (VENTURES_SEED[orgId] ?? []).map(({ workspaceId, sharesReadiness, ...venture }) => ({
+          ...venture,
+          readiness: sharesReadiness && state.workspaces[workspaceId] ? readinessOf(state.workspaces[workspaceId]).score : null,
+        })),
+      ),
+      40,
+    );
+  },
+
+  async listPartnerMembers(orgId) {
+    return delay(clone(getDb().partnerMembers[orgId] ?? []), 30);
+  },
+
+  async invitePartnerMember(orgId, input) {
+    const member = { id: nextId("pm"), name: input.name, role: input.role, status: "invited" as const };
+    mutate((state) => {
+      (state.partnerMembers[orgId] ??= []).push(member);
+    });
+    return delay(member, 60);
   },
 
   // ---- activity --------------------------------------------------------------------
