@@ -59,10 +59,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F3F4F8" },
-    { media: "(prefers-color-scheme: dark)", color: "#111219" },
-  ],
+  themeColor: "#F3F4F8",
   width: "device-width",
   initialScale: 1,
 };
@@ -77,6 +74,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   ].join(" ");
   return (
     <html lang="en" className={`${fonts} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        {/* Applies a saved dark or system choice before first paint; with nothing saved the page stays light. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=JSON.parse(localStorage.getItem("bizzagent.theme"));if(t==="dark"||t==="system")document.documentElement.setAttribute("data-theme",t)}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="flex min-h-full flex-col">
         <LogoDefs />
         <LanguageSync />

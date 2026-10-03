@@ -52,8 +52,9 @@ ${scalar("layout", "layout")}
   color-scheme: light;
 }
 
+/* Light is the default. The device's dark setting applies only if the person chose "follow my device". */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root[data-theme="system"] {
 ${colors("dark")}
     color-scheme: dark;
   }

@@ -9,6 +9,7 @@ import { EvidenceStamp } from "@/components/ds/evidence-stamp";
 import { Panel } from "@/components/ds/page";
 import { Tag } from "@/components/ds/tag";
 import { setLang, useLang } from "@/components/language";
+import { setTheme, useTheme } from "@/components/theme";
 import { Button } from "@/components/ui/button";
 import { useI18n, useMsg, type MessageId } from "@/i18n";
 import { cn } from "@/lib/format";
@@ -33,6 +34,7 @@ export function LanguageSection() {
   const lang = useLang();
   const order = useStore(dateOrderStore);
   const autoplay = useStore(voiceAutoplayStore);
+  const theme = useTheme();
   const [silent, setSilent] = useState(false);
   return (
     <div className="flex flex-col gap-5">
@@ -55,6 +57,17 @@ export function LanguageSection() {
         </ul>
         {silent && <p role="status" className="mt-2 text-sm text-muted">{t("st.lang.noVoice")}</p>}
         <p className="mt-2 text-sm text-muted">{t("st.lang.draft")}</p>
+      </Panel>
+      <Panel title={t("st.look")}>
+        <fieldset className="flex flex-col gap-1">
+          <legend className="sr-only">{t("st.look")}</legend>
+          {(["light", "dark", "system"] as const).map((value) => (
+            <label key={value} className="flex min-h-11 items-center gap-3">
+              <input type="radio" name="theme" checked={theme === value} onChange={() => setTheme(value)} className="size-4 accent-stamp" />
+              {t(`st.look.${value}` as MessageId)}
+            </label>
+          ))}
+        </fieldset>
       </Panel>
       <Panel title={t("st.lang.voice")}>
         <label className="flex min-h-11 items-center gap-3">

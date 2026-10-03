@@ -12,13 +12,11 @@ export function setTheme(theme: ThemeChoice) {
   themeStore.set(theme);
 }
 
-/** Mirrors the chosen theme onto <html data-theme>; "system" leaves it unset. */
+/** Mirrors the chosen theme onto <html data-theme>. Light is the default; "system" follows the device. */
 export function ThemeSync() {
   const theme = useTheme();
   useEffect(() => {
-    const root = document.documentElement;
-    if (theme === "system") root.removeAttribute("data-theme");
-    else root.setAttribute("data-theme", theme);
+    document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
   return null;
 }

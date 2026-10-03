@@ -57,8 +57,9 @@
   color-scheme: light;
 }
 
+/* Light is the default. The device's dark setting applies only if the person chose "follow my device". */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root[data-theme="system"] {
   --paper: #111219;
   --surface: #1A1B25;
   --ink: #ECEDF5;

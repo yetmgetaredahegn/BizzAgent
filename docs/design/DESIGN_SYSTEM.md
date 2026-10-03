@@ -8,8 +8,9 @@
 
 - **Tokens.** [tokens.json](tokens.json) is the only source of colours, type, space, radius,
   shadow and motion. Components never use raw hex values.
-- **Themes.** Light and dark come from the same token names. The theme follows the system
-  setting, with a manual override.
+- **Themes.** Light and dark come from the same token names. Light is the default for
+  everyone. Dark is opt-in, and "follow my device" is a third choice, all under Settings →
+  Language.
 - **Type.** Display: Familjen Grotesk. Body: Atkinson Hyperlegible Next. Figures: Atkinson
   Hyperlegible Mono. Ge'ez: Noto Sans/Serif Ethiopic. Use `font-variant-numeric: tabular-nums`
   for all money.
