@@ -122,7 +122,7 @@ export const importedBatchStore = createStore<ApplicationPack[] | null>(
 );
 
 export type ThemeChoice = "system" | "light" | "dark";
-export const themeStore = createStore<ThemeChoice>("bizzagent.theme", "local", "system");
+export const themeStore = createStore<ThemeChoice>("bizzagent.theme", "local", "light");
 
 export const dateOrderStore = createStore<"ec-first" | "gc-first">("bizzagent.dateOrder", "local", "ec-first");
 

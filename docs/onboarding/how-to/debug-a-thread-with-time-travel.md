@@ -1,11 +1,10 @@
 # How to debug a thread with time travel
 
 > **What this is:** inspecting and replaying a conversation or mission thread (PR C2 onward).
-> **Who reads it:** contributors. **Last reviewed:** 2026-10-02
+> **Who reads it:** contributors. **Last reviewed:** 2026-10-03
 
 ```python
-from bizzagent.agents.concierge import build_concierge
-from bizzagent.agents.checkpointer import checkpointer
+from bizzagent.modules.agents import build_concierge, checkpointer  # public API of the runtime
 
 graph = build_concierge(deps, checkpointer=checkpointer())
 cfg = {"configurable": {"thread_id": "<conversation or mission id>"}}

@@ -2,13 +2,14 @@
 
 > **What this is:** setting up BizzAgent locally and making a first change. Target: 15 minutes.
 > **Who reads it:** new contributors.
-> **Last reviewed:** 2026-10-02
+> **Last reviewed:** 2026-10-03
 
 ## 1. Prerequisites
 
 - Git
 - [uv](https://docs.astral.sh/uv/) (it installs Python 3.13 for you)
 - Node.js 22 or later, and npm
+- Docker, for PostgreSQL (from C1)
 - Optional, for real local models: [Ollama](https://ollama.com)
 
 ## 2. Clone
@@ -44,6 +45,9 @@ commit keys.
 
 | Command | Arrives in |
 |---|---|
+| `docker compose up -d db` (PostgreSQL 17 + pgvector) | C1 |
+| `uv run alembic upgrade head` | C1 |
+| `uv run bizzagent worker` (outbox + scheduled jobs) | C1 |
 | `uv run bizzagent seed` | C1 |
 | `BIZZAGENT_ENV=test uv run uvicorn …` (fake providers) | C2 |
 | `uv run langgraph dev` (Studio) | C2 |
@@ -59,12 +63,13 @@ cp .env.example .env.local
 npm run dev                                        # http://localhost:3000
 ```
 
-The demo cases and the reviewer batch work without the backend. `/apply` calls the backend.
+The demo cases and the reviewer batch work without the backend. The live funding intake and
+interview (`/w/{ws}/funding/new`) call the backend.
 
 ## 5. Checks before you push
 
 ```bash
-cd backend && uv run ruff check && uv run ruff format --check && uv run mypy src && uv run pytest -q
+cd backend && uv run ruff check && uv run ruff format --check && uv run mypy src && uv run lint-imports && uv run pytest -q
 cd web && npm run lint && npm test && npm run build
 ```
 

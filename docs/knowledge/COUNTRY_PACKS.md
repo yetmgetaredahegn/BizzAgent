@@ -1,7 +1,7 @@
 # Country knowledge packs
 
 > **What this is:** the format, sourcing, verification and staleness rules for the legal, tax and market knowledge BizzAgent is allowed to state.
-> **Who reads it:** content reviewers, engineers working on `bizzagent.knowledge`, anyone adding a fact.
+> **Who reads it:** content reviewers, engineers working on `bizzagent.modules.knowledge`, anyone adding a fact.
 > **Last reviewed:** 2026-10-02
 
 Decision: [ADR-0014](../architecture/adr/0014-country-knowledge-packs.md). Requirements:

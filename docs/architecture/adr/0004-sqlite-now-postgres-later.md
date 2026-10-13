@@ -1,6 +1,6 @@
 # ADR-0004: SQLite with the LangGraph SQLite checkpointer and store now, PostgreSQL later
 
-- **Status:** Accepted
+- **Status:** Superseded by [ADR-0037](0037-postgresql-from-day-one.md)
 - **Date:** 2026-10-02
 
 ## Context

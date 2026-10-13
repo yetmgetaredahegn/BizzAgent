@@ -1,21 +1,37 @@
 # Engineering rules
 
-> **What this is:** the rules every change follows: layering, honesty invariants, Python, LangGraph, TS/React, i18n, git and the definition of done.
+> **What this is:** the rules every change follows: modules and boundaries, honesty invariants, Python, LangGraph, TS/React, i18n, git and the definition of done.
 > **Who reads it:** every contributor, human or AI assistant. [AGENTS.md](../../AGENTS.md) points here.
-> **Last reviewed:** 2026-10-02
+> **Last reviewed:** 2026-10-03
 
-## 1. Layering
+## 1. Modules and boundaries
+
+The backend is a **modular monolith** ([ADR-0036](../architecture/adr/0036-modular-monolith.md)).
+Each business domain is a package under `bizzagent/modules/`; the catalogue and each module's
+responsibilities are in [modules.md](../architecture/modules.md).
 
 ```
-routes → services → agents (graphs) → calc | rules | knowledge | llm | speech | vision | search | exports
+core · shared · integrations   ←   platform modules (incl. the agent runtime)   ←   product modules
 ```
 
-- Lower layers never import upper layers.
-- **`calc`, `rules` and `knowledge` are pure.** No LLM, LangChain or LangGraph imports and no
-  I/O except reading pack files. `tests/test_architecture.py` enforces this.
-- Routes contain no business logic. They validate, call a service and map errors.
-- Org-owned data is accessed only through scoped repositories
+- **Put code in the module that owns the domain.** A module gains `router`, `schemas`, `models`,
+  `service`, `repository`, `events`, `tasks`, `rules/` or `agent/` only when it needs them.
+- **Import another module only through its package root** (`bizzagent.modules.funding`). Its
+  `__init__.py` exports stable commands, queries, read models and event contracts, never ORM
+  models or repositories.
+- **`core`, `shared` and `integrations` never import `modules`.** Integrations are technical
+  adapters with no business decisions.
+- **Platform modules and the agent runtime never import product modules.** Skills register with
+  the runtime's skill registry.
+- **Pure code stays pure.** `calc`, `knowledge` and every `rules/` import no LLM, LangChain,
+  LangGraph or integrations, and do no I/O except reading pack files.
+- **Only `bizzagent.main` imports `modules.personal`.**
+- **Talk across modules** by calling a public API, or by emitting a domain event through the
+  outbox ([ADR-0038](../architecture/adr/0038-transactional-outbox-and-worker.md)).
+- **Routes contain no business logic.** They validate, call the module's service and map errors.
+- **Org-owned data** is read only through the module's scoped repository
   ([data-model](data-model.md#tenancy-rules)).
+- `uv run lint-imports` enforces these rules (contracts in `backend/pyproject.toml`).
 
 ## 2. Honesty and safety invariants (each has a named test)
 
@@ -38,14 +54,19 @@ routes → services → agents (graphs) → calc | rules | knowledge | llm | spe
 
 ## 3. Python
 
-- **Tooling:** Python 3.13, `uv`. `ruff` (lint and format, line length 100); `mypy` (strict on
-  `calc`, `rules`, `knowledge`, `tenancy.permissions`, `agents.core.policy`).
+- **Tooling:** Python 3.13, `uv`. `ruff` (lint and format, line length 100); `import-linter`;
+  `mypy` (strict on `modules.calc`, `modules.knowledge`, every `rules/`, the accounts capability
+  matrix and the agents autonomy policy).
 - **Models:** Pydantic v2 at every boundary (API, LLM structured output, pack files).
 - **Heavy imports** (torch, whisper, kokoro, easyocr, weasyprint, provider SDKs) go **inside
   functions**. Importing `bizzagent.main` must load none of them (a test checks this).
-- **Configuration** comes only from `bizzagent.config.settings`. No `os.getenv` elsewhere.
+- **Configuration** comes only from the settings object (`bizzagent.config`, moving to
+  `core/config.py` in C1). No `os.getenv` elsewhere.
   **No secrets in code or the repo.**
-- **Errors:** raise domain errors in services; map them to the API error shape in routes.
+- **Errors:** raise the module's domain errors (`exceptions.py`) in services; map them to the
+  API error shape in its router.
+- **Database:** PostgreSQL only, one schema per module ([ADR-0037](../architecture/adr/0037-postgresql-from-day-one.md)).
+  A module never reads another module's tables.
 - **Logging:** use `logging` with structured extras. No `print`.
 
 ## 4. LangGraph
@@ -57,7 +78,8 @@ routes → services → agents (graphs) → calc | rules | knowledge | llm | spe
   them idempotent with a key.
 - **Every LLM node** has a `RetryPolicy` and a deterministic fallback (a template or asking the
   user). Structured output only for extraction.
-- **Prompts** live in `llm/prompts/<id>.md` and are versioned. The prompt id and version are
+- **Prompts** live next to their agent: `modules/<name>/agent/prompts/<id>.md`, or
+  `modules/agents/prompts/` for the runtime. They are versioned. The prompt id and version are
   logged.
 - **Untrusted text** (transcripts, pages, documents) goes in clearly delimited data sections. It
   never changes tools, policy or autonomy.
@@ -91,11 +113,11 @@ reviewed ([workflow](../i18n/translation-workflow.md)).
 
 ## 8. Definition of done
 
-- [ ] Backend: `uv run ruff check && uv run ruff format --check && uv run mypy src && uv run pytest`
+- [ ] Backend: `uv run ruff check && uv run ruff format --check && uv run mypy src && uv run lint-imports && uv run pytest`
 - [ ] Web: `npm run lint && npm test && npm run build`
 - [ ] Tests for new behaviour; the honesty invariants still pass
 - [ ] Docs updated in the same PR: SRS IDs, [traceability](../requirements/traceability.md),
-      SAD, ADRs, [api.md](api.md), [ux-spec](../design/ux-spec.md)
+      SAD, [modules](../architecture/modules.md), ADRs, [api.md](api.md), [ux-spec](../design/ux-spec.md)
 - [ ] UI: screenshots at 390 and 1440, light and dark, one Ethiopic language; axe clean;
       anti-slop checklist
 - [ ] No secrets, no real personal data in fixtures

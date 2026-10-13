@@ -2,24 +2,27 @@
 
 > **What this is:** the test layers, fakes, honesty invariants and the model evaluation suite.
 > **Who reads it:** all engineers.
-> **Last reviewed:** 2026-10-02
+> **Last reviewed:** 2026-10-03
 
 ## 1. Layers
 
 | Layer | Where | Runs in CI | Notes |
 |---|---|---|---|
-| Unit (pure) | `backend/tests/{calc,rules,knowledge,i18n,tenancy}` | yes | Hand-computed expectations; `hypothesis` property tests for calc invariants |
-| Parity | `backend/tests/rules/test_parity.py` | yes | Python rules vs fixtures exported from the TS engine |
-| Graph | `backend/tests/agents/**` | yes | Fake providers; drive interrupts with `Command(resume=…)` |
-| API | `backend/tests/api/**` | yes | `TestClient`; tenant isolation (a foreign org gets 404) |
-| Architecture | `backend/tests/test_architecture.py` | yes | Import rules; no heavy imports at startup |
+| Module | `backend/tests/modules/<module>/` | yes | Each module's unit, graph and API tests. Pure code: hand-computed expectations and `hypothesis` property tests |
+| Core and shared | `backend/tests/{core,shared}/` | yes | Config, logging, outbox, i18n helpers |
+| Parity | `backend/tests/modules/funding/test_parity.py` | yes | Python rules vs fixtures exported from the TS engine |
+| Graph | `backend/tests/modules/<module>/test_<skill>.py` | yes | Fake providers; drive interrupts with `Command(resume=…)` |
+| API | `backend/tests/modules/<module>/test_api.py` | yes | `TestClient`; tenant isolation (a foreign org gets 404) |
+| Cross-module | `backend/tests/integration/` | yes | Flows across modules, including outbox delivery and handler idempotency |
+| Boundaries | `uv run lint-imports` | yes | Module boundaries and purity ([ADR-0036](../architecture/adr/0036-modular-monolith.md)) |
+| Startup | `backend/tests/test_api.py` | yes | No heavy imports when `bizzagent.main` loads |
 | Web unit | `web/src/**/*.test.ts` (vitest) | yes | — |
 | Web E2E | `web/e2e/*.spec.ts` (Playwright) | yes (PR F onward) | Personas × 3 languages at 390 and 1440; screenshots; axe |
 | Evals | `backend/evals/` (`make eval`) | **no** | Against configured hosted models or Ollama |
 
 ## 2. Fakes
 
-`bizzagent.agents.deps.Deps.fake()` provides:
+`Deps.fake()` (from `modules.agents`) provides:
 
 - `FakeChatModel`: scripted structured outputs keyed by prompt id
 - `FakeASR`: maps an audio fixture name to a transcript
@@ -27,9 +30,10 @@
 - `FakeOCR`
 - `FakeSearch`: fixture pages with snapshots
 - `FakePaymentProvider`
-- an in-memory Store and checkpointer
+- an in-memory Store and checkpointer, for graph unit tests
 
-CI never calls a network model.
+CI never calls a network model. Tests that touch the database run against PostgreSQL (a service
+container in CI, `docker compose up -d db` locally), with a fresh database per run.
 
 ## 3. Honesty invariants
 

@@ -2,18 +2,23 @@
 
 > **What this is:** one section per skill: purpose, agent card, state, nodes, tools, interrupts, outputs, honesty rules and evals.
 > **Who reads it:** engineers building or changing a skill. Read the [operating model](agent-operating-model.md) first.
-> **Last reviewed:** 2026-10-02
+> **Last reviewed:** 2026-10-03
 
 Conventions for every skill:
 
-- **Layout.** A skill lives in `bizzagent/agents/skills/<name>/` with `state.py`, `graph.py`,
-  `nodes.py` and prompt ids in `llm/prompts/`.
+- **Layout.** A skill belongs to the product module that owns its domain, in
+  `bizzagent/modules/<module>/agent/` with `state.py`, `graph.py`, `nodes.py` and
+  `prompts/<id>.md` ([modules.md](modules.md)). The runtime (concierge, voice I/O, onboarding,
+  missions, inbox, verifiers) lives in `modules.agents`.
+- **Registration.** The module registers its graph and intents with the runtime's skill registry
+  at startup. The runtime never imports a product module.
 - **Compilation.** It is compiled as a sub-graph and added to the concierge as a node.
 - **Hand-back.** It returns with `Command(goto="summarise", graph=Command.PARENT, update=...)`.
-- **Asking the user.** All user questions go through `agents/common/ask.py` (`ask`, `readback`,
-  `approve`), which wraps `interrupt()` with the 3-language turn options.
-- **Arithmetic.** All numbers come from `bizzagent.calc`; all eligibility and scoring from
-  `bizzagent.rules`.
+- **Asking the user.** All user questions go through `ask`, `readback` and `approve` from
+  `modules.agents`, which wrap `interrupt()` with the 3-language turn options. In a mission,
+  `ask` becomes an inbox question card instead of a chat prompt.
+- **Arithmetic.** All numbers come from `modules.calc`; all eligibility and scoring from the
+  owning module's pure `rules/`.
 - **Verification.** Every user-visible output passes the verifier chain.
 
 [LangGraph primer](../onboarding/LANGGRAPH_PRIMER.md) module references are given as [M1]…[M6].
@@ -271,7 +276,24 @@ The resource finder runs as a search sub-graph (URL-or-drop).
 A growth plan (objectives, ledger KPIs, initiatives) with links to the scout, market entry and
 hiring. A weekly review loop and the `ledger_anomaly` watcher.
 
-## Mission core (`agents/core`)
+## Mission core (`modules.agents`)
 
-`missions.py` (planner + validator + executor with `Send`), `inbox.py`, `policy.py` (pure),
-`verifiers.py`, `activity.py`. See [agent-operating-model](agent-operating-model.md).
+Missions (planner + validator + executor with `Send`), the inbox, the autonomy policy (pure) and
+the verifier chain. The activity log is the `activity` module, fed by events. See
+[agent-operating-model](agent-operating-model.md).
+
+## Where each skill lives
+
+| Skill | Module |
+|---|---|
+| Concierge, voice I/O, onboarding interview, journey planner, mission core | `agents` |
+| Memory extractor and import | `memory` |
+| Document explainer | `learn` |
+| Business setup, launch readiness | `start` |
+| Idea clarifier and validation, market research | `plan` |
+| Funding proposal | `funding` |
+| Opportunity scout, accelerator and investor coach | `opportunities` |
+| Market entry | `markets` |
+| Numbers coach, money coach (business), growth coach | `money` |
+| Money coach (personal) | `personal` |
+| Hiring and resources | `team` |

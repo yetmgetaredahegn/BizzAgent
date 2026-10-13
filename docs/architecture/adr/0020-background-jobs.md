@@ -1,6 +1,6 @@
 # ADR-0020: Background jobs via a CLI, cron-friendly
 
-- **Status:** Accepted
+- **Status:** Accepted; amended by [ADR-0038](0038-transactional-outbox-and-worker.md) (jobs run in the worker; runs are recorded in `platform.job_runs`)
 - **Date:** 2026-10-02
 
 ## Context

@@ -1,7 +1,7 @@
 # Pricing and billing: pay-as-you-go
 
 > **What this is:** how users pay. Wallet, credits, top-up, metering, honest billing rules.
-> **Who reads it:** product, engineers working on `bizzagent.billing`, finance.
+> **Who reads it:** product, engineers working on `bizzagent.modules.billing`, finance.
 > **Last reviewed:** 2026-10-02
 
 Decision record: [ADR-0024](../architecture/adr/0024-credit-wallet.md). Requirements: `FR-BIL-*` in

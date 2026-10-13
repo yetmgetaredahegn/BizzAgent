@@ -2,7 +2,7 @@
 
 > **What this is:** what makes BizzAgent agentic. The agent card template, autonomy levels, missions, the inbox, standing instructions, verifiers, proactivity, humans in the loop, and the activity log.
 > **Who reads it:** engineers building skills or the mission core, designers of the Inbox and Missions screens.
-> **Last reviewed:** 2026-10-02
+> **Last reviewed:** 2026-10-03
 
 Decisions: [ADR-0032](adr/0032-autonomy-and-inbox.md), [ADR-0033](adr/0033-missions-as-durable-threads.md),
 [ADR-0034](adr/0034-verifier-chain.md). Requirements: `FR-MIS`, `FR-INB`, `FR-AUT`, `FR-VFY`,
@@ -39,7 +39,7 @@ Every skill is specified in [agents.md](agents.md) with this card:
 | **L3** | Autopilot within limits | Acts inside standing instructions, scope and budget, then reports | Opt-in only. **Never** for signing, legal submission, payments to third parties or personal-space data |
 
 The level is set per skill and per mission in Settings → Autonomy, with plain-language
-explanations in 3 languages. `agents/core/policy.py` is pure and decides, for each proposed
+explanations in 3 languages. The autonomy policy in `modules.agents` is pure and decides, for each proposed
 action, whether it is `allowed`, `needs_approval` or `forbidden`.
 
 ## 3. Missions
@@ -85,8 +85,9 @@ flowchart LR
 - **Question cards** are missing facts, ordered by how many tasks they unblock.
 - Approve or decline by tap, or **by voice with read-back**. Batch approval is allowed for cards
   of the same type.
-- Implementation: `request_approval()` wraps `interrupt()`. The inbox lists pending interrupts
-  across threads in the workspace.
+- Implementation: `approve()` (and `ask()` inside a mission) in `modules.agents` wraps
+  `interrupt()` and upserts an `InboxItem` keyed by `(thread_id, interrupt_id)`, because the node
+  re-runs from the top on resume. The inbox lists these items across the workspace's threads.
 
 ## 5. Standing instructions
 
@@ -98,7 +99,7 @@ Users write plain-language rules. For example:
 
 Each rule is parsed into a typed `Policy` (LLM, structured output), **shown back** for
 confirmation, stored in the Store under `("policies", workspace_id)`, and enforced
-deterministically by `policy.py`.
+deterministically by the autonomy policy in `modules.agents`.
 
 ## 6. Verifiers and critics
 
@@ -127,8 +128,8 @@ Watchers create inbox items, or start missions within standing instructions:
 - prices
 - ledger anomalies (margin drop, runway under N weeks)
 
-They respect quiet hours and channel preferences. They run as jobs
-([ADR-0020](adr/0020-background-jobs.md)).
+They respect quiet hours and channel preferences. They run as scheduled jobs in the worker, each owned by the module whose data it watches
+([ADR-0020](adr/0020-background-jobs.md), [ADR-0038](adr/0038-transactional-outbox-and-worker.md)).
 
 ## 8. Humans as team-mates
 
@@ -139,8 +140,9 @@ They respect quiet hours and channel preferences. They run as jobs
 
 ## 9. Activity log
 
-Every agent step, source used, approval given and credit spent is an `activity_event`. Events
-come from the same custom stream events the UI shows. The log is exportable, and every artifact
+Every agent step, source used, approval given and credit spent is an `activity_event`, stored by
+the `activity` module. Agent steps come from the same custom stream events the UI shows;
+approvals and charges arrive as domain events through the outbox. The log is exportable, and every artifact
 links to the mission and agent that produced it.
 
 ## 10. Per-feature agentic upgrades

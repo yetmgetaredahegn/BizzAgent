@@ -37,9 +37,11 @@
 
 ## 4. Tenant isolation
 
-Isolation relies on scoped repositories, 404 for foreign resources, an architecture test, and
-PostgreSQL RLS before external organisations
-([ADR-0010](../architecture/adr/0010-organisations-and-tenancy.md)).
+Isolation relies on scoped repositories, 404 for foreign resources, module boundaries checked by
+import-linter, and PostgreSQL RLS before external organisations
+([ADR-0010](../architecture/adr/0010-organisations-and-tenancy.md)). The personal space is also
+isolated in the database: its schema is readable only by a separate role
+([ADR-0037](../architecture/adr/0037-postgresql-from-day-one.md)).
 
 ## 5. Threat model (STRIDE highlights)
 

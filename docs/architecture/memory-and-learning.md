@@ -2,7 +2,7 @@
 
 > **What this is:** how BizzAgent remembers and learns. Long-term memory, the learning loop, the onboarding interview, AI-history import, and the memory UI.
 > **Who reads it:** engineers working on the concierge and memory, designers of Settings → Memory.
-> **Last reviewed:** 2026-10-02
+> **Last reviewed:** 2026-10-03
 
 Decisions: [ADR-0013](adr/0013-memory-in-langgraph-store.md),
 [ADR-0025](adr/0025-learning-memory-and-import.md). Requirements: `FR-MEM-*`.
@@ -12,7 +12,7 @@ Decisions: [ADR-0013](adr/0013-memory-in-langgraph-store.md),
 | Kind | Where | Lifetime |
 |---|---|---|
 | Short-term (this conversation) | Graph state, checkpointed per `thread_id` | The thread |
-| Profile | LangGraph Store namespace `("users", user_id)`: language, name, phone hash, consent flags, preferences | Until forgotten |
+| Profile | LangGraph Store (`PostgresStore`, schema `langgraph`) namespace `("users", user_id)`: language, name, phone hash, consent flags, preferences | Until forgotten |
 | Business facts | Store namespace `("business", workspace_id)`: a collection of `MemoryItem`s with a semantic index | Until forgotten |
 | Policies | Store namespace `("policies", workspace_id)` | Until changed |
 | Artifacts | App DB (versioned, with provenance) | Business record |

@@ -2,7 +2,7 @@
 
 > **What this is:** every endpoint the product needs: paths, request and response shapes, errors, auth and billing. The prototype's `web/src/api/contract.ts` mirrors this, and the backend implements it.
 > **Who reads it:** front-end and back-end engineers.
-> **Last reviewed:** 2026-10-02
+> **Last reviewed:** 2026-10-03
 
 Shapes use TypeScript-like notation; the Pydantic models in `bizzagent` are authoritative once
 they exist. Persistent shapes are in [data-model](data-model.md).
@@ -10,6 +10,8 @@ they exist. Persistent shapes are in [data-model](data-model.md).
 ## 1. Conventions
 
 - **Base path:** `/v1`. JSON in and out, except uploads (multipart) and streams (SSE).
+- **Ownership:** each section names the module whose `router.py` serves it
+  ([modules.md](../architecture/modules.md)). A route never reads another module's tables.
 - **Auth:**
   - `Authorization: Bearer <user token>` for users.
   - `X-Org-Key: <key>` for partner automation.
@@ -76,6 +78,8 @@ type Citation = {
 
 ## 2. Accounts and workspaces
 
+**Owning module:** `accounts`
+
 | Method | Path | Body → Response |
 |---|---|---|
 | POST 🌐 | `/accounts` | `{phone, language, path: "explorer"\|"team"\|"business"\|"collective"\|"partner", legal_form?, partner_kind?, name?}` → `{user, token, workspace}` |
@@ -95,6 +99,8 @@ type Citation = {
 | GET | `/me/capabilities?ws=` | → `{capabilities: string[]}` (the UI uses it to hide actions) |
 
 ## 3. Conversations (concierge)
+
+**Owning module:** `agents`
 
 | Method | Path | Body → Response |
 |---|---|---|
@@ -125,6 +131,8 @@ type StreamEvent =
 
 ## 4. Artifacts
 
+**Owning module:** `artifacts`
+
 | Method | Path | Body → Response |
 |---|---|---|
 | GET | `/workspaces/{ws}/artifacts?kind=` | → `ArtifactSummary{id, kind, title, version, completeness, stamps: Record<Status, number>, updated_at}[]` |
@@ -134,6 +142,8 @@ type StreamEvent =
 | POST | `/artifacts/{id}/versions/{v}/approve` | Approves a draft version (idea clarifier, drafts) |
 
 ## 5. Calculators and knowledge
+
+**Owning module:** `calc` (`/calcs`), `knowledge` (`/knowledge`)
 
 | Method | Path | Body → Response |
 |---|---|---|
@@ -147,6 +157,8 @@ type Step = { n: number; label: string; op: "+" | "-" | "×" | "÷" | "="; value
 ```
 
 ## 6. Funding: funders, calls, directory, proposals
+
+**Owning module:** `funding`
 
 | Method | Path | Body → Response |
 |---|---|---|
@@ -173,6 +185,8 @@ Legacy routes (deprecated, removed in D):
 
 ## 7. Opportunities, pipeline, Passport, readiness
 
+**Owning module:** `opportunities` (opportunities, matches, pipeline), `trust` (readiness, Common Application, Passport)
+
 | Method | Path | Body → Response |
 |---|---|---|
 | GET | `/opportunities?type=&sector=&region=&stage=&language=&closing_within=` | → `Opportunity[]` |
@@ -189,6 +203,8 @@ Legacy routes (deprecated, removed in D):
 | POST | `/orgs/{slug}/opportunities` | (partner) publish → `Opportunity` |
 
 ## 8. Missions, inbox, policies, activity
+
+**Owning module:** `agents` (missions, inbox, autonomy, policies), `activity` (activity log)
 
 | Method | Path | Body → Response |
 |---|---|---|
@@ -222,6 +238,8 @@ type InboxItem = {
 
 ## 9. Memory and import
 
+**Owning module:** `memory`
+
 | Method | Path | Body → Response |
 |---|---|---|
 | GET | `/me/memory?topic=` | → `MemoryItem[]` |
@@ -235,6 +253,8 @@ type InboxItem = {
 | POST | `/me/import` | `{text}`, or multipart `file` + `source: "chatgpt"\|"claude"\|"gemini"` → `{import_id, candidates: MemoryItem[]}` (the raw file is deleted) |
 
 ## 10. Money, ledger, personal space
+
+**Owning module:** `money` (ledger, statements, imports), `personal` (`/me/personal/*`)
 
 | Method | Path | Body → Response |
 |---|---|---|
@@ -253,6 +273,8 @@ type InboxItem = {
 
 ## 11. Team and hiring
 
+**Owning module:** `team`
+
 | Method | Path | Body → Response |
 |---|---|---|
 | GET / POST | `/workspaces/{ws}/jobs` | `JobOpening` |
@@ -263,6 +285,8 @@ type InboxItem = {
 
 ## 12. Documents and verification
 
+**Owning module:** `documents`
+
 | Method | Path | Body → Response |
 |---|---|---|
 | GET | `/workspaces/{ws}/documents` | → `DocumentRecord{id, title, format, language, artifact_ref, sha256, created_at, verify_url}[]` |
@@ -271,6 +295,8 @@ type InboxItem = {
 | POST 🌐 | `/verify/{id}` | multipart `file` → `{match: boolean}` |
 
 ## 13. Wallet and billing
+
+**Owning module:** `billing`
 
 | Method | Path | Body → Response |
 |---|---|---|
@@ -285,6 +311,8 @@ type InboxItem = {
 
 ## 14. Partner portal
 
+**Owning module:** `funding` (calls, publishing, preview scoring), `accounts` (members, consented ventures)
+
 | Method | Path | Body → Response |
 |---|---|---|
 | GET / POST | `/orgs/{slug}/calls` | Create a draft call |
@@ -295,6 +323,8 @@ type InboxItem = {
 | GET / POST | `/orgs/{slug}/members` | — |
 
 ## 15. Meta and connector
+
+**Owning module:** `core` (`/health`, `/meta`), `connector` (tokens, `/mcp`)
 
 | Method | Path | Purpose |
 |---|---|---|

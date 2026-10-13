@@ -54,7 +54,7 @@ Partner-side users:
    `unverified`, `missing` or `contradictory`. It also has a source. **The language model is
    never a source.**
 2. **Rules do the arithmetic.** Calculations, eligibility and scoring are deterministic Python
-   (`bizzagent.calc`, `bizzagent.rules`). The model explains them; it never types a result.
+   (`modules.calc` and each module's `rules/`). The model explains them; it never types a result.
 3. **No citation, no claim.** Legal, tax and market facts come only from cited knowledge-pack
    entries or URLs. Without one, BizzAgent says *"I don't have a verified answer"* and offers a
    human expert.

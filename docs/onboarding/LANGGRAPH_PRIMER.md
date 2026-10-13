@@ -1,7 +1,7 @@
 # LangGraph primer for BizzAgent
 
 > **What this is:** the LangChain Academy *Intro to LangGraph* course, mapped to current LangGraph 1.x APIs and to where BizzAgent uses each concept.
-> **Who reads it:** every engineer before touching `bizzagent.agents`.
+> **Who reads it:** every engineer before touching an `agent/` package or `bizzagent.modules.agents`.
 > **Last reviewed:** 2026-10-02. All snippets were run against langgraph 1.2.11.
 
 The course ([academy.langchain.com](https://academy.langchain.com/courses/intro-to-langgraph))
@@ -22,7 +22,7 @@ has six modules. Some of its notebooks use older APIs. **Use the 1.x forms shown
 | M1 agent / agent memory | Tools, checkpointer threads | Calculators as tools in the numbers coach; thread = conversation |
 | M2 state schema / reducers | TypedDict and Pydantic, `operator.add`, custom reducers | Artifacts merged by key, append-only evidence, a declaration reducer that rejects non-user ticks |
 | M2 multiple schemas | Private state, input and output schemas | Skill-internal scratch vs the concierge view |
-| M2 trim / summarise / external memory | Message trimming, summaries, `SqliteSaver` | Long voice conversations on small models |
+| M2 trim / summarise / external memory | Message trimming, summaries, `PostgresSaver` | Long voice conversations on small models |
 | M3 streaming | `stream_mode` updates / custom / messages, `get_stream_writer` | Stage text in the user's language over SSE; the activity log |
 | M3 breakpoints / dynamic breakpoints | **`interrupt()` + `Command(resume)`** | Questions, read-back, approvals (inbox) |
 | M3 edit state | `update_state(as_node=…)` | Language switch, user edits an artifact, reviewer override |
@@ -41,7 +41,7 @@ has six modules. Some of its notebooks use older APIs. **Use the 1.x forms shown
 ```python
 import operator
 from typing import Annotated, TypedDict
-from langgraph.checkpoint.memory import InMemorySaver   # SqliteSaver in the app
+from langgraph.checkpoint.memory import InMemorySaver   # PostgresSaver in the app
 from langgraph.config import get_stream_writer
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
@@ -115,7 +115,7 @@ parent.add_node("summarise", summarise)
 ```python
 from dataclasses import dataclass
 from langgraph.runtime import Runtime
-from langgraph.store.memory import InMemoryStore   # SQLite/Postgres store in the app
+from langgraph.store.memory import InMemoryStore   # PostgresStore in the app
 
 @dataclass
 class Ctx:

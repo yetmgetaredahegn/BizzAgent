@@ -1,7 +1,7 @@
 # Accounts, workspace types and roles
 
 > **What this is:** registration, workspace types and legal forms, the 15 roles, the capability matrix, consent and the signatory rule.
-> **Who reads it:** product, design (onboarding and Team screens), engineers working on `bizzagent.tenancy`.
+> **Who reads it:** product, design (onboarding and Team screens), engineers working on `bizzagent.modules.accounts`.
 > **Last reviewed:** 2026-10-02
 
 Decision records: [ADR-0021](../architecture/adr/0021-accounts-and-roles.md),
@@ -86,7 +86,7 @@ assigned items.
 ² Only when the member is flagged `authorised_signatory` (the owner by default).
 
 Helper capabilities are further limited by the scope of their consent grant. The matrix lives in
-`bizzagent/tenancy/permissions.py` as pure data and is tested for every (role, capability) pair.
+`bizzagent/modules/accounts/` (the capability matrix) as pure data and is tested for every (role, capability) pair.
 
 ## 5. Rules
 

@@ -37,7 +37,7 @@ the voice interview in this browser).
 - `src/lib/form-schema.ts`: registry of every form field: section, label, what
   evidence establishes it and who provides it
 - `src/lib/grid.ts`, `src/lib/evaluate.ts`: deterministic eligibility gate,
-  exclusions and weighted grid (illustrative grid, moving to the backend `bizzagent.rules` package)
+  exclusions and weighted grid (illustrative grid, moving to the backend `bizzagent.modules.funding.rules` package)
 - `src/lib/contradictions.ts`: licence date vs years, ownership sum, capacity vs
   machinery, staff split
 - `src/lib/fixtures/`: fictional demo applications

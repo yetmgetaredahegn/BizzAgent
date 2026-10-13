@@ -9,7 +9,7 @@
 | [0001](0001-supervisor-and-skill-subgraphs.md) | LangGraph supervisor (concierge) with skill sub-graphs |
 | [0002](0002-deterministic-rules-in-python.md) | Deterministic calculators and rules in Python |
 | [0003](0003-nextjs-replaces-streamlit.md) | Next.js web client replaces Streamlit |
-| [0004](0004-sqlite-now-postgres-later.md) | SQLite with the LangGraph SQLite checkpointer and store now, PostgreSQL later |
+| [0004](0004-sqlite-now-postgres-later.md) | ~~SQLite now, PostgreSQL later~~ (superseded by 0037) |
 | [0005](0005-language-routed-speech.md) | Language-routed speech stack |
 | [0006](0006-pluggable-llm-per-role.md) | Pluggable LLM per role: hosted in production, Ollama in development, fake in CI |
 | [0007](0007-provenance-model.md) | Provenance model across all artifacts |
@@ -40,3 +40,7 @@
 | [0032](0032-autonomy-and-inbox.md) | Autonomy levels L0–L3 and the approvals inbox |
 | [0033](0033-missions-as-durable-threads.md) | Missions as durable multi-skill LangGraph threads |
 | [0034](0034-verifier-chain.md) | Verifier chain before user-visible output |
+| [0035](0035-contract-first-and-vertical-slices.md) | Web contract as API source of truth; backend in vertical slices (proposed) |
+| [0036](0036-modular-monolith.md) | A modular monolith with domain-owned skills |
+| [0037](0037-postgresql-from-day-one.md) | PostgreSQL from day one, one schema per module |
+| [0038](0038-transactional-outbox-and-worker.md) | Transactional outbox and a PostgreSQL-backed worker |

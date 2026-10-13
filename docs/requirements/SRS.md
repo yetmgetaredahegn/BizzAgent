@@ -21,7 +21,7 @@
 
 - **Users:** see the [personas](../product/personas.md) and [roles](../product/roles-and-permissions.md).
 - **Operating environment.**
-  - Server: Python 3.13, SQLite now and PostgreSQL later.
+  - Server: Python 3.13, PostgreSQL only (one schema per module), as a modular monolith.
   - Browsers: the current two major versions of Chrome, Safari and Firefox, mobile first at
     390 px.
 - **Constraints.**
@@ -148,7 +148,7 @@
 | FR-FND-001 | A proposal shall pin the call configuration version current at creation. |
 | FR-FND-002 | Claims extracted by the model shall be grounded: the quote must appear in the source and numbers must appear in the quote. Otherwise the claim is discarded. |
 | FR-FND-003 | Merging shall set document evidence to `established`, voice to `unverified`, and disagreement to `contradictory` with both values kept. |
-| FR-FND-004 | Contradictions, gaps, eligibility, exclusions and the score shall come from `bizzagent.rules` using the pinned configuration. |
+| FR-FND-004 | Contradictions, gaps, eligibility, exclusions and the score shall come from `bizzagent.modules.funding.rules` using the pinned configuration. |
 | FR-FND-005 | Each gap shall state the field, why it is missing, what evidence is needed and who provides it. |
 | FR-FND-006 | Declarations shall be explained in the user's language with understanding recorded. Only a user actor event shall tick them. |
 | FR-FND-007 | Narrative and impact drafts shall be tagged `draft_for_approval` until the user approves them. |
@@ -368,5 +368,6 @@
 | NFR-REL-001 | Graph threads shall be checkpointed and resumable after a crash. |
 | NFR-REL-002 | Background jobs shall be idempotent. |
 | NFR-OBS-001 | Every run shall log a `run_id`, the skill, the model per role, token usage and latency. |
-| NFR-MNT-001 | `calc`, `rules` and `knowledge` shall not import LLM or LangChain modules (architecture test). |
+| NFR-MNT-001 | `calc`, `knowledge` and every module's `rules/` shall not import LLM, LangChain or LangGraph modules or integrations (import-linter). |
 | NFR-MNT-002 | Docs shall be updated in the same PR as the behaviour they describe. |
+| NFR-MNT-003 | Code shall import another module only through its public package root; platform modules and the agent runtime shall not import product modules; only the app entry point shall import the personal space ([ADR-0036](../architecture/adr/0036-modular-monolith.md)). |

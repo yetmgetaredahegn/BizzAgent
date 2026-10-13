@@ -2,7 +2,7 @@
 
 > **What this is:** where things are today, and where they are going.
 > **Who reads it:** new contributors.
-> **Last reviewed:** 2026-10-02
+> **Last reviewed:** 2026-10-03
 
 ## Today
 
@@ -27,16 +27,30 @@ web/
 docs/                     this documentation
 ```
 
-## Target (after C6)
+## Target: a modular monolith
 
-See [SAD §4](../architecture/SAD.md#4-components-c4-level-3-package-bizzagent) for the package
-list:
+The package tree exists now; modules fill in from C1. See [modules.md](../architecture/modules.md)
+for what each module owns.
 
-- `tenancy`, `billing`, `calc`, `rules`, `knowledge`, `i18n`, `llm`, `search`, `opportunities`
-- `exports`, `agents/{concierge, skills/*, core/*, common/*}`
-- `jobs`, `connector`, `routes/v1`
+```
+backend/src/bizzagent/
+  core/            config, database, security, errors, events + outbox, tenancy, logging
+  integrations/    llm, speech, vision, search, payments, storage (technical adapters)
+  shared/          provenance, value types, i18n helpers
+  modules/
+    accounts billing artifacts documents knowledge calc memory activity
+    agents         the agent runtime: concierge, missions, inbox, verifiers, skill registry
+    learn start plan funding opportunities trust markets money team personal
+                   product domains; each skill graph lives in <module>/agent/
+    connector      MCP
+backend/tests/modules/<module>/   tests per module
+```
 
-In the web app, `src/api/{contract, mock, http}` replaces `src/lib/api.ts`, and screens move to
+Boundaries are checked by `uv run lint-imports`
+([ENGINEERING_RULES §1](../engineering/ENGINEERING_RULES.md#1-modules-and-boundaries)).
+
+In the web app, `src/api/{contract, mock, http}` replaces `src/lib/api.ts` (`http/<module>.ts`
+mirrors the backend module names), and screens move to
 `/w/[ws]/…`, `/me/…` and `/p/[org]/…` ([ux-spec](../design/ux-spec.md)).
 
 ## Where to start reading
