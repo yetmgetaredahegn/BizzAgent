@@ -12,8 +12,6 @@ htmlcov/
 # Runtime data (uploads, generated audio, local databases)
 /backend/var/
 *.db
-*.sqlite
-*.sqlite3
 
 # Local recordings
 *.m4a

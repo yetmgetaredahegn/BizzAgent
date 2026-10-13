@@ -16,7 +16,7 @@ proposal. That work is now BizzAgent's funding skill; the original brief is in
 | Path | What it is |
 | --- | --- |
 | `web/` | Next.js 16 web client: landing page, applicant path, reviewer dashboard |
-| `backend/` | FastAPI service, package `bizzagent` (src layout, managed with uv) |
+| `backend/` | FastAPI service, package `bizzagent`: a modular monolith on PostgreSQL ([modules](docs/architecture/modules.md)) |
 | `backend/tests/fixtures/` | Sample licence and workshop photos used by tests |
 | `docs/` | Product and engineering documentation (in progress) |
 
@@ -30,7 +30,8 @@ npm run dev                   # http://localhost:3000
 ```
 
 The demo cases (Almaz, Nahom, Hiwot) and the 12-application reviewer batch work
-without the backend. The live applicant flow (`/apply`) needs the backend.
+without the backend. The live funding intake and interview
+(`/w/{ws}/funding/new`) need the backend.
 
 Checks: `npm run lint`, `npm test`, `npm run build`.
 
@@ -55,7 +56,9 @@ environment variables. Allowed browser origins come from
 `BIZZAGENT_FRONTEND_ORIGINS`.
 
 Checks: `uv run ruff check`, `uv run ruff format --check`, `uv run mypy src`,
-`uv run pytest`.
+`uv run lint-imports` (module boundaries), `uv run pytest`.
+
+From PR C1 the backend needs PostgreSQL: `docker compose up -d db`.
 
 ## Principles
 

@@ -30,6 +30,7 @@ llm-local = ["langchain-ollama>=1.1.0"]
 [dependency-groups]
 dev = [
     "httpx>=0.28",
+    "import-linter>=2.15",
     "mypy>=1.18",
     "pytest>=8.4",
     "ruff>=0.13",
@@ -64,3 +65,178 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[tool.importlinter]
+root_package = "bizzagent"
+include_external_packages = true
+
+# Module boundaries (ADR-0036). Run with `uv run lint-imports`.
+[[tool.importlinter.contracts]]
+name = "core, shared and integrations never import modules"
+type = "forbidden"
+source_modules = ["bizzagent.core", "bizzagent.shared", "bizzagent.integrations"]
+forbidden_modules = ["bizzagent.modules"]
+
+[[tool.importlinter.contracts]]
+name = "Platform modules and the agent runtime never import product modules"
+type = "forbidden"
+source_modules = [
+    "bizzagent.modules.accounts",
+    "bizzagent.modules.billing",
+    "bizzagent.modules.artifacts",
+    "bizzagent.modules.documents",
+    "bizzagent.modules.knowledge",
+    "bizzagent.modules.calc",
+    "bizzagent.modules.memory",
+    "bizzagent.modules.activity",
+    "bizzagent.modules.agents",
+]
+forbidden_modules = [
+    "bizzagent.modules.learn",
+    "bizzagent.modules.start",
+    "bizzagent.modules.plan",
+    "bizzagent.modules.funding",
+    "bizzagent.modules.opportunities",
+    "bizzagent.modules.trust",
+    "bizzagent.modules.money",
+    "bizzagent.modules.personal",
+    "bizzagent.modules.team",
+    "bizzagent.modules.markets",
+]
+
+[[tool.importlinter.contracts]]
+name = "Pure code imports no model frameworks or integrations"
+type = "forbidden"
+source_modules = [
+    "bizzagent.modules.calc",
+    "bizzagent.modules.knowledge",
+    "bizzagent.modules.funding.rules",
+    "bizzagent.modules.start.rules",
+]
+forbidden_modules = ["langchain", "langchain_core", "langgraph", "bizzagent.integrations"]
+
+[[tool.importlinter.contracts]]
+name = "Only the app entry point imports the personal space"
+type = "protected"
+protected_modules = ["bizzagent.modules.personal"]
+allowed_importers = ["bizzagent.main"]
+
+[[tool.importlinter.contracts]]
+name = "accounts: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.accounts.*"]
+allowed_importers = ["bizzagent.modules.accounts"]
+
+[[tool.importlinter.contracts]]
+name = "billing: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.billing.*"]
+allowed_importers = ["bizzagent.modules.billing"]
+
+[[tool.importlinter.contracts]]
+name = "artifacts: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.artifacts.*"]
+allowed_importers = ["bizzagent.modules.artifacts"]
+
+[[tool.importlinter.contracts]]
+name = "documents: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.documents.*"]
+allowed_importers = ["bizzagent.modules.documents"]
+
+[[tool.importlinter.contracts]]
+name = "knowledge: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.knowledge.*"]
+allowed_importers = ["bizzagent.modules.knowledge"]
+
+[[tool.importlinter.contracts]]
+name = "calc: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.calc.*"]
+allowed_importers = ["bizzagent.modules.calc"]
+
+[[tool.importlinter.contracts]]
+name = "memory: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.memory.*"]
+allowed_importers = ["bizzagent.modules.memory"]
+
+[[tool.importlinter.contracts]]
+name = "activity: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.activity.*"]
+allowed_importers = ["bizzagent.modules.activity"]
+
+[[tool.importlinter.contracts]]
+name = "agents: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.agents.*"]
+allowed_importers = ["bizzagent.modules.agents"]
+
+[[tool.importlinter.contracts]]
+name = "connector: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.connector.*"]
+allowed_importers = ["bizzagent.modules.connector"]
+
+[[tool.importlinter.contracts]]
+name = "learn: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.learn.*"]
+allowed_importers = ["bizzagent.modules.learn"]
+
+[[tool.importlinter.contracts]]
+name = "start: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.start.*"]
+allowed_importers = ["bizzagent.modules.start"]
+
+[[tool.importlinter.contracts]]
+name = "plan: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.plan.*"]
+allowed_importers = ["bizzagent.modules.plan"]
+
+[[tool.importlinter.contracts]]
+name = "funding: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.funding.*"]
+allowed_importers = ["bizzagent.modules.funding"]
+
+[[tool.importlinter.contracts]]
+name = "opportunities: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.opportunities.*"]
+allowed_importers = ["bizzagent.modules.opportunities"]
+
+[[tool.importlinter.contracts]]
+name = "trust: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.trust.*"]
+allowed_importers = ["bizzagent.modules.trust"]
+
+[[tool.importlinter.contracts]]
+name = "money: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.money.*"]
+allowed_importers = ["bizzagent.modules.money"]
+
+[[tool.importlinter.contracts]]
+name = "personal: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.personal.*"]
+allowed_importers = ["bizzagent.modules.personal"]
+
+[[tool.importlinter.contracts]]
+name = "team: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.team.*"]
+allowed_importers = ["bizzagent.modules.team"]
+
+[[tool.importlinter.contracts]]
+name = "markets: other code imports only the package root"
+type = "protected"
+protected_modules = ["bizzagent.modules.markets.*"]
+allowed_importers = ["bizzagent.modules.markets"]
