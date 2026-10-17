@@ -1,6 +1,6 @@
 # Backend Handoff
 
-> **Status:** Clean-Slate Structural Reorganization Complete  
+> **Status:** Phase 1 (Structural Cleanup Commits) & Phase 2 (Accounts Capability Foundation) Complete  
 > **Last updated:** 2026-10-17  
 > **Author:** Antigravity AI Assistant (for human contributor)  
 
@@ -8,84 +8,73 @@
 
 ## 1. Current Objective & Milestone
 
-- **Objective:** Clean-slate structural reorganization of the BizzAgent backend codebase, sanitizing and organizing it into a clean, consistent, maintainable structure that adheres to the established BizzAgent architecture.
-- **Milestone:** Structural foundation established. Obsolete prototype code and dependencies removed; layers, modules, configuration, and boundary enforcement configured; project instructions and module conventions established; test and linter suites passing.
+- **Objective:** Complete the structural reorganization and implement the first real backend capability: the Accounts foundation (authentication, authorization, workspace isolation, and user profile management).
+- **Milestone:** 
+  1. Clean structural foundation reviewed, verified, and committed with Conventional Commits.
+  2. Accounts module implemented according to `docs/architecture/module-conventions.md` and `docs/engineering/api.md` §2.
+  3. All 42 unit, service, API, and boundary tests passing.
+  4. Frontend in `web/` verified completely untouched.
 
 ---
 
-## 2. Structural Changes Completed
+## 2. Structural Cleanup Commits (Phase 1)
 
-1. **Obsolete Prototype Removal:**
-   - Removed legacy hackathon/prototype code (`bizzagent/legacy/`, `bizzagent/routes/`, `bizzagent/schemas/`, `bizzagent/speech/`, `bizzagent/vision/`, `bizzagent/storage/`).
-   - Removed obsolete prototype test suite (`backend/tests/test_api.py`, `backend/tests/fixtures/images/`).
-   - Removed speculative empty sub-packages (`agent/` and `rules/` directories containing only empty `__init__.py` placeholders across modules).
-2. **Standard Layer Organization Established:**
-   - `bizzagent/core/`: Application-wide foundations and cross-cutting infrastructure (`__init__.py`, `config.py`).
-   - `bizzagent/shared/`: Value types, provenance primitives, i18n helpers (`__init__.py`).
-   - `bizzagent/integrations/`: Provider-neutral technical adapters (`__init__.py`).
-   - `bizzagent/modules/`: 20 business capability packages, each initialized with an authoritative module `__init__.py` docstring defining responsibility and schema.
-3. **Application Composition Sanitized:**
-   - `bizzagent/main.py`: Pure application composition without product logic or speculative endpoints. Configures FastAPI and CORS middleware.
-4. **Dependency Sanitization:**
-   - Removed obsolete dependencies (`langchain`, `langchain-ollama`, `torch`, `torchaudio`, `transformers`, `faster-whisper`, `kokoro`, `easyocr`, `soundfile`).
-   - Retained structural dependencies: `fastapi`, `uvicorn[standard]`, `pydantic[email]`, `pydantic-settings`, `python-multipart`.
-   - Updated and pruned lockfile (`uv.lock`) removing 44 heavy packages.
-5. **Tooling & Boundary Enforcement:**
-   - Configured `import-linter` contracts in `pyproject.toml` (24 contracts verifying layer and module isolation).
-   - Added structural smoke test in `backend/tests/test_structure.py`.
+The following Conventional Commits were executed on branch `chore/agent-scaffold`:
+
+1. `92fe860`: `docs(architecture): document module conventions and dependency boundary rules`
+   - Added `docs/architecture/module-conventions.md` (authoritative module file structure).
+   - Added `docs/architecture/dependency-rules.md` (layer hierarchy and boundary enforcement).
+   - Updated `AGENTS.md` with persistent instructions for future assistant sessions.
+2. `cb25cab`: `refactor(backend): reorganize modular package structure and remove legacy prototype`
+   - Removed legacy prototype code (`bizzagent/legacy/`, `routes/`, `schemas/`, `speech/`, `vision/`, `storage/`).
+   - Relocated configuration to `bizzagent/core/config.py`.
+   - Cleaned up application entry in `bizzagent/main.py`.
+   - Established `core/`, `shared/`, `integrations/`, and 20 `modules/` packages.
+   - Synchronized dependencies and `uv.lock`.
+   - Added structural boundary smoke tests in `tests/test_structure.py`.
+3. `4a69b88`: `docs(backend): record canonical handoff for structural cleanup`
+   - Added initial canonical handoff documenting the structural baseline.
 
 ---
 
-## 3. Files and Directories Created, Modified, or Removed
+## 3. Accounts Implementation (Phase 2)
 
-### Created
-- `backend/src/bizzagent/core/config.py` (relocated from root `config.py`)
-- `backend/tests/test_structure.py` (structural boundary smoke tests)
-- `docs/architecture/module-conventions.md` (authoritative module file convention)
-- `docs/architecture/dependency-rules.md` (import and architecture boundary rules)
-- `backend/handoff.md` (this canonical handoff document)
+### 3.1 Functionality Implemented
+- **User Identity & Lifecycle:** Phone-first identity registration (`POST /v1/accounts`), storing normalized phone numbers and privacy-preserving SHA-256 phone hashes.
+- **Authentication:** Token-based authentication (`POST /v1/accounts/login`) returning signed JWT tokens with 7-day expiration and signature validation (`HS256`).
+- **Authorization & Capability Matrix:** Deterministic pure rule capability evaluator (`rules.py`) implementing the 15 roles and 13 permissions from `docs/product/roles-and-permissions.md` §4, including the `authorised_signatory` requirement for `submit_and_sign`.
+- **Tenancy & Workspace Scoping:** Per-workspace membership checking ensuring `NFR-TEN-001` (requests outside a caller's memberships return HTTP 404, never leaking workspace existence).
+- **Profile & Capabilities Management:** `GET /v1/me`, `PATCH /v1/me`, `GET /v1/me/capabilities?ws={ws}`, and `GET /v1/workspaces/{ws}/members`.
 
-### Modified
-- `AGENTS.md` (updated persistent instructions for future coding sessions)
-- `backend/pyproject.toml` (sanitized dependencies, updated import-linter contracts)
-- `backend/uv.lock` (pruned obsolete packages, synchronized with pyproject.toml)
-- `backend/src/bizzagent/main.py` (clean composition, removed legacy routes)
-- `backend/src/bizzagent/core/__init__.py` (layer documentation)
-- `backend/src/bizzagent/shared/__init__.py` (layer documentation)
-- `backend/src/bizzagent/integrations/__init__.py` (layer documentation)
-- `backend/src/bizzagent/modules/__init__.py` (layer documentation)
-- `backend/src/bizzagent/modules/*/__init__.py` (20 module packages docstrings)
-
-### Removed
-- `backend/src/bizzagent/config.py` (moved to `core/config.py`)
-- `backend/src/bizzagent/legacy/` (prototype interview workflow and agent)
-- `backend/src/bizzagent/routes/` (prototype applications router)
-- `backend/src/bizzagent/schemas/` (prototype schemas)
-- `backend/src/bizzagent/speech/` (prototype asr/tts)
-- `backend/src/bizzagent/vision/` (prototype licence check)
-- `backend/src/bizzagent/storage/` (prototype uploads)
-- `backend/tests/test_api.py` (tests for removed routes)
-- `backend/tests/fixtures/images/` (prototype test images)
-- `backend/tests/modules/.gitkeep` (empty placeholder)
-- Speculative empty `agent/` and `rules/` sub-packages across modules
+### 3.2 Module File Structure
+Adheres to `docs/architecture/module-conventions.md`:
+- `backend/src/bizzagent/core/database.py`: SQLAlchemy engine, session factory, `get_db` dependency, and multi-schema initialization.
+- `backend/src/bizzagent/core/security.py`: Phone normalization (`+251...`), SHA-256 phone hashing, PBKDF2-HMAC-SHA256 password hashing/verification, and JWT access token encode/decode.
+- `backend/src/bizzagent/core/errors.py`: Standard API error response handler and domain exception types (`UnauthorizedException`, `ForbiddenActionException`, `NotFoundException`, `ConflictException`).
+- `backend/src/bizzagent/modules/accounts/rules.py`: Pure domain logic containing the capability matrix, role sets, legal form validations, and signatory checks.
+- `backend/src/bizzagent/modules/accounts/models.py`: SQLAlchemy entities in `accounts` schema (`User`, `Organization`, `Membership`) and `personal` schema (`PersonalSpace`).
+- `backend/src/bizzagent/modules/accounts/schemas.py`: Validated Pydantic contracts supporting both snake_case and camelCase aliases for the frontend JSON contract.
+- `backend/src/bizzagent/modules/accounts/repository.py`: Org-scoped database queries.
+- `backend/src/bizzagent/modules/accounts/service.py`: Business use-case orchestration.
+- `backend/src/bizzagent/modules/accounts/dependencies.py`: Request-scoped FastAPI dependencies (`get_current_user`, `get_current_workspace_membership`, `require_capability`, `require_signatory`).
+- `backend/src/bizzagent/modules/accounts/router.py`: Thin HTTP handlers mounted at `/v1` and root.
+- `backend/src/bizzagent/modules/accounts/__init__.py`: Public module API exposing service, schemas, rules, dependencies, and `accounts_router`.
 
 ---
 
-## 4. Architecture Conventions Established
+## 4. Implemented API Contracts
 
-1. **Layer Hierarchy:** `core` · `shared` · `integrations` ← `platform modules` ← `product modules`. Infrastructure layers never import `modules`.
-2. **Private Module Internals:** External code imports business modules only through package roots (`bizzagent.modules.<name>`), enforced by `import-linter`.
-3. **Module File Standardization:** Documented in [docs/architecture/module-conventions.md](file:///c:/Users/yetmgeta/Desktop/Projects/BizzAgent/docs/architecture/module-conventions.md):
-   - `__init__.py`: Public API (commands, queries, read models, events).
-   - `router.py`: Thin HTTP mapping only.
-   - `schemas.py`: Pydantic request/response contracts (camelCase aliases).
-   - `models.py`: SQLAlchemy tables in module's Postgres schema.
-   - `service.py`: Use case orchestration.
-   - `repository.py`: Org-scoped persistence queries.
-   - `rules/`: Pure Python domain logic (no I/O, no LLM, no integrations).
-   - `dependencies.py`: Request-scoped FastAPI dependencies.
-4. **Boundary Rules:** Documented in [docs/architecture/dependency-rules.md](file:///c:/Users/yetmgeta/Desktop/Projects/BizzAgent/docs/architecture/dependency-rules.md).
-5. **Session Guidelines:** Documented in [AGENTS.md](file:///c:/Users/yetmgeta/Desktop/Projects/BizzAgent/AGENTS.md).
+Base path: `/v1` (also accessible at `/`):
+
+| Method | Path | Request Body | Response Body | Description |
+|---|---|---|---|---|
+| `POST` | `/v1/accounts` | `CreateAccountRequest` | `AuthResponse` (`user`, `token`, `workspace`) | Public registration creating user, personal space, org, and owner membership |
+| `POST` | `/v1/accounts/login` | `LoginRequest` (`phone`) | `AuthResponse` (`user`, `token`, `workspace`) | Public sign-in via registered phone number |
+| `GET` | `/v1/me` | None (`Bearer <token>`) | `MeResponse` (`user`, `language`, `workspaces`, `personal_space_id`) | Authenticated profile and workspace summary |
+| `PATCH` | `/v1/me` | `UpdateMeRequest` (`language?`, `name?`) | `UserResponse` | Update language and name |
+| `GET` | `/v1/me/capabilities` | Query `?ws={id}` (`Bearer <token>`) | `CapabilitiesResponse` (`capabilities: string[]`) | List caller's capabilities in specified workspace |
+| `GET` | `/v1/workspaces/{ws}` | None (`Bearer <token>`) | `WorkspaceResponse` | Workspace metadata (returns 404 if not a member) |
+| `GET` | `/v1/workspaces/{ws}/members` | None (`Bearer <token>`) | `list[MemberResponse]` | Workspace member directory (returns 404 if not a member) |
 
 ---
 
@@ -95,56 +84,43 @@ All executed from `backend/`:
 
 | Check Command | Result | Notes |
 |---|---|---|
-| `uv lock --check` | **Passed** | 44 packages resolved in 4ms; lockfile in sync with `pyproject.toml` |
-| `uv run ruff check .` | **Passed** | All checks passed cleanly |
-| `uv run ruff format --check .` | **Passed** | 29 files checked, 29 already formatted |
-| `uv run mypy src` | **Passed** | Success: no issues found in 27 source files |
+| `uv lock --check` | **Passed** | 49 packages resolved in 1ms |
+| `uv run ruff check .` | **Passed** | All checks clean |
+| `uv run ruff format --check .` | **Passed** | 44 files checked, 44 already formatted |
+| `uv run mypy src` | **Passed** | Success: no issues found in 37 source files |
 | `uv run lint-imports` | **Passed** | 24 contracts kept, 0 broken |
-| `uv run pytest` | **Passed** | 2 passed in 2.75s (verifies no heavy dependencies on import + layer existence) |
+| `uv run pytest` | **Passed** | 42 passed in 2.95s (all permission, auth, isolation, and structure tests pass) |
 
 ---
 
-## 6. Outstanding Issues and Unresolved Decisions
+## 6. Frontend Contract Compatibility & Alignment
 
-1. **Country Pack Static Data Storage:**
-   - Architecture documents specify `knowledge` and `calc` are pure Python. The physical location of raw static country packs (e.g. JSON/YAML files vs Python constants) should be finalized when `knowledge` is implemented.
-2. **Database Engine & Migration Setup:**
-   - SQLAlchemy and Alembic configurations are deferred until the first module requiring persistence (`accounts`) is implemented.
-3. **External Integration Providers:**
-   - Specific third-party SDKs for SMS, payments, and hosted speech/LLMs will be introduced in `integrations/` when their capabilities are implemented.
-
----
-
-## 7. Exact Next Steps
-
-1. Review and commit structural reorganization changes to Git branch `chore/agent-scaffold`.
-2. Implement `core/database.py` and base engine scaffolding alongside the first database-backed module (`accounts`).
-3. Implement `modules/accounts` according to `module-conventions.md` (schemas, models, service, repository, router, tests).
-4. Wire accounts router into `main.py` and add router tests in `backend/tests/modules/accounts/`.
+- **Frontend State:** `web/` is **completely untouched** (`git status web` clean).
+- **Match:** `CreateAccountRequest` accepts `phone`, `language`, `path`, `legalForm`, `partnerKind`, `name`, and `profile` facts, matching `CreateAccountInput` in `web/src/api/contract.ts`.
+- **Match:** Response from `POST /v1/accounts` returns `{ user, token, workspace }` per `docs/engineering/api.md` §2.
+- **Match:** Workspace summary shapes match `WorkspaceSummary` in `web/src/api/contract.ts` (`id`, `name`, `type`, `legalForm`, `role`, `signatory`, `stage`).
+- **Upcoming Frontend Integration Note:** The frontend prototype currently routes calls through `web/src/api/mock/client.ts`. When PR D introduces the HTTP client (`web/src/api/http/`), it will point to these backend endpoints without needing any backend contract changes.
 
 ---
 
-## 8. Git Branch and Working-Tree State
+## 7. Outstanding Limitations & Future Work
+
+1. **SMS / OTP Gateway:** The prototype uses direct phone verification tokens ("Phone number. OTP later; a token for now" per `docs/product/roles-and-permissions.md` §1). Live SMS OTP provider integration will be placed under `integrations/sms` when ready.
+2. **PostgreSQL Migrations:** Schema creation currently uses SQLAlchemy `init_db`. Alembic migration scripts for production database evolution can be added when deploying to managed PostgreSQL.
+3. **Invitations & Consent Grants:** Invitation sending and `ConsentGrant` records for external advisors will be added alongside the Team screens.
+
+---
+
+## 8. Git State & Phase 2 Commit
 
 - **Branch:** `chore/agent-scaffold`
-- **Commits Executed in Phase 1:**
-  - `92fe860`: `docs(architecture): document module conventions and dependency boundary rules`
-  - `cb25cab`: `refactor(backend): reorganize modular package structure and remove legacy prototype`
-- **Working Tree:**
-  - Clean apart from this canonical handoff document.
+- **Phase 2 Commit:** `aeb675d` — `feat(accounts): implement authentication, authorization, and workspace foundation`
+- **Working Tree:** Clean (apart from this handoff update).
+- **Frontend Status:** Unchanged and verified clean throughout all phases.
 
 ---
 
-## 9. Confirmation Regarding Frontend
+## 9. Exact Next Steps
 
-- **Status:** **UNTOUCHED**.
-- `git status web` confirms: `On branch chore/agent-scaffold, nothing to commit, working tree clean`.
-- No files under `web/` were viewed, edited, created, or deleted.
-
----
-
-## 10. Design Invariant Declaration
-
-**Endpoints, business services, database models, agent graphs, LangGraph runtimes, tools, missions, and workflows remain completely unimplemented by design.**
-
-All directories and packages established in this task serve strictly as a clean, standardized, and verified structural foundation for future incremental implementation.
+1. Commit this handoff update: `docs(backend): update canonical handoff for accounts foundation`.
+2. Proceed to next platform milestone in roadmap (e.g. `billing` double-entry ledger or `calc` pure calculators per roadmap C1).
