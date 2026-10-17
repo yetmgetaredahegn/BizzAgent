@@ -6,26 +6,14 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.141.1",
-    "langchain>=1.3.18",
     "pydantic[email]>=2.13.5",
     "pydantic-settings>=2.15.0",
     "python-multipart>=0.0.32",
     "uvicorn[standard]>=0.52.4",
 ]
 
-[project.optional-dependencies]
-# Local speech stack (dev); production uses hosted speech APIs.
-speech = [
-    "faster-whisper>=1.2.1",
-    "kokoro>=0.9.4",
-    "soundfile>=0.14.0",
-    "torch>=2.13.0",
-    "torchaudio>=2.11.0",
-    "transformers>=5.16.1",
-]
-vision = ["easyocr>=1.7.2"]
-# Local models for testing; production uses hosted model APIs.
-llm-local = ["langchain-ollama>=1.1.0"]
+# Optional extras will be re-added as feature code is implemented.
+# [project.optional-dependencies]
 
 [dependency-groups]
 dev = [
@@ -53,9 +41,8 @@ select = ["E", "F", "I", "UP", "B"]
 # FastAPI declares parameters with File(...)/Form(...) defaults by design.
 ignore = ["B008"]
 
-[tool.ruff.lint.per-file-ignores]
-# Prompt text in the legacy interview is kept verbatim until it is deleted.
-"src/bizzagent/legacy/**" = ["E501"]
+# [tool.ruff.lint.per-file-ignores]
+# (none at this time — legacy code has been removed)
 
 [tool.mypy]
 python_version = "3.13"
@@ -110,8 +97,7 @@ type = "forbidden"
 source_modules = [
     "bizzagent.modules.calc",
     "bizzagent.modules.knowledge",
-    "bizzagent.modules.funding.rules",
-    "bizzagent.modules.start.rules",
+    # Add funding.rules and start.rules back when those sub-packages are created.
 ]
 forbidden_modules = ["langchain", "langchain_core", "langgraph", "bizzagent.integrations"]
 

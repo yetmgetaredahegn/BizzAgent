@@ -1,9 +1,13 @@
+"""BizzAgent application entry point.
+
+Builds the FastAPI ``app`` and will mount each module's router as modules are
+implemented. No product logic belongs here — only application composition.
+"""
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from bizzagent.config import settings
-from bizzagent.legacy.interview.routes import router as legacy_interview_router
-from bizzagent.routes.applications import router as applications_router
+from bizzagent.core.config import settings
 
 app = FastAPI(
     title="BizzAgent API",
@@ -18,11 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.get("/health")
-def health_check() -> dict[str, str]:
-    return {"status": "ok"}
-
-
-app.include_router(applications_router)
-app.include_router(legacy_interview_router)
+# Module routers will be mounted here as modules are implemented.
+# Example (when accounts is ready):
+#   from bizzagent.modules.accounts import router as accounts_router
+#   app.include_router(accounts_router, prefix="/v1")
