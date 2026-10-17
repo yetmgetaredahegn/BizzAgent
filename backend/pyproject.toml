@@ -10,6 +10,9 @@ dependencies = [
     "pydantic-settings>=2.15.0",
     "python-multipart>=0.0.32",
     "uvicorn[standard]>=0.52.4",
+    "sqlalchemy>=2.0",
+    "pyjwt>=2.15.1",
+    "psycopg[binary]>=3.2",
 ]
 
 # Optional extras will be re-added as feature code is implemented.

@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     env: str = "dev"
     frontend_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
     media_dir: Path = BACKEND_DIR / "var" / "media"
+    database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/bizzagent"
+    jwt_secret: str = "dev-insecure-jwt-secret-do-not-use-in-production"
+    jwt_algorithm: str = "HS256"
+    jwt_expire_minutes: int = 60 * 24 * 7  # 7 days
 
     @property
     def origins(self) -> list[str]:
